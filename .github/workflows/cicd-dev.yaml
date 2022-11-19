@@ -1,0 +1,75 @@
+name: cicd-dev
+
+on:
+    push:
+        branches: develop
+
+env:
+    ACTIVE_PROFILE: "dev"
+    DOCKERHUB_ID: ${{ secrets.DOCKERHUB_ID }}
+    DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+    DOCERHUB_REPO: ${{ secrets.DOCERHUB_REPO }}
+
+jobs:
+    build-and-ci:
+        runs-on: ubuntu-latest
+        outputs:
+            image_tag: ${{ steps.image_tag.outputs.image_tag }}
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+
+            - name: Cache Gradle packages
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.gradle/caches
+                      ~/.gradle/wrapper
+                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+                  restore-keys: |
+                      ${{ runner.os }}-gradle-
+
+            - name: Create yaml file
+              run: |
+                  touch ./src/main/resources/application-$ACTIVE_PROFILE.yml
+                  echo "${{ secrets.APPLCATION_YAML }}" >> ./src/main/resources/application-$ACTIVE_PROFILE.yml
+
+            - name: Add permission for gradlew
+              run: chmod +x ./gradlew
+
+            - name: gradle Build
+              run: ./gradlew build
+
+            - name: Make image tag value
+              run: echo "IMAGE_TAG=$ACTIVE_PROFILE-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+            - name: Build docker image and push image
+              run: |
+                  docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASSWORD
+                  docker build --build-arg SPRING_PROFILES_ACTIVE=$ACTIVE_PROFILE -t $DOCERHUB_REPO:${{env.IMAGE_TAG}} .
+                  docker push $DOCERHUB_REPO:${{env.IMAGE_TAG}}
+
+            - name: Pass Image tag value
+              id: image_tag
+              run: echo "image_tag=${{env.IMAGE_TAG}}" >> $GITHUB_OUTPUT
+
+    cd:
+        needs: build-and-ci
+        runs-on: [ yapp-server ]
+        steps:
+            - name: Set image tag value from output value
+              run: echo "IMAGE_TAG=${{ needs.build-and-ci.outputs.image_tag }}" >> $GITHUB_ENV
+
+            - name: Run docker image
+              run: |
+                  docker pull $DOCERHUB_REPO:${{env.IMAGE_TAG}}
+                  docker stop yapp 2> /dev/null || echo "yapp container doesn't exist"
+                  docker rm yapp 2> /dev/null || echo "yapp container doesn't exist"
+                  docker run --restart always -d -p 80:8080 --name yapp $DOCERHUB_REPO:${{env.IMAGE_TAG}}
