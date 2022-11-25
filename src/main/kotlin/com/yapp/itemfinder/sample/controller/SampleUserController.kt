@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @RequestMapping("/sample-user")
 @RestController
@@ -18,7 +19,7 @@ class SampleUserController(
 ) {
 
     @PostMapping()
-    fun createUser(@RequestBody dto: CreateUserReq): CreateUserRes {
+    fun createUser(@RequestBody @Valid dto: CreateUserReq): CreateUserRes {
         return userService.insertUser(dto)
     }
 
