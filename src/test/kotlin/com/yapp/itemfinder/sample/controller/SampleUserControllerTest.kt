@@ -42,9 +42,7 @@ class SampleUserControllerTest(
         }.andExpect {
             status { is4xxClientError() }
             content { json(objectMapper.writeValueAsString(ErrorMessage("올바른 형식의 이메일이어야 합니다"))) }
-
         }
-
     }
 
     @Test
@@ -56,7 +54,7 @@ class SampleUserControllerTest(
         }.andExpect {
             status { is4xxClientError() }
             content { json(objectMapper.writeValueAsString(ErrorMessage("올바른 형식의 이름이어야 합니다"))) }
-        }.andReturn()
+        }
     }
 
     @Test
