@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val querydslVersion: String by project
+val springdocVersion: String by project
 val kotestVersion: String by project
 val mockkVersion: String by project
 
@@ -35,6 +36,11 @@ dependencies {
 	//querydsl
 	implementation("com.querydsl:querydsl-jpa:${querydslVersion}")
 	kapt("com.querydsl:querydsl-apt:${querydslVersion}:jpa")
+	// swagger
+	implementation("org.springdoc:springdoc-openapi-ui:$springdocVersion")
+	// security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	testImplementation("org.springframework.security:spring-security-test")
 
 	//h2
 	testImplementation("com.h2database:h2")
