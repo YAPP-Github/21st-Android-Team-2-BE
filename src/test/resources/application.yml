@@ -11,3 +11,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+admin:
+  username: "test"
+  password: "test"
+
+
+springdoc:
+  api-docs:
+    path: "/api-docs"
