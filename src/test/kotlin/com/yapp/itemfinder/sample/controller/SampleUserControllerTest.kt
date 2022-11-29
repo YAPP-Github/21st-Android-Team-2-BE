@@ -1,37 +1,13 @@
 package com.yapp.itemfinder.sample.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.sample.ErrorMessage
 import com.yapp.itemfinder.sample.service.dto.CreateUserReq
-import io.kotest.core.spec.style.AnnotationSpec
-import org.springframework.boot.test.context.SpringBootTest
+import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.context.WebApplicationContext
-import org.springframework.web.filter.CharacterEncodingFilter
 
-@SpringBootTest
-@Transactional
-class SampleUserControllerTest(
-    private val objectMapper: ObjectMapper,
-    private val webApplicationContext: WebApplicationContext
-) : AnnotationSpec() {
-
-    lateinit var mockMvc: MockMvc
-
-    @BeforeEach
-    internal fun setUp(
-    ) {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-            .addFilter<DefaultMockMvcBuilder>(CharacterEncodingFilter("UTF-8", true))
-            .alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
-            .build()
-    }
+class SampleUserControllerTest : ControllerIntegrationTest() {
 
     @Test
     fun `올바른 형식의 이메일이 아닌 경우 회원가입에 실패한다`() {
