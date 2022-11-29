@@ -3,6 +3,7 @@ package com.yapp.itemfinder.sample.repository
 import com.yapp.itemfinder.RepositoryTest
 import com.yapp.itemfinder.sample.entity.SampleUser
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.optional.shouldBeEmpty
 import io.kotest.matchers.optional.shouldBePresent
 import io.kotest.matchers.shouldBe
 
@@ -25,7 +26,7 @@ class SampleUserRepositoryTest(
     }
 
     Given("회원 id가 주어진 경우") {
-        val userId = 1L;
+        val userId = 2L;
 
         When("존재하는 회원 id라면") {
             sampleUserRepository.save(SampleUser("user1", "user1@email.com", userId))
@@ -34,6 +35,14 @@ class SampleUserRepositoryTest(
                 val findUser = sampleUserRepository.findById(userId)
                 findUser.shouldBePresent()
                 findUser.get().id shouldBe userId
+            }
+        }
+
+        When("존재하지 않는 회원 id라면") {
+
+            Then("빈값을 반환한다.") {
+                val findUser = sampleUserRepository.findById(userId)
+                findUser.shouldBeEmpty()
             }
         }
     }
