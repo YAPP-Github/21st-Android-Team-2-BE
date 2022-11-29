@@ -6,6 +6,7 @@ import com.yapp.itemfinder.sample.service.dto.CreateUserReq
 import com.yapp.itemfinder.sample.service.dto.CreateUserRes
 import com.yapp.itemfinder.sample.service.dto.GetUserRes
 import com.yapp.itemfinder.sample.service.dto.UpdateUserReq
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,7 +18,7 @@ class SampleUserService(
 
     @Transactional
     fun insertUser(dto: CreateUserReq): CreateUserRes {
-        require(!userRepository.existsByEmail(dto.email)) {IllegalArgumentException("이미 존재하는 회원입니다.")}
+        require(!userRepository.existsByEmail(dto.email)) { "이미 존재하는 회원입니다." }
         return CreateUserRes(userRepository.save(dto.toEntity()).id)
     }
 
@@ -36,7 +37,7 @@ class SampleUserService(
         userRepository.delete(findByIdOrException(userId))
     }
 
-    fun findByIdOrException(userId: Long): SampleUser = userRepository.findById(userId)
-        .orElseThrow() { IllegalArgumentException("잘못된 회원 id 입니다.") }
+    fun findByIdOrException(userId: Long): SampleUser = userRepository.findByIdOrNull(userId)
+        ?: throw IllegalArgumentException("잘못된 회원 id 입니다.")
 
 }
