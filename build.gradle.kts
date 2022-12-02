@@ -49,6 +49,7 @@ dependencies {
 	testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")
 	testImplementation("io.kotest:kotest-assertions-core:${kotestVersion}")
 	testImplementation("io.kotest:kotest-extensions-spring:${kotestVersion}") // @SpringBootTest 통합테스트에서 Kotest 레이아웃을 사용하기 위함
+	implementation("com.vladmihalcea:hibernate-types-52:2.16.0")
 
 	// mockk
 	testImplementation("io.mockk:mockk:${mockkVersion}")
