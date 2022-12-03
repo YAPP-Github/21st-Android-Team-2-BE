@@ -1,7 +1,9 @@
 package com.yapp.itemfinder.sample.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.vladmihalcea.hibernate.type.json.JsonStringType
@@ -73,35 +75,33 @@ class TemplateConverter : AttributeConverter<Template, String> {
     }
 }
 
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes(
     JsonSubTypes.Type(value = Food::class, name = "FOOD"),
     JsonSubTypes.Type(value = LifeStyle::class, name = "LIFESTYLE"),
 )
 interface Template {
-    val name: String
-    val description: String
-    val type: TemplateType
 
-    enum class TemplateType {
-        FOOD, LIFESTYLE
-    }
+    val type: TemplateType
 }
 
 // 빈 생성자
+//@JsonTypeName("FOOD")
 data class Food(
-    override val name: String = "",
-    override val description: String = "",
-    override val type: Template.TemplateType = Template.TemplateType.FOOD,
     val taste: String = "",
-) : Template
+    val gram: Int = 0
+) : Template {
 
+    override val type: TemplateType = TemplateType.FOOD
+}
+
+//@JsonTypeName("LIFESTYLE")
 data class LifeStyle(
-    override val name: String = "",
-    override val description: String = "",
-    override val type: Template.TemplateType = Template.TemplateType.LIFESTYLE,
     val period: String = "",
 ) : Template {
+
+    override val type: TemplateType = TemplateType.LIFESTYLE
+
     fun updatePeriod(newPeriod: String): LifeStyle {
         return this.copy(period = newPeriod)
     }

@@ -27,40 +27,40 @@ class TestController(
         itemRepository.save(Items.of(items))
     }
 
-    @GetMapping("/lib/find")
-    fun testWithLibraryRead() {
-        val item = itemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
-        println(item.itemInfo)
-    }
-
-    @GetMapping("/custom/create")
-    @Transactional
-    fun testWithCustomCreate() {
-        val food = Food(name = "족발", description = "맛임음", taste = "평범")
-        val lifeStyle = LifeStyle(name = "라이프스타일", description = "라이프스타일설명", period ="2")
-        productItemRepository.save(ProductItem.of(food))
-        productItemRepository.save(ProductItem.of(lifeStyle))
-    }
-
-    @GetMapping("/custom/read")
-    fun testWithCustomRead() {
-        val foodProductItem = productItemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
-        println(foodProductItem.template)
-
-        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
-        println(lifeStyleItem.template)
-    }
-
-    @Transactional
-    @GetMapping("/custom/update")
-    fun testWithCustomUpdate() {
-        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
-        println(lifeStyleItem.template)
-        val lifeStyleTemplate = lifeStyleItem.template as LifeStyle
-
-        val newLifeStyleTemplate = lifeStyleTemplate.updatePeriod("newPeriod")
-        lifeStyleItem.updateTemplate(template = newLifeStyleTemplate)
-    }
+//    @GetMapping("/lib/find")
+//    fun testWithLibraryRead() {
+//        val item = itemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
+//        println(item.itemInfo)
+//    }
+//
+//    @GetMapping("/custom/create")
+//    @Transactional
+//    fun testWithCustomCreate() {
+//        val food = Food(name = "족발", description = "맛임음", taste = "평범")
+//        val lifeStyle = LifeStyle(name = "라이프스타일", description = "라이프스타일설명", period ="2")
+//        productItemRepository.save(ProductItem.of(food))
+//        productItemRepository.save(ProductItem.of(lifeStyle))
+//    }
+//
+//    @GetMapping("/custom/read")
+//    fun testWithCustomRead() {
+//        val foodProductItem = productItemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
+//        println(foodProductItem.template)
+//
+//        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
+//        println(lifeStyleItem.template)
+//    }
+//
+//    @Transactional
+//    @GetMapping("/custom/update")
+//    fun testWithCustomUpdate() {
+//        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
+//        println(lifeStyleItem.template)
+//        val lifeStyleTemplate = lifeStyleItem.template as LifeStyle
+//
+//        val newLifeStyleTemplate = lifeStyleTemplate.updatePeriod("newPeriod")
+//        lifeStyleItem.updateTemplate(template = newLifeStyleTemplate)
+//    }
     @Transactional
     @GetMapping("/test")
     fun test() {
@@ -75,11 +75,11 @@ class TestController(
         )
         productRepository.save(topProduct)
 
-        val foodItem = Food(name = "족발", description = "맛임음", taste = "평범")
-        val lifeStyleItem = LifeStyle(name = "라이프스타일", description = "라이프스타일설명", period ="2")
+        val foodItem = Food(taste = "평범", gram = 1000)
+        val lifeStyleItem = LifeStyle(period ="2")
 
-        val singleFoodItem = SingleItem(category = "이유식", template = foodItem)
-        val singleLifeStyleItem = SingleItem(category = "공구", template = lifeStyleItem)
+        val singleFoodItem = SingleItem(category = "이유식", template = foodItem, name = "식품 이름", description = "식품 설명", type = TemplateType.FOOD)
+        val singleLifeStyleItem = SingleItem(category = "공구", template = lifeStyleItem, name = "생활 이름", description = "생활 설명", type = TemplateType.LIFESTYLE)
 
         singleItemRepository.save(singleFoodItem)
         singleItemRepository.save(singleLifeStyleItem)
@@ -118,20 +118,25 @@ class TestController(
 
     @Transactional
     @GetMapping("/test/get")
-    fun get() {
+    fun get(): List<ItemDto> {
         val product = productRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
         val childProducts = product.childProducts
 
         println(childProducts.map { it.name })
         val productItems = childProducts.filter { it.type == ProductType.ITEM }
         val items = productItems.mapNotNull { it.item }
+        return items.map { ItemDto(name = it.name, description = it.description, type = it.type, template = it.template) }
 
-        val templates = items.map { it.template }
-        val template = templates.first()
-        if (template is Food) {
-            val foodDto = FoodDto(template as Food)
-        }
+
+//        val templates = items.map { it.template }
+//        val template = templates.first()
+//        ItemDto()
+//        if (template is Food) {
+//            val foodDto = FoodDto(template as Food)
+//        }
     }
+
+
 
     @GetMapping("/products/{id}")
     fun findById(@PathVariable id: Long) {
@@ -142,19 +147,18 @@ class TestController(
 data class ItemDto(
     val name: String,
     val description: String,
-    val type: Template.TemplateType,
-    val taste: String? = null,
-    val period: String? = null
+    val type: TemplateType,
+    val template: Template
 ) {
+}
 
-}
-data class FoodDto(
-    val name: String,
-    val description: String,
-    val taste: String,
-) {
-    constructor(food: Food): this(food.name, food.description, food.taste)
-}
+//data class FoodDto(
+//    val name: String,
+//    val description: String,
+//    val taste: String,
+//) {
+//    constructor(food: Food): this(food.name, food.description, food.taste)
+//}
 
 /**
  *

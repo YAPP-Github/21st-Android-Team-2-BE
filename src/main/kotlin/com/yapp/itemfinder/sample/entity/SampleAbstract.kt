@@ -108,10 +108,23 @@ class Product(
 class SingleItem(
     id: Long = 0L,
     category: String,
+    name: String,
+    description: String,
+    type: TemplateType,
     template: Template
 ): BaseEntity(id){
     @Convert(converter = TemplateConverter::class)
     var template: Template = template
+        protected set
+
+    var name: String = name
+        protected set
+
+    var description: String = description
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    var type: TemplateType = type
         protected set
 
     var category: String = category
@@ -125,3 +138,6 @@ enum class ProductType {
     BOX, ITEM
 }
 
+enum class TemplateType {
+    FOOD, LIFESTYLE
+}
