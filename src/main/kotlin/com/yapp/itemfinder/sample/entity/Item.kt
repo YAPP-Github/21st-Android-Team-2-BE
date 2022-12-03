@@ -9,14 +9,11 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 import javax.persistence.AttributeConverter
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
+
 
 // 라이브러리 사용하는 방식
 @Entity
@@ -71,11 +68,12 @@ class TemplateConverter : AttributeConverter<Template, String> {
     }
 
     override fun convertToEntityAttribute(dbData: String): Template {
+        val readValue = ObjectMapper().readValue(dbData, Template::class.java)
         return ObjectMapper().readValue(dbData, Template::class.java)
     }
 }
 
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
 @JsonSubTypes(
     JsonSubTypes.Type(value = Food::class, name = "FOOD"),
     JsonSubTypes.Type(value = LifeStyle::class, name = "LIFESTYLE"),
@@ -111,55 +109,3 @@ data class LifeStyle(
 
 interface ItemRepository: JpaRepository<Items, Long>
 
-@RestController
-class TestController(
-    private val itemRepository: ItemRepository,
-    private val productItemRepository: ProductItemRepository
-) {
-    @Transactional
-    @GetMapping("/lib/create")
-    fun testWithLibraryCreate() {
-        val items = hashMapOf(
-            "name" to "샘플 이름",
-            "description" to "샘플 설명",
-            "tag" to "샘플 태그"
-        )
-
-        itemRepository.save(Items.of(items))
-    }
-
-    @GetMapping("/lib/find")
-    fun testWithLibraryRead() {
-        val item = itemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
-        println(item.itemInfo)
-    }
-
-    @GetMapping("/custom/create")
-    @Transactional
-    fun testWithCustomCreate() {
-        val food = Food(name = "족발", description = "맛임음", taste = "평범")
-        val lifeStyle = LifeStyle(name = "라이프스타일", description = "라이프스타일설명", period ="2")
-        productItemRepository.save(ProductItem.of(food))
-        productItemRepository.save(ProductItem.of(lifeStyle))
-    }
-
-    @GetMapping("/custom/read")
-    fun testWithCustomRead() {
-        val foodProductItem = productItemRepository.findByIdOrNull(1L) ?: throw RuntimeException("")
-        println(foodProductItem.template)
-
-        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
-        println(lifeStyleItem.template)
-    }
-
-    @Transactional
-    @GetMapping("/custom/update")
-    fun testWithCustomUpdate() {
-        val lifeStyleItem = productItemRepository.findByIdOrNull(2L) ?: throw RuntimeException("")
-        println(lifeStyleItem.template)
-        val lifeStyleTemplate = lifeStyleItem.template as LifeStyle
-
-        val newLifeStyleTemplate = lifeStyleTemplate.updatePeriod("newPeriod")
-        lifeStyleItem.updateTemplate(template = newLifeStyleTemplate)
-    }
-}
