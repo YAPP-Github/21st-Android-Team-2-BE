@@ -8,6 +8,7 @@ data class SingleTableItemDto(
     val name: String,
     val description: String,
     val taste: String?,
+    val type: String,
     val gram: Int?,
     val period: String?
 ) {
@@ -24,10 +25,11 @@ data class SingleTableItemDto(
         }
 
         fun of(food: FoodSingleTable): SingleTableItemDto {
-            return SingleTableItemDto(name = food.name, description = food.description, taste = food.taste, gram = food.gram, period = null)
+            return SingleTableItemDto(name = food.name, description = food.description, taste = food.taste, gram = food.gram, period = null,
+            type = food.type)
         }
         fun of(life: LifeSingleTable): SingleTableItemDto {
-            return SingleTableItemDto(name = life.name, description = life.description, period = life.period, taste = null, gram = null)
+            return SingleTableItemDto(name = life.name, description = life.description, period = life.period, taste = null, gram = null, type = life.type)
         }
     }
 
