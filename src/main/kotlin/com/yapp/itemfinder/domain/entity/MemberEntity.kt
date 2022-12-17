@@ -2,6 +2,8 @@ package com.yapp.itemfinder.domain.entity
 
 import javax.persistence.*
 
+@Entity
+@Table(name = "member")
 class MemberEntity(
     email: String,
     name: String,
