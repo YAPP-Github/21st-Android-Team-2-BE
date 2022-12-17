@@ -1,6 +1,6 @@
-package com.yapp.itemfinder.sample.service.dto
+package com.yapp.itemfinder.domain.service.dto
 
-import com.yapp.itemfinder.sample.entity.SampleUser
+import com.yapp.itemfinder.domain.entity.SampleUser
 import javax.validation.constraints.Email
 import javax.validation.constraints.Pattern
 

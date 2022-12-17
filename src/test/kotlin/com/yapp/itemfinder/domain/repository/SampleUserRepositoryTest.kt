@@ -1,7 +1,7 @@
-package com.yapp.itemfinder.sample.repository
+package com.yapp.itemfinder.domain.repository
 
 import com.yapp.itemfinder.RepositoryTest
-import com.yapp.itemfinder.sample.entity.SampleUser
+import com.yapp.itemfinder.domain.entity.SampleUser
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.optional.shouldBeEmpty
 import io.kotest.matchers.optional.shouldBePresent

@@ -1,7 +1,7 @@
-package com.yapp.itemfinder.sample.controller
+package com.yapp.itemfinder.api
 
-import com.yapp.itemfinder.sample.service.SampleUserService
-import com.yapp.itemfinder.sample.service.dto.*
+import com.yapp.itemfinder.domain.service.SampleUserService
+import com.yapp.itemfinder.domain.service.dto.*
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping

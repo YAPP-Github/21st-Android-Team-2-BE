@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.sample.entity
+package com.yapp.itemfinder.domain.entity
 
 import javax.persistence.Column
 import javax.persistence.Entity
