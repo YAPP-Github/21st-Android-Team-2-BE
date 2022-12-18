@@ -1,7 +1,7 @@
 package com.yapp.itemfinder.domain.entity.tag
 
 import com.yapp.itemfinder.domain.entity.BaseEntity
-import com.yapp.itemfinder.domain.entity.MemberEntity
+import com.yapp.itemfinder.domain.entity.member.MemberEntity
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType

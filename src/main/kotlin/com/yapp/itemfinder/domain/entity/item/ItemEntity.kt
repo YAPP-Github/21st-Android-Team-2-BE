@@ -1,7 +1,7 @@
 package com.yapp.itemfinder.domain.entity.item
 
 import com.yapp.itemfinder.domain.entity.BaseEntity
-import com.yapp.itemfinder.domain.entity.ContainerEntity
+import com.yapp.itemfinder.domain.entity.container.ContainerEntity
 import com.yapp.itemfinder.domain.entity.tag.ItemTagEntity
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
