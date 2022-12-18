@@ -2,7 +2,13 @@ package com.yapp.itemfinder.domain.entity.space
 
 import com.yapp.itemfinder.domain.entity.BaseEntity
 import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.Index
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Table
 
 @Entity
 @Table(name = "space",

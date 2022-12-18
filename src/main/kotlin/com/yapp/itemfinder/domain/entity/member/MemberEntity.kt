@@ -1,7 +1,14 @@
 package com.yapp.itemfinder.domain.entity.member
 
 import com.yapp.itemfinder.domain.entity.BaseEntity
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Embeddable
+import javax.persistence.Embedded
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.Index
+import javax.persistence.Table
 
 @Entity
 @Table(name = "member",
