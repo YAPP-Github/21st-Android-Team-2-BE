@@ -1,5 +1,7 @@
-package com.yapp.itemfinder.domain.entity
+package com.yapp.itemfinder.domain.entity.space
 
+import com.yapp.itemfinder.domain.entity.BaseEntity
+import com.yapp.itemfinder.domain.entity.member.MemberEntity
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType

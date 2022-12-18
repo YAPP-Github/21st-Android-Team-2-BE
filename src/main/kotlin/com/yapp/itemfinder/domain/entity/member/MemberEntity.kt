@@ -1,5 +1,6 @@
-package com.yapp.itemfinder.domain.entity
+package com.yapp.itemfinder.domain.entity.member
 
+import com.yapp.itemfinder.domain.entity.BaseEntity
 import javax.persistence.*
 
 @Entity
@@ -7,7 +8,7 @@ import javax.persistence.*
 class MemberEntity(
     email: String,
     name: String,
-    socialType: String,
+    socialType: SocialType,
     socialId: String,
     status: MemberStatus = MemberStatus.ACTIVE,
     id: Long = 0L
@@ -21,13 +22,8 @@ class MemberEntity(
     var name: String = name
         protected set
 
-    @Column(length = 20, nullable = false)
-    var socialType: String = socialType
-        protected set
-
-    @Column(length = 20, nullable = false)
-    var socialId: String = socialId
-        protected set
+    @Embedded
+    var social: Social = Social(socialType = socialType, socialId = socialId)
 
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -38,4 +34,22 @@ class MemberEntity(
 
 enum class MemberStatus {
     ACTIVE, INACTIVE
+}
+
+@Embeddable
+class Social(
+    socialType: SocialType,
+    socialId: String
+) {
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    var socialType: SocialType = socialType
+        protected set
+    @Column(length = 20, nullable = false)
+    var socialId: String = socialId
+        protected set
+}
+
+enum class SocialType {
+    KAKAO
 }

@@ -1,5 +1,9 @@
-package com.yapp.itemfinder.domain.entity
+package com.yapp.itemfinder.domain.entity.container
 
+import com.yapp.itemfinder.domain.entity.BaseEntity
+import com.yapp.itemfinder.domain.entity.item.ItemType
+import com.yapp.itemfinder.domain.entity.space.SpaceEntity
+import org.hibernate.annotations.ColumnDefault
 import javax.persistence.*
 
 @Entity
@@ -7,7 +11,7 @@ import javax.persistence.*
 class ContainerEntity(
     space: SpaceEntity,
     name: String,
-    defaultItemType: String,
+    defaultItemType: ItemType = ItemType.LIFESTYLE,
     description: String,
     imageUrl: String,
     id: Long = 0L
@@ -22,8 +26,10 @@ class ContainerEntity(
     var name: String = name
         protected set
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    var defaultItemType: String = defaultItemType
+    @ColumnDefault("'LIFESTYLE'")
+    var defaultItemType: ItemType = defaultItemType
         protected set
 
     var description: String = description
