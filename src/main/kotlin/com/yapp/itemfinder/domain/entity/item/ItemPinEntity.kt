@@ -21,11 +21,11 @@ class ItemPinEntity(
     positionX: Float,
     positionY: Float,
 ): BaseEntity(id) {
-    @Column(name = "pin_position_x")
+    @Column(name = "position_x")
     var positionX: Float = positionX
         protected set
 
-    @Column(name = "pin_position_y")
+    @Column(name = "position_y")
     var positionY: Float = positionY
         protected set
 
