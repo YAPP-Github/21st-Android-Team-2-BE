@@ -7,7 +7,11 @@ import org.hibernate.annotations.ColumnDefault
 import javax.persistence.*
 
 @Entity
-@Table(name = "container")
+@Table(name = "container",
+    indexes = [
+        Index(name = "idx_space_id", columnList = "space_id")
+    ]
+)
 class ContainerEntity(
     space: SpaceEntity,
     name: String,

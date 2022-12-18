@@ -4,7 +4,12 @@ import com.yapp.itemfinder.domain.entity.BaseEntity
 import javax.persistence.*
 
 @Entity
-@Table(name = "member")
+@Table(name = "member",
+    indexes = [
+        Index(name = "idx_email", columnList = "email"),
+        Index(name = "idx_social_id", columnList = "socialId")
+    ]
+)
 class MemberEntity(
     email: String,
     name: String,
@@ -14,7 +19,7 @@ class MemberEntity(
     id: Long = 0L
 ) : BaseEntity(id) {
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(length = 100, nullable = false)
     var email: String = email
         protected set
 

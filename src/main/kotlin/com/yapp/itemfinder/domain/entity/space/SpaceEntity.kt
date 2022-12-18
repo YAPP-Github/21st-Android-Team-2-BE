@@ -2,15 +2,14 @@ package com.yapp.itemfinder.domain.entity.space
 
 import com.yapp.itemfinder.domain.entity.BaseEntity
 import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
-@Table(name = "space")
+@Table(name = "space",
+    indexes = [
+        Index(name = "idx_member_id", columnList = "member_id")
+    ]
+)
 class SpaceEntity(
     member: MemberEntity,
     name: String,
