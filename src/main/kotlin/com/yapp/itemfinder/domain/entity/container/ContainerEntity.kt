@@ -16,8 +16,8 @@ class ContainerEntity(
     space: SpaceEntity,
     name: String,
     defaultItemType: ItemType = ItemType.LIFESTYLE,
-    description: String,
-    imageUrl: String,
+    description: String?,
+    imageUrl: String?,
     id: Long = 0L
 ) : BaseEntity(id) {
 
@@ -36,9 +36,9 @@ class ContainerEntity(
     var defaultItemType: ItemType = defaultItemType
         protected set
 
-    var description: String = description
+    var description: String? = description
         protected set
 
-    var imageUrl: String = imageUrl
+    var imageUrl: String? = imageUrl
         protected set
 }
