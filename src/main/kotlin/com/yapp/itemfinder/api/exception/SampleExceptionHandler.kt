@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.sample
+package com.yapp.itemfinder.api.exception
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
-@RestControllerAdvice(basePackages = ["com.yapp.itemfinder.sample"])
+@RestControllerAdvice(basePackages = ["com.yapp.itemfinder"])
 class SampleExceptionHandler : ResponseEntityExceptionHandler() {
 
     // null 혹은 형식 오류

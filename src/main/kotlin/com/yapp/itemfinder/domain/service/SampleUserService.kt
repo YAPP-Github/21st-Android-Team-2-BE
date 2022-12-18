@@ -1,11 +1,11 @@
-package com.yapp.itemfinder.sample.service
+package com.yapp.itemfinder.domain.service
 
-import com.yapp.itemfinder.sample.entity.SampleUser
-import com.yapp.itemfinder.sample.repository.SampleUserRepository
-import com.yapp.itemfinder.sample.service.dto.CreateUserReq
-import com.yapp.itemfinder.sample.service.dto.CreateUserRes
-import com.yapp.itemfinder.sample.service.dto.GetUserRes
-import com.yapp.itemfinder.sample.service.dto.UpdateUserReq
+import com.yapp.itemfinder.domain.entity.SampleUser
+import com.yapp.itemfinder.domain.repository.SampleUserRepository
+import com.yapp.itemfinder.domain.service.dto.CreateUserReq
+import com.yapp.itemfinder.domain.service.dto.CreateUserRes
+import com.yapp.itemfinder.domain.service.dto.GetUserRes
+import com.yapp.itemfinder.domain.service.dto.UpdateUserReq
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

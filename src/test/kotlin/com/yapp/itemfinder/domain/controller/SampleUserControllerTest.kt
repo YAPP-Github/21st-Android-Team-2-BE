@@ -1,8 +1,8 @@
-package com.yapp.itemfinder.sample.controller
+package com.yapp.itemfinder.domain.controller
 
 import com.yapp.itemfinder.ControllerIntegrationTest
-import com.yapp.itemfinder.sample.ErrorMessage
-import com.yapp.itemfinder.sample.service.dto.CreateUserReq
+import com.yapp.itemfinder.api.exception.ErrorMessage
+import com.yapp.itemfinder.domain.service.dto.CreateUserReq
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.post

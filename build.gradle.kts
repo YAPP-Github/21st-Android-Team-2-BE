@@ -41,7 +41,6 @@ dependencies {
 	// security
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	testImplementation("org.springframework.security:spring-security-test")
-
 	//h2
 	testImplementation("com.h2database:h2")
 

@@ -1,10 +1,10 @@
-package com.yapp.itemfinder.sample.entity
+package com.yapp.itemfinder.domain.entity
 
+import com.yapp.itemfinder.common.Const.KST_ZONE_ID
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.sql.Timestamp
-import java.time.Instant
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
@@ -21,9 +21,9 @@ abstract class BaseEntity(
 ) {
     @CreatedDate
     @Column(updatable = false)
-    var createdAt: Timestamp = Timestamp.from(Instant.now())
+    var createdAt: LocalDateTime = LocalDateTime.now(KST_ZONE_ID)
 
     @LastModifiedDate
     @Column(updatable = true)
-    var lastModifiedAt: Timestamp = Timestamp.from(Instant.now())
+    var updatedAt: LocalDateTime = LocalDateTime.now(KST_ZONE_ID)
 }

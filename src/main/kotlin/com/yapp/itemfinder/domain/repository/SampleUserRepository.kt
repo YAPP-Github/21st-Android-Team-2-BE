@@ -1,7 +1,7 @@
-package com.yapp.itemfinder.sample.repository
+package com.yapp.itemfinder.domain.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.yapp.itemfinder.sample.entity.SampleUser
+import com.yapp.itemfinder.domain.entity.SampleUser
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface SampleUserRepository : JpaRepository<SampleUser, Long>, SampleUserRepositoryCustom {
