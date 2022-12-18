@@ -13,8 +13,7 @@ import javax.persistence.*
 class MemberEntity(
     email: String,
     name: String,
-    socialType: SocialType,
-    socialId: String,
+    social: Social,
     status: MemberStatus = MemberStatus.ACTIVE,
     id: Long = 0L
 ) : BaseEntity(id) {
@@ -28,7 +27,8 @@ class MemberEntity(
         protected set
 
     @Embedded
-    var social: Social = Social(socialType = socialType, socialId = socialId)
+    var social: Social = social
+        protected set
 
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
