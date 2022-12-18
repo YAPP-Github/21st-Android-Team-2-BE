@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Table(name = "member",
     indexes = [
         Index(name = "idx_email", columnList = "email"),
-        Index(name = "idx_social_id", columnList = "socialId")
+        Index(name = "idx_social_id", columnList = "social_id")
     ]
 )
 class MemberEntity(
@@ -54,10 +54,10 @@ class Social(
     socialId: String
 ) {
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, name = "social_type")
     var socialType: SocialType = socialType
         protected set
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, name = "social_id")
     var socialId: String = socialId
         protected set
 }
