@@ -11,13 +11,19 @@ import javax.persistence.Convert
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.FetchType
+import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
-@Table(name = "item")
+@Table(
+    name = "item",
+    indexes = [
+        Index(name = "idx_container_id", columnList = "container_id")
+    ]
+)
 @Entity
 @DynamicUpdate
 class ItemEntity(

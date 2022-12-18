@@ -3,12 +3,18 @@ package com.yapp.itemfinder.domain.entity.item
 import com.yapp.itemfinder.domain.entity.BaseEntity
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = "item_pin")
+@Table(
+    name = "item_pin",
+    indexes = [
+        Index(name = "idx_item_id", columnList = "item_id")
+    ]
+)
 class ItemPinEntity(
     id: Long = 0L,
     item: ItemEntity,

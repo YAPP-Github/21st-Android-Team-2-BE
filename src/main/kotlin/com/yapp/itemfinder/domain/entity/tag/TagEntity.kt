@@ -5,11 +5,17 @@ import com.yapp.itemfinder.domain.entity.MemberEntity
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
+import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
 
-@Table(name = "tag")
+@Table(
+    name = "tag",
+    indexes = [
+        Index(name = "idx_member_id", columnList = "member_id")
+    ]
+)
 @Entity
 class TagEntity(
     id: Long = 0L,
