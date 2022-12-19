@@ -8,5 +8,4 @@ class HealthCheckController {
 
     @GetMapping
     fun healthCheck() = "okay"
-
 }

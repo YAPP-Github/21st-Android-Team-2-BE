@@ -8,10 +8,8 @@ interface SampleUserRepository : JpaRepository<SampleUser, Long>, SampleUserRepo
     fun existsByEmail(email: String): Boolean
 }
 
-interface SampleUserRepositoryCustom {
-}
+interface SampleUserRepositoryCustom
 
 class SampleUserRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
-) : SampleUserRepositoryCustom {
-}
+) : SampleUserRepositoryCustom

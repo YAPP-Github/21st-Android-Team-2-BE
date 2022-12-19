@@ -26,7 +26,7 @@ class SampleUserRepositoryTest(
     }
 
     Given("회원 id가 주어진 경우") {
-        val userId = 2L;
+        val userId = 2L
 
         When("존재하는 회원 id라면") {
             sampleUserRepository.save(SampleUser("user1", "user1@email.com", userId))

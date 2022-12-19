@@ -14,7 +14,7 @@ class ItemTagEntity(
     id: Long = 0L,
     item: ItemEntity,
     tag: TagEntity
-): BaseEntity(id) {
+) : BaseEntity(id) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     var item: ItemEntity = item

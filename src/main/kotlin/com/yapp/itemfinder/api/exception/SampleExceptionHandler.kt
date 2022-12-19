@@ -26,7 +26,7 @@ class SampleExceptionHandler : ResponseEntityExceptionHandler() {
         val message = when (val exception = ex.cause) {
             is MissingKotlinParameterException -> "${exception.parameter.name.orEmpty()}는 널이어서는 안됩니다"
             is InvalidFormatException -> "${exception.path.last().fieldName.orEmpty()}는 올바른 형식이어야 합니다"
-            else -> exception?.message?:"올바르지 않은 요청입니다."
+            else -> exception?.message ?: "올바르지 않은 요청입니다."
         }
         return ResponseEntity.badRequest().body(ErrorMessage(message))
     }
@@ -47,7 +47,7 @@ class SampleExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(Exception::class)
     fun handleBadRequestException(ex: Exception): ResponseEntity<Any> {
         logger.error("message=${ex.message}")
-        return ResponseEntity.badRequest().body(ErrorMessage(ex.message?:"올바르지 않은 요청입니다."))
+        return ResponseEntity.badRequest().body(ErrorMessage(ex.message ?: "올바르지 않은 요청입니다."))
     }
 }
 

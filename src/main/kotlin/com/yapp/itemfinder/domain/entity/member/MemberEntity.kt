@@ -11,7 +11,8 @@ import javax.persistence.Index
 import javax.persistence.Table
 
 @Entity
-@Table(name = "member",
+@Table(
+    name = "member",
     indexes = [
         Index(name = "idx_email", columnList = "email"),
         Index(name = "idx_social_id", columnList = "social_id")
@@ -41,7 +42,6 @@ class MemberEntity(
     @Enumerated(EnumType.STRING)
     var status: MemberStatus = status
         protected set
-
 }
 
 enum class MemberStatus {

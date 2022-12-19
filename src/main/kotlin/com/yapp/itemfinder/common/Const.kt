@@ -3,5 +3,5 @@ package com.yapp.itemfinder.common
 import java.time.ZoneId
 
 object Const {
-    val KST_ZONE_ID = ZoneId.of("Asia/Seoul");
+    val KST_ZONE_ID = ZoneId.of("Asia/Seoul")
 }

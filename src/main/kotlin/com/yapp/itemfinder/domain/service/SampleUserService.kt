@@ -39,5 +39,4 @@ class SampleUserService(
 
     fun findByIdOrException(userId: Long): SampleUser = userRepository.findByIdOrNull(userId)
         ?: throw IllegalArgumentException("잘못된 회원 id 입니다.")
-
 }
