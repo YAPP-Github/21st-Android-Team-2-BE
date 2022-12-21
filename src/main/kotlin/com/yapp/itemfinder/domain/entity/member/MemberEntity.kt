@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Table(
     name = "member",
     indexes = [
-        Index(name = "idx_email", columnList = "email"),
+        Index(name = "uk_email", columnList = "email", unique = true),
         Index(name = "idx_social_id", columnList = "social_id")
     ]
 )
