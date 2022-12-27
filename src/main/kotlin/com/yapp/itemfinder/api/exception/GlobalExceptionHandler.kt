@@ -41,5 +41,4 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
             .body(ErrorResponse(message = INTERNAL_SERVER_ERROR_MESSAGE))
     }
-
 }

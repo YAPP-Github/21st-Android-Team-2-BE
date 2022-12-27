@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.domain.service
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.entity.SampleUser
 import com.yapp.itemfinder.domain.repository.SampleUserRepository
 import com.yapp.itemfinder.domain.service.dto.CreateUserReq
@@ -35,9 +36,8 @@ class SampleUserServiceTest : BehaviorSpec({
         every { sampleUserRepository.existsByEmail(req.email) } returns true
 
         When("회원가입을 하면") {
-
-            Then("IllegalArgumentException 예외가 발생한다") {
-                shouldThrow<IllegalArgumentException> { sampleUserService.insertUser(req) }
+            Then("BadRequestException 예외가 발생한다") {
+                shouldThrow<BadRequestException> { sampleUserService.insertUser(req) }
             }
         }
     }
