@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 class ItemFinderApplication
 
 fun main(args: Array<String>) {
-	runApplication<ItemFinderApplication>(*args)
+    runApplication<ItemFinderApplication>(*args)
 }

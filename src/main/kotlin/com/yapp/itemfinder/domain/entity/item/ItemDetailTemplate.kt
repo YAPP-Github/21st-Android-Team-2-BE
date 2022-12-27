@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes(
     JsonSubTypes.Type(value = FoodDetailTemplate::class, name = "FOOD"),
     JsonSubTypes.Type(value = ClothDetailTemplate::class, name = "CLOTH"),

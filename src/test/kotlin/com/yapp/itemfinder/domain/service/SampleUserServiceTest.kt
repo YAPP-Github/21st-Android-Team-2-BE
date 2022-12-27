@@ -24,7 +24,7 @@ class SampleUserServiceTest : BehaviorSpec({
             val res = sampleUserService.insertUser(req)
 
             Then("회원가입에 성공하고 추가된 id를 반환받는다") {
-                res.id  shouldNotBe null
+                res.id shouldNotBe null
                 res.id shouldBe 1L
             }
         }
@@ -37,7 +37,7 @@ class SampleUserServiceTest : BehaviorSpec({
         When("회원가입을 하면") {
 
             Then("IllegalArgumentException 예외가 발생한다") {
-                shouldThrow<IllegalArgumentException> {sampleUserService.insertUser(req)}
+                shouldThrow<IllegalArgumentException> { sampleUserService.insertUser(req) }
             }
         }
     }

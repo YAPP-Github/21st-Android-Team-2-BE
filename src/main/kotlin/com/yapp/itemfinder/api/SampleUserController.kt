@@ -1,7 +1,10 @@
 package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.domain.service.SampleUserService
-import com.yapp.itemfinder.domain.service.dto.*
+import com.yapp.itemfinder.domain.service.dto.CreateUserReq
+import com.yapp.itemfinder.domain.service.dto.CreateUserRes
+import com.yapp.itemfinder.domain.service.dto.GetUserRes
+import com.yapp.itemfinder.domain.service.dto.UpdateUserReq
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping

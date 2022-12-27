@@ -5,17 +5,19 @@ import com.yapp.itemfinder.domain.entity.container.ContainerEntity
 import com.yapp.itemfinder.domain.entity.tag.ItemTagEntity
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
+import javax.persistence.AttributeOverride
+import javax.persistence.AttributeOverrides
 import javax.persistence.CollectionTable
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.ElementCollection
+import javax.persistence.Embedded
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
-import javax.persistence.OneToOne
 import javax.persistence.Table
 
 @Table(
@@ -34,7 +36,8 @@ class ItemEntity(
     type: ItemType,
     dueDate: LocalDateTime? = null,
     description: String? = null,
-    imageUrls: MutableList<String> = mutableListOf()
+    imageUrls: MutableList<String> = mutableListOf(),
+    itemPin: ItemPin? = null
 ) : BaseEntity(id) {
     @Convert(converter = ItemDetailTemplateConverter::class)
     var detailTemplate: ItemDetailTemplate = detailTemplate
@@ -53,8 +56,12 @@ class ItemEntity(
     var container: ContainerEntity = container
         protected set
 
-    @OneToOne(mappedBy = "item", orphanRemoval = true)
-    var pin: ItemPinEntity? = null
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "positionX", column = Column(name = "pin_position_x")),
+        AttributeOverride(name = "positionY", column = Column(name = "pin_position_y"))
+    )
+    var itemPin: ItemPin? = itemPin
         protected set
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -75,9 +82,5 @@ class ItemEntity(
 
     fun updateTags(tags: List<ItemTagEntity>) {
         this.tags = tags.toMutableList()
-    }
-
-    fun updatePin(pin: ItemPinEntity) {
-        this.pin = pin
     }
 }

@@ -11,7 +11,8 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = "space",
+@Table(
+    name = "space",
     indexes = [
         Index(name = "idx_member_id", columnList = "member_id")
     ]

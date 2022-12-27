@@ -21,7 +21,7 @@ class TagEntity(
     id: Long = 0L,
     member: MemberEntity,
     name: String
-): BaseEntity(id) {
+) : BaseEntity(id) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     var member: MemberEntity = member

@@ -24,7 +24,6 @@ data class GetUserRes(
     constructor(sampleUser: SampleUser) : this(sampleUser.name, sampleUser.email)
 }
 
-
 data class UpdateUserReq(
     val name: String?,
     val email: String?

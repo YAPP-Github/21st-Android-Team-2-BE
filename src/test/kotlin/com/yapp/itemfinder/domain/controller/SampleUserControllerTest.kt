@@ -43,5 +43,4 @@ class SampleUserControllerTest : ControllerIntegrationTest() {
             status { isOk() }
         }
     }
-
 }
