@@ -1,7 +1,7 @@
 package com.yapp.itemfinder.domain.controller
 
 import com.yapp.itemfinder.ControllerIntegrationTest
-import com.yapp.itemfinder.api.exception.ErrorMessage
+import com.yapp.itemfinder.api.exception.ErrorResponse
 import com.yapp.itemfinder.domain.service.dto.CreateUserReq
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -17,7 +17,7 @@ class SampleUserControllerTest : ControllerIntegrationTest() {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { is4xxClientError() }
-            content { json(objectMapper.writeValueAsString(ErrorMessage("올바른 형식의 이메일이어야 합니다"))) }
+            content { json(objectMapper.writeValueAsString(ErrorResponse(message = "올바른 형식의 이메일이어야 합니다"))) }
         }
     }
 
@@ -29,7 +29,7 @@ class SampleUserControllerTest : ControllerIntegrationTest() {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { is4xxClientError() }
-            content { json(objectMapper.writeValueAsString(ErrorMessage("올바른 형식의 이름이어야 합니다"))) }
+            content { json(objectMapper.writeValueAsString(ErrorResponse(message = "올바른 형식의 이름이어야 합니다"))) }
         }
     }
 

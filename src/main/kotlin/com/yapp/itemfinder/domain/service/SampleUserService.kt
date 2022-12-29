@@ -1,5 +1,7 @@
 package com.yapp.itemfinder.domain.service
 
+import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.domain.entity.SampleUser
 import com.yapp.itemfinder.domain.repository.SampleUserRepository
 import com.yapp.itemfinder.domain.service.dto.CreateUserReq
@@ -18,7 +20,9 @@ class SampleUserService(
 
     @Transactional
     fun insertUser(dto: CreateUserReq): CreateUserRes {
-        require(!userRepository.existsByEmail(dto.email)) { "이미 존재하는 회원입니다." }
+        if (userRepository.existsByEmail(dto.email)) {
+            throw BadRequestException(message = "이미 존재하는 회원입니다.")
+        }
         return CreateUserRes(userRepository.save(dto.toEntity()).id)
     }
 
@@ -38,5 +42,5 @@ class SampleUserService(
     }
 
     fun findByIdOrException(userId: Long): SampleUser = userRepository.findByIdOrNull(userId)
-        ?: throw IllegalArgumentException("잘못된 회원 id 입니다.")
+        ?: throw NotFoundException(message = "잘못된 회원 id 입니다.")
 }
