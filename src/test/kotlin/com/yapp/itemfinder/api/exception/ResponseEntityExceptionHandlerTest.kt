@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
-class GlobalExceptionHandlerTest : ControllerIntegrationTest() {
+class ResponseEntityExceptionHandlerTest : ControllerIntegrationTest() {
 
     @Test
     fun `잘못된 Method 요청 시, 405 코드로 응답한다`() {
