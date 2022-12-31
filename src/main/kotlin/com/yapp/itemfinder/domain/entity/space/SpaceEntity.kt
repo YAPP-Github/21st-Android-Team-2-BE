@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.domain.entity.space
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.entity.BaseEntity
 import com.yapp.itemfinder.domain.entity.member.MemberEntity
 import javax.persistence.Column
@@ -22,6 +23,9 @@ class SpaceEntity(
     name: String,
     id: Long = 0L
 ) : BaseEntity(id) {
+    init {
+        validateName(name)
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -31,4 +35,10 @@ class SpaceEntity(
     @Column(length = 30, nullable = false)
     var name: String = name
         protected set
+
+    private fun validateName(name: String) {
+        require(name.isNotBlank() && name.length <= 30) {
+            throw BadRequestException(message = "1자 이상 30자 이내로 이름을 등록해 주세요.")
+        }
+    }
 }
