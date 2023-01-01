@@ -19,3 +19,9 @@ class BadRequestException(
     message: String? = null,
     errorCode: ErrorCode? = null
 ) : BaseException(httpStatus, message, errorCode)
+
+class ConflictException(
+    httpStatus: HttpStatus = HttpStatus.CONFLICT,
+    message: String? = null,
+    errorCode: ErrorCode? = null
+) : BaseException(httpStatus, message, errorCode)

@@ -11,7 +11,7 @@ import io.kotest.matchers.shouldBe
 
 class SpaceEntityTest : BehaviorSpec({
     Given("공간을 생성할 때") {
-        val givenMember = FakeEntity.getMemberEntity()
+        val givenMember = FakeEntity.createFakeMemberEntity()
 
         When("30자를 초과하거나 1자 미만 및 공백으로 구성된 공간 이름이 주어지면") {
             val nameOverLengthLimit: String = TestUtil.generateRandomString(31)

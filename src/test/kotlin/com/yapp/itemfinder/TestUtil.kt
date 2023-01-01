@@ -7,4 +7,8 @@ object TestUtil {
             .map { charset.random() }
             .joinToString("")
     }
+
+    fun generateRandomPositiveLongValue(): Long {
+        return (1..Long.MAX_VALUE).random()
+    }
 }
