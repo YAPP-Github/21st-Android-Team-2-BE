@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Table(
     name = "member",
     indexes = [
-        Index(name = "uk_email", columnList = "email", unique = true),
+        Index(name = "idx_email", columnList = "email"),
         Index(name = "idx_social_id", columnList = "social_id")
     ]
 )
@@ -26,7 +26,7 @@ class MemberEntity(
     id: Long = 0L
 ) : BaseEntity(id) {
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     var email: String = email
         protected set
 
@@ -57,6 +57,7 @@ class Social(
     @Column(length = 20, nullable = false, name = "social_type")
     var socialType: SocialType = socialType
         protected set
+
     @Column(length = 20, nullable = false, name = "social_id")
     var socialId: String = socialId
         protected set
