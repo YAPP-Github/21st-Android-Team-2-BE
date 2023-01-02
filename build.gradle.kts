@@ -4,6 +4,7 @@ val querydslVersion: String by project
 val springdocVersion: String by project
 val kotestVersion: String by project
 val mockkVersion: String by project
+val jjwtVersion: String by project
 
 plugins {
     id("org.springframework.boot") version "2.7.5"
@@ -53,6 +54,13 @@ dependencies {
     // mockk
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("com.ninja-squad:springmockk:3.0.1")
+
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    // jwt
+    implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
 }
 
 noArg {
