@@ -36,4 +36,9 @@ class AuthService(
         return memberRepository.findBySocial(social)?.id
             ?: throw NotFoundException(message = "존재하지 않는 회원입니다.")
     }
+
+    @Transactional
+    fun logout(memberId: Long) {
+        tokenRepository.deleteById(memberId)
+    }
 }
