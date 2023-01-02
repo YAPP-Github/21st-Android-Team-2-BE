@@ -6,7 +6,6 @@ import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.entity.member.MemberEntity
 import com.yapp.itemfinder.domain.repository.MemberRepository
 import org.springframework.core.MethodParameter
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -18,7 +17,7 @@ const val BEARER = "Bearer"
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class LoginMember()
+annotation class LoginMember
 
 @Component
 class LoginMemberResolver(
@@ -37,7 +36,7 @@ class LoginMemberResolver(
     ): MemberEntity {
         val token = extractBearerToken(webRequest)
         val memberId = tokenProvider.getSubject(token).toLong()
-        return memberRepository.findByIdOrNull(memberId) ?: throw NotFoundException(message = "존재하지 않는 회원입니다.")
+        return memberRepository.findActiveMemberById(memberId) ?: throw NotFoundException(message = "존재하지 않는 회원입니다.")
     }
 
     private fun extractBearerToken(webRequest: NativeWebRequest): String {
