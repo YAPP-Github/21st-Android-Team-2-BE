@@ -15,7 +15,7 @@ import javax.persistence.Table
     name = "member",
     indexes = [
         Index(name = "idx_email", columnList = "email"),
-        Index(name = "idx_social_id", columnList = "social_id")
+        Index(name = "uk_social", columnList = "social_id, social_type", unique = true)
     ]
 )
 class MemberEntity(
