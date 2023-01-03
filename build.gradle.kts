@@ -38,6 +38,7 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jpa")
     // swagger
     implementation("org.springdoc:springdoc-openapi-ui:$springdocVersion")
+    implementation("org.springdoc:springdoc-openapi-kotlin:$springdocVersion")
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.security:spring-security-test")
