@@ -2,6 +2,7 @@ package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.api.exception.UnauthorizedException
+import com.yapp.itemfinder.common.Const.BEARER
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
@@ -12,8 +13,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-
-const val BEARER = "Bearer"
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
