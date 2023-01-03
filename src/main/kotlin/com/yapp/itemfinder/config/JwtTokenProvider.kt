@@ -32,9 +32,9 @@ class JwtTokenProvider(
         return createToken(subject, refreshTokenExpirationMilliseconds)
     }
 
-    private fun createToken(subject: String, expMilliseconds: Long): String {
+    private fun createToken(subject: String, expireMillis: Long): String {
         val now = Date()
-        val expiration = Date(now.time + expMilliseconds)
+        val expiration = Date(now.time + expireMillis)
         return Jwts.builder()
             .setSubject(subject)
             .setIssuedAt(now)
@@ -57,7 +57,7 @@ class JwtTokenProvider(
         } catch (e: ExpiredJwtException) {
             throw UnauthorizedException(message = "만료된 토큰입니다.")
         } catch (e: IllegalArgumentException) {
-            throw UnauthorizedException(message = "토큰을 입력해주세요.")
+            throw UnauthorizedException(message = "토큰이 없습니다.")
         } catch (e: UnsupportedJwtException) {
             throw UnauthorizedException(message = "잘못된 형식의 토큰입니다.")
         } catch (e: MalformedJwtException) {
