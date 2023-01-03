@@ -3,7 +3,7 @@ package com.yapp.itemfinder.domain.entity.space.controller
 import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
-import com.yapp.itemfinder.domain.entity.space.dto.SpacesResponse
+import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType

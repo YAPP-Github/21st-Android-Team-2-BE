@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import com.yapp.itemfinder.api.auth.LoginMemberArgumentResolver
 import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import com.yapp.itemfinder.domain.entity.member.MemberRepository
-import com.yapp.itemfinder.domain.entity.space.SpaceRepository
+import com.yapp.itemfinder.domain.member.MemberRepository
+import com.yapp.itemfinder.domain.space.SpaceRepository
 import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired

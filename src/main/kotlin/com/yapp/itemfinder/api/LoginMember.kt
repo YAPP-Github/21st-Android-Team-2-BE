@@ -3,8 +3,8 @@ package com.yapp.itemfinder.api
 import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.api.exception.UnauthorizedException
 import com.yapp.itemfinder.config.JwtTokenProvider
-import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import com.yapp.itemfinder.domain.repository.MemberRepository
+import com.yapp.itemfinder.domain.member.MemberEntity
+import com.yapp.itemfinder.domain.member.MemberRepository
 import org.springframework.core.MethodParameter
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component

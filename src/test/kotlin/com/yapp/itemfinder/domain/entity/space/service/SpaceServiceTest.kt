@@ -5,8 +5,9 @@ import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.entity.space.SpaceEntity
-import com.yapp.itemfinder.domain.entity.space.SpaceRepository
+import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
+import com.yapp.itemfinder.domain.space.service.SpaceService
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
