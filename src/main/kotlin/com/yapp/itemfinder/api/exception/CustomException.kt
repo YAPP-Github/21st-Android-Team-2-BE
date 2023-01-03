@@ -25,3 +25,9 @@ class ConflictException(
     message: String? = null,
     errorCode: ErrorCode? = null
 ) : BaseException(httpStatus, message, errorCode)
+
+class UnauthorizedException(
+    httpStatus: HttpStatus = HttpStatus.UNAUTHORIZED,
+    message: String? = null,
+    errorCode: ErrorCode? = null
+) : BaseException(httpStatus, message, errorCode)
