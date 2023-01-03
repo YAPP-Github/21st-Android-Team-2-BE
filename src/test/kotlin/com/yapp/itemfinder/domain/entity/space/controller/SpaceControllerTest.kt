@@ -15,7 +15,7 @@ class SpaceControllerTest : ControllerIntegrationTest() {
     @Test
     fun `요청한 멤버가 등록한 공간 정보들을 확인할 수 있다`() {
         // given
-        val givenSpaceName = "방이름"
+        val givenSpaceName = "공간 이름"
         val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = testMember, name = givenSpaceName))
 
         // when

@@ -31,7 +31,7 @@ class SpaceService(
 
     private fun validateSpaceExist(memberId: Long, spaceName: String) {
         spaceRepository.findByMemberIdAndName(memberId = memberId, name = spaceName)?.let {
-            throw ConflictException(message = "이미 해당 이름으로 등록된 방이 존재합니다.")
+            throw ConflictException(message = "이미 해당 이름으로 등록된 공간이 존재합니다.")
         }
     }
 }

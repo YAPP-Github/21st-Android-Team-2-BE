@@ -24,7 +24,7 @@ object FakeEntity {
     }
     fun createFakeSpaceEntity(
         id: Long = generateRandomPositiveLongValue(),
-        name: String = "방 이름",
+        name: String = "공간 이름",
         member: MemberEntity,
     ): SpaceEntity {
         return SpaceEntity(

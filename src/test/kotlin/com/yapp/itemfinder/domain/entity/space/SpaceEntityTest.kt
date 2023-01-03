@@ -30,7 +30,7 @@ class SpaceEntityTest : BehaviorSpec({
         }
 
         When("1자 이상 30자 이하의 적절한 공간 이름이 주어지면") {
-            val givenValidNames = listOf(TestUtil.generateRandomString(30), "방", "방 2")
+            val givenValidNames = listOf(TestUtil.generateRandomString(30), "공간1", "공간2")
 
             Then("정상적으로 공간을 생성할 수 있다") {
                 givenValidNames.forAll { givenName ->

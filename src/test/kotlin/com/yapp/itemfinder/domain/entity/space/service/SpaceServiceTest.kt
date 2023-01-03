@@ -21,7 +21,7 @@ class SpaceServiceTest : BehaviorSpec({
     val spaceService = SpaceService(spaceRepository)
 
     Given("공간을 새로 추가할 때") {
-        val givenSpaceName = "방"
+        val givenSpaceName = "공간 이름1"
         val givenMember = createFakeMemberEntity()
         val givenCreateSpaceRequest = CreateSpaceRequest(name = givenSpaceName)
 
