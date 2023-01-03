@@ -3,7 +3,6 @@ package com.yapp.itemfinder.domain.auth.controller
 import com.yapp.itemfinder.api.LoginMember
 import com.yapp.itemfinder.api.exception.ErrorResponse
 import com.yapp.itemfinder.domain.member.MemberEntity
-import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.auth.service.AuthService
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
@@ -53,7 +52,7 @@ class AuthController(
         @RequestBody @Valid
         loginInfo: LoginRequest
     ): LoginResponse {
-        return authService.loginAndCreateTokens(Social(loginInfo.socialType, loginInfo.socialId))
+        return authService.loginAndCreateTokens(loginInfo)
     }
 
     @GetMapping("/logout")

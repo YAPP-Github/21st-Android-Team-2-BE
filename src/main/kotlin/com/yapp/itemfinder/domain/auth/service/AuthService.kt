@@ -2,6 +2,7 @@ package com.yapp.itemfinder.domain.auth.service
 
 import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.config.JwtTokenProvider
+import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.token.TokenEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
@@ -18,8 +19,8 @@ class AuthService(
     private val tokenRepository: TokenRepository
 ) {
     @Transactional
-    fun loginAndCreateTokens(social: Social): LoginResponse {
-        val memberId = getMemberIdBySocial(social)
+    fun loginAndCreateTokens(request: LoginRequest): LoginResponse {
+        val memberId = getMemberIdBySocial(Social(socialId = request.socialId, socialType = request.socialType))
         val accessToken = tokenProvider.createAccessToken(memberId.toString())
         val refreshToken = tokenProvider.createRefreshToken(memberId.toString())
         tokenRepository.save(
