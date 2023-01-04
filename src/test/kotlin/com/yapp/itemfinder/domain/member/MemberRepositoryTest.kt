@@ -1,9 +1,6 @@
-package com.yapp.itemfinder.domain.member.repository
+package com.yapp.itemfinder.domain.member
 
 import com.yapp.itemfinder.RepositoryTest
-import com.yapp.itemfinder.domain.member.MemberEntity
-import com.yapp.itemfinder.domain.member.Social
-import com.yapp.itemfinder.domain.member.SocialType
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.domain.entity.space
+package com.yapp.itemfinder.domain.space
 
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.TestUtil
