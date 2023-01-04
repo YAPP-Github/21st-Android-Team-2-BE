@@ -39,7 +39,7 @@ class LoginMemberResolver(
     }
 
     private fun extractBearerToken(webRequest: NativeWebRequest): String {
-        val authorization = webRequest.getHeader(HttpHeaders.AUTHORIZATION) ?: throw UnauthorizedException(message = "토큰을 입력해주세요.")
+        val authorization = webRequest.getHeader(HttpHeaders.AUTHORIZATION) ?: throw UnauthorizedException(message = "토큰이 없습니다.")
         try {
             val (tokenType, token) = authorization.split(" ")
             if (tokenType != BEARER) {
