@@ -2,14 +2,15 @@ package com.yapp.itemfinder
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import com.yapp.itemfinder.api.auth.LoginMemberArgumentResolver
-import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import com.yapp.itemfinder.domain.entity.member.MemberRepository
-import com.yapp.itemfinder.domain.entity.space.SpaceRepository
+import com.yapp.itemfinder.api.LoginMemberResolver
+import com.yapp.itemfinder.domain.member.MemberEntity
+import com.yapp.itemfinder.domain.member.MemberRepository
+import com.yapp.itemfinder.domain.space.SpaceRepository
 import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -21,6 +22,7 @@ import org.springframework.web.filter.CharacterEncodingFilter
 
 @SpringBootTest
 @Transactional
+@Import(EmbeddedRedisConfig::class)
 abstract class ControllerIntegrationTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
@@ -34,7 +36,7 @@ abstract class ControllerIntegrationTest {
     lateinit var spaceRepository: SpaceRepository
 
     @MockkBean
-    lateinit var loginMemberArgumentResolver: LoginMemberArgumentResolver
+    lateinit var loginMemberArgumentResolver: LoginMemberResolver
 
     lateinit var testMember: MemberEntity
     @BeforeEach

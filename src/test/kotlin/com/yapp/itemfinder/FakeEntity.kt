@@ -1,10 +1,10 @@
 package com.yapp.itemfinder
 
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
-import com.yapp.itemfinder.domain.entity.member.MemberEntity
-import com.yapp.itemfinder.domain.entity.member.Social
-import com.yapp.itemfinder.domain.entity.member.SocialType
-import com.yapp.itemfinder.domain.entity.space.SpaceEntity
+import com.yapp.itemfinder.domain.member.MemberEntity
+import com.yapp.itemfinder.domain.member.Social
+import com.yapp.itemfinder.domain.member.SocialType
+import com.yapp.itemfinder.domain.space.SpaceEntity
 import java.util.UUID
 
 object FakeEntity {

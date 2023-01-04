@@ -12,6 +12,10 @@ spring:
       hibernate:
         format_sql: true
 
+  redis:
+      host: localhost
+      port: 6379
+
 admin:
   username: "test"
   password: "test"
@@ -20,3 +24,6 @@ admin:
 springdoc:
   api-docs:
     path: "/api-docs"
+
+jwt:
+  secret: 5dc5ef5de6e3094ec5fd308585eeff44950e9d8b87e95044bcbf7ec7200fd968632d73ee605c07df2a9d1f7dd6e5ced6903f9d029f682464079d311daeebb339

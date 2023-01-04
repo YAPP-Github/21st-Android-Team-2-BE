@@ -1,6 +1,5 @@
 package com.yapp.itemfinder.config
 
-import com.yapp.itemfinder.api.auth.LoginMemberArgumentResolver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,14 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.method.support.HandlerMethodArgumentResolver
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
-class SecurityFilterConfig(
-    private val loginMemberArgumentResolver: LoginMemberArgumentResolver
-) : WebMvcConfigurer {
+class SecurityFilterConfig {
     companion object {
         private const val ADMIN_ROLE_NAME = "ADMIN"
     }
@@ -46,9 +41,6 @@ class SecurityFilterConfig(
             .disable()
 
         return http.build()
-    }
-    override fun addArgumentResolvers(argumentResolvers: MutableList<HandlerMethodArgumentResolver>) {
-        argumentResolvers.add(loginMemberArgumentResolver)
     }
 
     @Profile("!prod")
