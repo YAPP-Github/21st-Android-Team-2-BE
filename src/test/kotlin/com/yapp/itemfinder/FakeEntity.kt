@@ -1,6 +1,7 @@
 package com.yapp.itemfinder
 
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
+import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
@@ -16,7 +17,7 @@ object FakeEntity {
             id = id,
             email = email,
             social = Social(
-                socialId = "socialID",
+                socialId = generateRandomString(20),
                 socialType = SocialType.KAKAO
             ),
             name = "name",
