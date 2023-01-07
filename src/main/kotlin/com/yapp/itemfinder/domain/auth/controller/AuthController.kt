@@ -8,7 +8,6 @@ import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -70,11 +69,7 @@ class AuthController(
             )
         ]
     )
-    fun logout(
-        @Parameter(hidden = true)
-        @LoginMember
-        member: MemberEntity
-    ) {
+    fun logout(@LoginMember member: MemberEntity) {
         authService.logout(member.id)
     }
 
@@ -117,10 +112,5 @@ class AuthController(
             )
         ]
     )
-    fun validateMember(
-        @Parameter(hidden = true)
-        @LoginMember
-        member: MemberEntity
-    ) {
-    }
+    fun validateMember(@LoginMember member: MemberEntity) = "유효한 access token 입니다."
 }
