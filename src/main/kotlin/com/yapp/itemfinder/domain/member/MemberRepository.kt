@@ -9,4 +9,7 @@ interface MemberRepository : JpaRepository<MemberEntity, Long> {
 
     @Query("select m from MemberEntity m where m.id = :memberId and m.status = 'ACTIVE'")
     fun findActiveMemberById(memberId: Long): MemberEntity?
+
+    @Query("select (count(m) > 0) from MemberEntity m where m.social = ?1 and m.status = 'ACTIVE'")
+    fun existsBySocial(social: Social): Boolean
 }

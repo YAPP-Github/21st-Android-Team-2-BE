@@ -6,6 +6,7 @@ import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.auth.service.AuthService
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
+import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -75,5 +76,30 @@ class AuthController(
         member: MemberEntity
     ) {
         authService.logout(member.id)
+    }
+
+    @PostMapping("/signup")
+    @Operation(summary = "회원가입")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "회원가입 성공"
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "형식 오류"
+            ),
+            ApiResponse(
+                responseCode = "409",
+                description = "이미 존재하는 회원"
+            )
+        ]
+    )
+    fun signUp(
+        @RequestBody @Valid
+        signUpInfo: SignUpRequest
+    ): LoginResponse {
+        return authService.createMemberAndLogin(signUpInfo)
     }
 }
