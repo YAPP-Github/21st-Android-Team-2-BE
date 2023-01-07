@@ -6,6 +6,7 @@ import com.yapp.itemfinder.common.Const.BEARER
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
+import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.core.MethodParameter
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 
+@Hidden
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LoginMember

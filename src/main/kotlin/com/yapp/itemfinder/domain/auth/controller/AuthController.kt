@@ -8,7 +8,6 @@ import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -70,11 +69,7 @@ class AuthController(
             )
         ]
     )
-    fun logout(
-        @Parameter(hidden = true)
-        @LoginMember
-        member: MemberEntity
-    ) {
+    fun logout(@LoginMember member: MemberEntity) {
         authService.logout(member.id)
     }
 
@@ -102,4 +97,20 @@ class AuthController(
     ): LoginResponse {
         return authService.createMemberAndLogin(signUpInfo)
     }
+
+    @GetMapping("/validate-member")
+    @Operation(summary = "회원 토큰 검증")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "유효한 회원의 토큰"
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "null이거나 유효하지 않은 토큰"
+            )
+        ]
+    )
+    fun validateMember(@LoginMember member: MemberEntity) = "유효한 access token 입니다."
 }
