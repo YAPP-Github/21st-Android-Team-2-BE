@@ -28,7 +28,7 @@ class SpaceRepositorySupportImpl(
                 )
             )
             .from(spaceEntity)
-            .leftJoin(containerEntity).on(containerEntity.space.id.eq(spaceEntity.id))
+            .innerJoin(containerEntity).on(containerEntity.space.id.eq(spaceEntity.id))
             .where(spaceEntity.member.id.eq(memberId))
             .groupBy(spaceEntity.id)
             .orderBy(spaceEntity.createdAt.asc())
