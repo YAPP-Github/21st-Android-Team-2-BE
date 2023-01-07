@@ -31,6 +31,7 @@ class SpaceRepositoryTest(
 
         When("조회하고자 하는 대상 멤버 아이디를 전달한다면") {
             val result = spaceRepository.getSpaceWithContainerCountByMemberId(givenMember.id)
+
             Then("해당 회원이 등록한 각 공간에 등록된 보관함 개수를 확인할 수 있고, 각 공간들은 생성된 순서대로 조회된다") {
                 result.size shouldBe 2
                 with(result.first()) {
