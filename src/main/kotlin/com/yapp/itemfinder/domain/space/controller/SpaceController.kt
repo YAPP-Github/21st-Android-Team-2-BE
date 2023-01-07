@@ -5,6 +5,7 @@ import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import com.yapp.itemfinder.domain.space.service.SpaceService
 import com.yapp.itemfinder.domain.member.MemberEntity
+import com.yapp.itemfinder.domain.space.dto.SpaceWithContainerIcon
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -27,5 +28,11 @@ class SpaceController(
     @GetMapping("/spaces")
     fun getSpaces(@LoginMember member: MemberEntity): SpacesResponse {
         return spaceService.getSpaces(member.id)
+    }
+
+    @Operation(summary = "멤버가 등록한 공간들에 대한 보관함 개수 및 상위 아이콘 리스트 조회")
+    @GetMapping("/spaces/container-icons")
+    fun getSpaceWithContainerIcons(@LoginMember member: MemberEntity): List<SpaceWithContainerIcon> {
+        return spaceService.getSpaceWithContainerIcons(member.id)
     }
 }

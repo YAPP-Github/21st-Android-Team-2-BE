@@ -2,11 +2,19 @@ package com.yapp.itemfinder.domain.space.service
 
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
+import com.yapp.itemfinder.TestUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.ConflictException
+import com.yapp.itemfinder.domain.container.IconType
+import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_2
+import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_3
+import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_4
+import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
+import com.yapp.itemfinder.domain.space.SpaceWithContainerCount
+import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -18,7 +26,8 @@ import io.mockk.verify
 
 class SpaceServiceTest : BehaviorSpec({
     val spaceRepository = mockk<SpaceRepository>()
-    val spaceService = SpaceService(spaceRepository)
+    val containerService = mockk<ContainerService>()
+    val spaceService = SpaceService(spaceRepository, containerService)
 
     Given("공간을 새로 추가할 때") {
         val givenSpaceName = "공간 이름1"
@@ -79,6 +88,39 @@ class SpaceServiceTest : BehaviorSpec({
                 result.spaces.size shouldBe 1
                 result.spaces.first().id shouldBe givenSpaceId
                 result.spaces.first().name shouldBe givenSpaceName
+            }
+        }
+    }
+
+    Given("유저가 홈 뷰에서 본인이 등록한 공간과 대표 보관함 아이콘을 확인할 때") {
+        val givenMemberId = generateRandomPositiveLongValue()
+        val (givenSpaceId, givenSpaceName, givenContainerCount) = Triple(generateRandomPositiveLongValue(), "공간 이름", 5L)
+        val givenContainerIconNames = listOf(IC_CONTAINER_2, IC_CONTAINER_2, IC_CONTAINER_3, IC_CONTAINER_4, IconType.IC_CONTAINER_5).map { it.name }
+        every {
+            spaceRepository.getSpaceWithContainerCountByMemberId(givenMemberId)
+        } returns listOf(SpaceWithContainerCount(givenSpaceId, givenSpaceName, givenContainerCount))
+
+        every { containerService.getSpaceIdToContainerIconNames(listOf(givenSpaceId)) } returns mapOf(givenSpaceId to givenContainerIconNames)
+
+        When("유저가 등록한 공간에 보관함이 5개 이상 있다면") {
+            val result = spaceService.getSpaceWithContainerIcons(givenMemberId)
+
+
+            Then("전달받은 보관함 아이콘 이름들 중 네 개까지만 잘라서 함께 값을 반환한다") {
+                assertSoftly {
+                    result.size shouldBe 1
+                    with(result.first()) {
+                        spaceId shouldBe givenSpaceId
+                        spaceName shouldBe givenSpaceName
+                        containerCount shouldBe givenContainerCount
+
+                        containerIcons.size shouldBe 4
+                        containerIcons[0] shouldBe givenContainerIconNames[0]
+                        containerIcons[1] shouldBe givenContainerIconNames[1]
+                        containerIcons[2] shouldBe givenContainerIconNames[2]
+                        containerIcons[3] shouldBe givenContainerIconNames[3]
+                    }
+                }
             }
         }
     }

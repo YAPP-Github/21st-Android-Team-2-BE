@@ -28,7 +28,7 @@ object FakeEntity {
     fun createFakeSpaceEntity(
         id: Long = generateRandomPositiveLongValue(),
         name: String = TestUtil.generateRandomString(30),
-        member: MemberEntity,
+        member: MemberEntity = createFakeMemberEntity(),
     ): SpaceEntity {
         return SpaceEntity(
             id = id,
