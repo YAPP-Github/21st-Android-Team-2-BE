@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class SignUpRequest(
-    @field:NotBlank(message = "socialId는 공백이어서는 안됩니다.")
+    @field:NotBlank(message = "소셜 아이디 값이 공백입니다.")
     var socialId: String,
     @field:NotNull
     var socialType: SocialType,
