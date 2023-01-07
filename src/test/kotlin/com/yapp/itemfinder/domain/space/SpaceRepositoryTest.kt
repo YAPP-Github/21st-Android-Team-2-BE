@@ -12,7 +12,7 @@ class SpaceRepositoryTest(
     private val memberRepository: MemberRepository,
     private val spaceRepository: SpaceRepository,
     private val containerRepository: ContainerRepository,
-): BehaviorSpec({
+) : BehaviorSpec({
 
     Given("회원이 여러 공간에 해당하는 보관함을 등록했을 때") {
         val givenMember = memberRepository.save(FakeEntity.createFakeMemberEntity())

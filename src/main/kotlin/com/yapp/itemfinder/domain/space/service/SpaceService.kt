@@ -37,7 +37,7 @@ class SpaceService(
         val spaceWithContainerCount = spaceRepository.getSpaceWithContainerCountByMemberId(memberId)
         val spaceIdToContainerIconNames = containerService.getSpaceIdToContainerIconNames(spaceIds = spaceWithContainerCount.map { it.spaceId })
 
-        return spaceWithContainerCount.map {spaceWithCount ->
+        return spaceWithContainerCount.map { spaceWithCount ->
             SpaceWithContainerIcon(
                 spaceWithCount.spaceId,
                 spaceWithCount.spaceName,

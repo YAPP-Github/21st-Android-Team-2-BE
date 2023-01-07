@@ -17,16 +17,16 @@ interface SpaceRepositorySupport {
 
 class SpaceRepositorySupportImpl(
     private val queryFactory: JPAQueryFactory
-): SpaceRepositorySupport {
+) : SpaceRepositorySupport {
     override fun getSpaceWithContainerCountByMemberId(memberId: Long): List<SpaceWithContainerCount> {
         return queryFactory.select(
-                Projections.constructor(
-                    SpaceWithContainerCount::class.java,
-                    spaceEntity.id,
-                    spaceEntity.name,
-                    containerEntity.id.count()
-                )
+            Projections.constructor(
+                SpaceWithContainerCount::class.java,
+                spaceEntity.id,
+                spaceEntity.name,
+                containerEntity.id.count()
             )
+        )
             .from(spaceEntity)
             .innerJoin(containerEntity).on(containerEntity.space.id.eq(spaceEntity.id))
             .where(spaceEntity.member.id.eq(memberId))

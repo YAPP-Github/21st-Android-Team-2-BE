@@ -2,7 +2,6 @@ package com.yapp.itemfinder.domain.space.service
 
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
-import com.yapp.itemfinder.TestUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.container.IconType
@@ -105,8 +104,7 @@ class SpaceServiceTest : BehaviorSpec({
         When("유저가 등록한 공간에 보관함이 5개 이상 있다면") {
             val result = spaceService.getSpaceWithContainerIcons(givenMemberId)
 
-
-            Then("전달받은 보관함 아이콘 이름들 중 네 개까지만 잘라서 함께 값을 반환한다") {
+            Then("전달받은 보관함 아이콘들을 모두 전달하지 않고 중 최대 4개까지만 제한해서 전달한다") {
                 assertSoftly {
                     result.size shouldBe 1
                     with(result.first()) {

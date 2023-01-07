@@ -10,8 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 
-
-class ContainerServiceTest: BehaviorSpec({
+class ContainerServiceTest : BehaviorSpec({
     val containerRepository = mockk<ContainerRepository>()
     val containerService = ContainerService(containerRepository)
 
@@ -22,7 +21,7 @@ class ContainerServiceTest: BehaviorSpec({
         every { containerRepository.findIconTypeBySpaceIdIsIn(listOf(givenSpaceId)) } returns
             listOf(SpaceIdWithContainerIcon(spaceId = givenSpaceId, iconType = givenIconType))
 
-        When("전달받은 공간 아이디 리스트에 대한 아이콘들을 조회했다면") {
+        When("전달받은 공간 아이디 리스트에 대한 보관함 아이콘들을 조회했다면") {
             val result = containerService.getSpaceIdToContainerIconNames(listOf(givenSpaceId))
 
             Then("해당 아이콘의 이름을 map 형태(spaceId: 키, 아이콘 이름 배열: 값)로 변환해서 반환한다") {
