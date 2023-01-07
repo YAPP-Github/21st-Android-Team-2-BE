@@ -70,6 +70,24 @@ class Social(
     @Column(length = 20, nullable = false, name = "social_id")
     var socialId: String = socialId
         protected set
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Social
+
+        if (socialType != other.socialType) return false
+        if (socialId != other.socialId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = socialType.hashCode()
+        result = 31 * result + socialId.hashCode()
+        return result
+    }
 }
 
 enum class SocialType {
