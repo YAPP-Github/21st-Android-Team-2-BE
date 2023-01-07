@@ -23,7 +23,7 @@ class AuthService(
     @Transactional
     fun loginAndCreateTokens(request: LoginRequest): LoginResponse {
         val memberId = getMemberIdBySocial(Social(socialId = request.socialId, socialType = request.socialType))
-        return login(memberId)
+        return createToken(memberId)
     }
 
     private fun getMemberIdBySocial(social: Social): Long {
@@ -42,10 +42,10 @@ class AuthService(
             throw ConflictException(message = "이미 존재하는 회원입니다.")
         }
         val member = memberRepository.save(request.toEntity())
-        return login(member.id)
+        return createToken(member.id)
     }
 
-    private fun login(memberId: Long): LoginResponse {
+    private fun createToken(memberId: Long): LoginResponse {
         val accessToken = tokenProvider.createAccessToken(memberId.toString())
         val refreshToken = tokenProvider.createRefreshToken(memberId.toString())
         tokenRepository.save(
