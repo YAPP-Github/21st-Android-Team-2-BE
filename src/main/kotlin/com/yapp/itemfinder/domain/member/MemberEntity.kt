@@ -19,15 +19,17 @@ import javax.persistence.Table
     ]
 )
 class MemberEntity(
-    email: String,
+    email: String? = null,
     name: String,
     social: Social,
     status: MemberStatus = MemberStatus.ACTIVE,
+    gender: Gender? = null,
+    birthYear: Int? = null,
     id: Long = 0L
 ) : BaseEntity(id) {
 
     @Column(length = 100)
-    var email: String = email
+    var email: String? = email
         protected set
 
     @Column(length = 50, nullable = false)
@@ -41,6 +43,13 @@ class MemberEntity(
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     var status: MemberStatus = status
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    var gender: Gender? = gender
+        protected set
+
+    var birthYear: Int? = birthYear
         protected set
 }
 
@@ -61,8 +70,30 @@ class Social(
     @Column(length = 20, nullable = false, name = "social_id")
     var socialId: String = socialId
         protected set
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Social
+
+        if (socialType != other.socialType) return false
+        if (socialId != other.socialId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = socialType.hashCode()
+        result = 31 * result + socialId.hashCode()
+        return result
+    }
 }
 
 enum class SocialType {
     KAKAO
+}
+
+enum class Gender {
+    FEMALE, MALE
 }
