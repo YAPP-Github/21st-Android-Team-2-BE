@@ -102,4 +102,25 @@ class AuthController(
     ): LoginResponse {
         return authService.createMemberAndLogin(signUpInfo)
     }
+
+    @GetMapping("/validate-member")
+    @Operation(summary = "회원 토큰 검증")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "유효한 회원의 토큰"
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "null이거나 유효하지 않은 토큰"
+            )
+        ]
+    )
+    fun validateMember(
+        @Parameter(hidden = true)
+        @LoginMember
+        member: MemberEntity
+    ) {
+    }
 }
