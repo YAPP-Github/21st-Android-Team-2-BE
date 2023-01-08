@@ -24,9 +24,10 @@ class SpaceService(
         val spaceName = spaceRequest.name
         validateSpaceExist(member.id, spaceName)
 
-        return SpaceResponse.from(
-            spaceRepository.save(SpaceEntity(member = member, name = spaceName))
-        )
+        val newSpace = spaceRepository.save(SpaceEntity(member = member, name = spaceName))
+        return SpaceResponse(newSpace).also {
+            containerService.addDefaultContainer(newSpace)
+        }
     }
 
     fun getSpaces(memberId: Long): SpacesResponse {

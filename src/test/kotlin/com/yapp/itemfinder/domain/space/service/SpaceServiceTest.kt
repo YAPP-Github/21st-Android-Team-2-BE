@@ -27,7 +27,7 @@ import io.mockk.verify
 
 class SpaceServiceTest : BehaviorSpec({
     val spaceRepository = mockk<SpaceRepository>()
-    val containerService = mockk<ContainerService>()
+    val containerService = mockk<ContainerService>(relaxed = true)
     val spaceService = SpaceService(spaceRepository, containerService)
 
     Given("공간을 새로 추가할 때") {
@@ -58,7 +58,7 @@ class SpaceServiceTest : BehaviorSpec({
             every { spaceRepository.findByMemberIdAndName(givenMember.id, givenSpaceName) } returns null
             every { spaceRepository.save(capture(spaceCaptor)) } returns givenSpace
 
-            Then("정상적으로 해당 공간을 등록할 수 있다") {
+            Then("정상적으로 해당 공간을 등록하고 기본 보관함 생성을 요청할 수 있다") {
                 val response = spaceService.createSpace(givenCreateSpaceRequest, givenMember)
 
                 spaceCaptor.captured.name shouldBe givenSpaceName
@@ -66,6 +66,10 @@ class SpaceServiceTest : BehaviorSpec({
 
                 response.name shouldBe givenCreateSpaceRequest.name
                 response.id shouldBe givenSpace.id
+
+                verify(exactly = 1) {
+                    containerService.addDefaultContainer(givenSpace)
+                }
             }
         }
     }
