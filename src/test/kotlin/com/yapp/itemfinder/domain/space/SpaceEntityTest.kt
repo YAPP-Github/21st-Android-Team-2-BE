@@ -3,6 +3,7 @@ package com.yapp.itemfinder.domain.space
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.TestUtil
 import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.domain.space.SpaceEntity.Companion.SPACE_NAME_LENGTH_LIMIT
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -13,8 +14,8 @@ class SpaceEntityTest : BehaviorSpec({
     Given("공간을 생성할 때") {
         val givenMember = FakeEntity.createFakeMemberEntity()
 
-        When("30자를 초과하거나 1자 미만 및 공백으로 구성된 공간 이름이 주어지면") {
-            val nameOverLengthLimit: String = TestUtil.generateRandomString(31)
+        When("제한된 글자를 초과하거나 1자 미만 및 공백으로 구성된 공간 이름이 주어지면") {
+            val nameOverLengthLimit: String = TestUtil.generateRandomString(SPACE_NAME_LENGTH_LIMIT + 1)
             val givenInvalidNames = listOf(nameOverLengthLimit, "", "  ")
 
             Then("해당 이름으로 공간을 생성할 수 없다") {
@@ -29,8 +30,8 @@ class SpaceEntityTest : BehaviorSpec({
             }
         }
 
-        When("1자 이상 30자 이하의 적절한 공간 이름이 주어지면") {
-            val givenValidNames = listOf(TestUtil.generateRandomString(30), "공간1", "공간2")
+        When("1자 이상 9자 이하의 적절한 공간 이름이 주어지면") {
+            val givenValidNames = listOf(TestUtil.generateRandomString(SPACE_NAME_LENGTH_LIMIT), "공간1", "공간2")
 
             Then("정상적으로 공간을 생성할 수 있다") {
                 givenValidNames.forAll { givenName ->
