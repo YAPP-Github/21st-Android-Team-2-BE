@@ -4,12 +4,9 @@ import com.yapp.itemfinder.api.exception.UnauthorizedException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import io.jsonwebtoken.security.SignatureException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.Key
@@ -47,6 +44,17 @@ class JwtTokenProvider(
         return getClaims(token).subject
     }
 
+    /**
+     * 기한 만료 토큰으로부터 subject 반환
+     */
+    fun getSubjectFromExpiredToken(token: String): String {
+        return try {
+            getClaims(token).subject
+        } catch (e: ExpiredJwtException) {
+            e.claims.subject
+        }
+    }
+
     private fun getClaims(token: String): Claims {
         try {
             return Jwts.parserBuilder()
@@ -54,16 +62,8 @@ class JwtTokenProvider(
                 .build()
                 .parseClaimsJws(token)
                 .body
-        } catch (e: ExpiredJwtException) {
-            throw UnauthorizedException(message = "만료된 토큰입니다.")
         } catch (e: IllegalArgumentException) {
             throw UnauthorizedException(message = "토큰이 없습니다.")
-        } catch (e: UnsupportedJwtException) {
-            throw UnauthorizedException(message = "잘못된 형식의 토큰입니다.")
-        } catch (e: MalformedJwtException) {
-            throw UnauthorizedException(message = "잘못된 형식의 토큰입니다.")
-        } catch (e: SignatureException) {
-            throw UnauthorizedException(message = "잘못된 형식의 토큰입니다.")
         }
     }
 }
