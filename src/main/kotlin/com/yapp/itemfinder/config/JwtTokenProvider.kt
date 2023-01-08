@@ -18,8 +18,8 @@ class JwtTokenProvider(
     private val secret: String
 ) {
     private val key: Key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secret))
-    val accessTokenExpirationMilliseconds: Long = 1000 * 60 * 60 * 12 // 12시간
-    val refreshTokenExpirationMilliseconds: Long = 1000 * 60 * 60 * 24 * 14 // 14일
+    val accessTokenExpirationMilliseconds: Long = 1000L * 60 * 60 * 12 // 12시간
+    val refreshTokenExpirationMilliseconds: Long = 1000L * 60 * 60 * 24 * 30 // 30일
 
     fun createAccessToken(subject: String): String {
         return createToken(subject, accessTokenExpirationMilliseconds)
