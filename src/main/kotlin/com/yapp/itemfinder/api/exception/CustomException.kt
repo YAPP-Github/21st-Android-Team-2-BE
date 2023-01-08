@@ -31,3 +31,5 @@ class UnauthorizedException(
     message: String? = null,
     errorCode: ErrorCode? = null
 ) : BaseException(httpStatus, message, errorCode)
+
+const val INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다."

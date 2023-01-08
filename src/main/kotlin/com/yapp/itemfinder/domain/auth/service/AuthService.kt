@@ -1,7 +1,9 @@
 package com.yapp.itemfinder.domain.auth.service
 
 import com.yapp.itemfinder.api.exception.ConflictException
+import com.yapp.itemfinder.api.exception.INVALID_TOKEN_MESSAGE
 import com.yapp.itemfinder.api.exception.NotFoundException
+import com.yapp.itemfinder.api.exception.UnauthorizedException
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.member.Social
@@ -9,7 +11,10 @@ import com.yapp.itemfinder.domain.token.TokenEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.auth.repository.TokenRepository
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
+import com.yapp.itemfinder.domain.auth.dto.ReissueRequest
+import com.yapp.itemfinder.domain.auth.dto.ReissueResponse
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -56,5 +61,14 @@ class AuthService(
             )
         )
         return LoginResponse(accessToken, refreshToken)
+    }
+
+    fun reissueToken(request: ReissueRequest): ReissueResponse {
+        val memberId = tokenProvider.getSubject(request.refreshToken)
+        val token = tokenRepository.findByIdOrNull(memberId.toLong()) ?: throw UnauthorizedException(message = INVALID_TOKEN_MESSAGE)
+        if (token.refreshToken != request.refreshToken) {
+            throw UnauthorizedException(message = INVALID_TOKEN_MESSAGE)
+        }
+        return ReissueResponse(tokenProvider.createAccessToken(memberId))
     }
 }

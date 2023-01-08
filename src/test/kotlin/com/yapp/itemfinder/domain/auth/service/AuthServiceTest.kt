@@ -1,20 +1,26 @@
 package com.yapp.itemfinder.domain.auth.service
 
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
+import com.yapp.itemfinder.JwtTokenUtil.createToken
 import com.yapp.itemfinder.api.exception.ConflictException
+import com.yapp.itemfinder.api.exception.UnauthorizedException
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
+import com.yapp.itemfinder.domain.auth.dto.ReissueRequest
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
 import com.yapp.itemfinder.domain.auth.repository.TokenRepository
 import com.yapp.itemfinder.domain.member.MemberRepository
+import com.yapp.itemfinder.domain.token.TokenEntity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
+import org.springframework.data.repository.findByIdOrNull
 
 class AuthServiceTest() : BehaviorSpec({
     val memberRepository = mockk<MemberRepository>(relaxed = true)
@@ -65,6 +71,41 @@ class AuthServiceTest() : BehaviorSpec({
 
             Then("회원가입에 성공한다") {
                 tokens shouldNotBe null
+            }
+        }
+    }
+
+    Given("유효한 리프레시 토큰이 주어진 경우") {
+        val member = createFakeMemberEntity()
+
+        val refreshToken = createToken(member.id.toString(), 1000 * 60)
+        val reissueRequest = ReissueRequest(refreshToken)
+
+        every { tokenRepository.findByIdOrNull(member.id) } returns TokenEntity(memberId = member.id, refreshToken = refreshToken)
+
+        When("토큰을 재발급하면") {
+            val reissueToken = authService.reissueToken(request = reissueRequest)
+
+            Then("액세스 토큰 재발급에 성공한다") {
+                reissueToken shouldNotBe null
+            }
+        }
+    }
+
+    Given("만료된 리프레시 토큰이 주어진 경우") {
+        val member = createFakeMemberEntity()
+
+        val refreshToken = createToken(member.id.toString(), 1)
+
+        every { tokenRepository.findByIdOrNull(member.id) } returns null
+
+        When("토큰을 재발급하면") {
+            val reissueRequest = ReissueRequest(refreshToken)
+
+            Then("액세스 토큰 재발급에 실패한다") {
+                shouldThrow<UnauthorizedException> {
+                    authService.reissueToken(request = reissueRequest)
+                }
             }
         }
     }
