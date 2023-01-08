@@ -2,6 +2,8 @@ package com.yapp.itemfinder
 
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
+import com.yapp.itemfinder.domain.container.ContainerEntity
+import com.yapp.itemfinder.domain.container.IconType
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
@@ -25,13 +27,27 @@ object FakeEntity {
     }
     fun createFakeSpaceEntity(
         id: Long = generateRandomPositiveLongValue(),
-        name: String = "공간 이름",
-        member: MemberEntity,
+        name: String = TestUtil.generateRandomString(30),
+        member: MemberEntity = createFakeMemberEntity(),
     ): SpaceEntity {
         return SpaceEntity(
             id = id,
             name = name,
             member = member,
+        )
+    }
+
+    fun createFakeContainerEntity(
+        id: Long = generateRandomPositiveLongValue(),
+        name: String = "컨테이너 이름",
+        space: SpaceEntity,
+        iconType: IconType = IconType.IC_CONTAINER_1
+    ): ContainerEntity {
+        return ContainerEntity(
+            id = id,
+            name = name,
+            space = space,
+            iconType = iconType
         )
     }
 }
