@@ -5,13 +5,13 @@ import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.ConflictException
-import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_2
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_3
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_4
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_5
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.service.ContainerService
+import com.yapp.itemfinder.domain.container.service.ContainerVo
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
@@ -101,7 +101,7 @@ class SpaceServiceTest : BehaviorSpec({
         val givenMemberId = generateRandomPositiveLongValue()
         val (givenSpaceId, givenSpaceName, givenContainerCount) = Triple(generateRandomPositiveLongValue(), "공간 이름", 5L)
 
-        val givenContainers = mutableListOf<ContainerEntity>()
+        val givenContainerVos = mutableListOf<ContainerVo>()
 
         every {
             spaceRepository.getSpaceWithContainerCountByMemberId(givenMemberId)
@@ -113,10 +113,10 @@ class SpaceServiceTest : BehaviorSpec({
                     iconType = it,
                     space = createFakeSpaceEntity(id = givenSpaceId)
                 ).apply {
-                    givenContainers.add(this)
+                    givenContainerVos.add(ContainerVo(this))
                 }
             }
-            every { containerService.getSpaceIdToContainers(listOf(givenSpaceId)) } returns mapOf(givenSpaceId to givenContainers)
+            every { containerService.getSpaceIdToContainers(listOf(givenSpaceId)) } returns mapOf(givenSpaceId to givenContainerVos)
 
             val result = spaceService.getSpaceWithTopContainers(givenMemberId)
 
@@ -129,23 +129,27 @@ class SpaceServiceTest : BehaviorSpec({
                         containerCount shouldBe givenContainerCount
 
                         topContainers.size shouldBe 4
-                        topContainers[0] shouldBe ContainerResponse(givenContainers[0])
-                        topContainers[1] shouldBe ContainerResponse(givenContainers[1])
-                        topContainers[2] shouldBe ContainerResponse(givenContainers[2])
-                        topContainers[3] shouldBe ContainerResponse(givenContainers[3])
+                        topContainers[0] shouldBe ContainerResponse(givenContainerVos[0])
+                        topContainers[1] shouldBe ContainerResponse(givenContainerVos[1])
+                        topContainers[2] shouldBe ContainerResponse(givenContainerVos[2])
+                        topContainers[3] shouldBe ContainerResponse(givenContainerVos[3])
                     }
                 }
             }
         }
 
         When("유저가 등록한 공간에 보관함이 4개 이하 있다면") {
-            givenContainers.clear()
-            givenContainers.add(createFakeContainerEntity(iconType = IC_CONTAINER_2, space = createFakeSpaceEntity(id = givenSpaceId)))
+            givenContainerVos.clear()
+            givenContainerVos.add(
+                ContainerVo(
+                    createFakeContainerEntity(iconType = IC_CONTAINER_2, space = createFakeSpaceEntity(id = givenSpaceId))
+                )
+            )
 
             every {
                 containerService.getSpaceIdToContainers(listOf(givenSpaceId))
             } returns mapOf(
-                givenSpaceId to givenContainers
+                givenSpaceId to givenContainerVos
             )
 
             val result = spaceService.getSpaceWithTopContainers(givenMemberId)
@@ -159,12 +163,12 @@ class SpaceServiceTest : BehaviorSpec({
                         containerCount shouldBe givenContainerCount
 
                         topContainers.size shouldBe 1
-                        topContainers[0].id shouldBe givenContainers[0].id
-                        topContainers[0].icon shouldBe givenContainers[0].iconType.name
-                        topContainers[0].description shouldBe givenContainers[0].description
-                        topContainers[0].imageUrl shouldBe givenContainers[0].imageUrl
-                        topContainers[0].spaceId shouldBe givenContainers[0].space.id
-                        topContainers[0].defaultItemType shouldBe givenContainers[0].defaultItemType.name
+                        topContainers[0].id shouldBe givenContainerVos[0].id
+                        topContainers[0].icon shouldBe givenContainerVos[0].iconType
+                        topContainers[0].description shouldBe givenContainerVos[0].description
+                        topContainers[0].imageUrl shouldBe givenContainerVos[0].imageUrl
+                        topContainers[0].spaceId shouldBe givenContainerVos[0].spaceId
+                        topContainers[0].defaultItemType shouldBe givenContainerVos[0].defaultItemType
                     }
                 }
             }

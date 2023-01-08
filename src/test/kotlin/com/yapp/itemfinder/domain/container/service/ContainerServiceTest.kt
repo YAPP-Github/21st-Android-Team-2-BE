@@ -27,7 +27,15 @@ class ContainerServiceTest : BehaviorSpec({
                 assertSoftly {
                     result.keys.size shouldBe 1
                     result[givenSpaceId]?.size shouldBe 1
-                    result[givenSpaceId]?.first() shouldBe givenContainer
+                    result[givenSpaceId]?.first()?.let {
+                        it.id shouldBe givenContainer.id
+                        it.spaceId shouldBe givenSpaceId
+                        it.iconType shouldBe givenContainer.iconType.name
+                        it.name shouldBe givenContainer.name
+                        it.defaultItemType shouldBe givenContainer.defaultItemType.name
+                        it.description shouldBe givenContainer.description
+                        it.imageUrl shouldBe givenContainer.imageUrl
+                    }
                 }
             }
         }
