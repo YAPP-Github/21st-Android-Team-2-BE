@@ -61,7 +61,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleJwtException(ex: JwtException): ResponseEntity<ErrorResponse> {
         logger.error("message=${ex.message}")
         return ResponseEntity.status(UNAUTHORIZED)
-            .body(ErrorResponse(message = "유효하지 않은 토큰입니다."))
+            .body(ErrorResponse(message = INVALID_TOKEN_MESSAGE))
     }
 
     @ExceptionHandler(Exception::class)

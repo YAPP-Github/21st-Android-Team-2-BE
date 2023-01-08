@@ -2,7 +2,6 @@ package com.yapp.itemfinder.config
 
 import com.yapp.itemfinder.api.exception.UnauthorizedException
 import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
@@ -42,17 +41,6 @@ class JwtTokenProvider(
 
     fun getSubject(token: String): String {
         return getClaims(token).subject
-    }
-
-    /**
-     * 기한 만료 토큰으로부터 subject 반환
-     */
-    fun getSubjectFromExpiredToken(token: String): String {
-        return try {
-            getClaims(token).subject
-        } catch (e: ExpiredJwtException) {
-            e.claims.subject
-        }
     }
 
     private fun getClaims(token: String): Claims {
