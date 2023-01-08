@@ -17,7 +17,6 @@ import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceWithContainerCount
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -53,16 +52,20 @@ class SpaceServiceTest : BehaviorSpec({
         }
 
         When("요청한 공간명으로 해당 유저가 등록한 공간이 존재하지 않는다면") {
+            val givenSpace = createFakeSpaceEntity(name = givenSpaceName, member = givenMember)
             val spaceCaptor = slot<SpaceEntity>()
+
             every { spaceRepository.findByMemberIdAndName(givenMember.id, givenSpaceName) } returns null
-            every { spaceRepository.save(capture(spaceCaptor)) } returns createFakeSpaceEntity(name = givenSpaceName, member = givenMember)
+            every { spaceRepository.save(capture(spaceCaptor)) } returns givenSpace
 
             Then("정상적으로 해당 공간을 등록할 수 있다") {
-                shouldNotThrow<Exception> {
-                    spaceService.createSpace(givenCreateSpaceRequest, givenMember)
-                }
+                val response = spaceService.createSpace(givenCreateSpaceRequest, givenMember)
+
                 spaceCaptor.captured.name shouldBe givenSpaceName
                 spaceCaptor.captured.member.id shouldBe givenMember.id
+
+                response.name shouldBe givenCreateSpaceRequest.name
+                response.id shouldBe givenSpace.id
             }
         }
     }
