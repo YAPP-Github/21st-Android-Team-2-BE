@@ -1,14 +1,18 @@
 package com.yapp.itemfinder.domain.auth.service
 
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
+import com.yapp.itemfinder.JwtTokenUtil.createToken
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
+import com.yapp.itemfinder.domain.auth.dto.ReissueRequest
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
 import com.yapp.itemfinder.domain.auth.repository.TokenRepository
 import com.yapp.itemfinder.domain.member.MemberRepository
+import io.jsonwebtoken.ExpiredJwtException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -65,6 +69,44 @@ class AuthServiceTest() : BehaviorSpec({
 
             Then("회원가입에 성공한다") {
                 tokens shouldNotBe null
+            }
+        }
+    }
+
+    Given("유효한 리프레시 토큰과 기한 만료된 액세스 토큰이 주어진 경우") {
+        val member = createFakeMemberEntity()
+
+        val accessToken = createToken(member.id.toString(), 1)
+        val refreshToken = createToken(member.id.toString(), 1000 * 60)
+        val reissueRequest = ReissueRequest(accessToken, refreshToken)
+
+        every { memberRepository.findActiveMemberById(member.id) } returns member
+
+        When("토큰을 재발급하면") {
+            val reissueToken = authService.reissueToken(request = reissueRequest)
+
+            Then("액세스 토큰 재발급에 성공한다") {
+                reissueToken shouldNotBe null
+                println("reissueToken = $reissueToken")
+            }
+        }
+    }
+
+    Given("만료된 리프레시 토큰이 주어진 경우") {
+        val member = createFakeMemberEntity()
+
+        val accessToken = createToken(member.id.toString(), 1)
+        val refreshToken = createToken(member.id.toString(), 1)
+
+        every { memberRepository.findActiveMemberById(member.id) } returns member
+
+        When("토큰을 재발급하면") {
+            val reissueRequest = ReissueRequest(accessToken, refreshToken)
+
+            Then("액세스 토큰 재발급에 실패한다") {
+                shouldThrow<ExpiredJwtException> {
+                    authService.reissueToken(request = reissueRequest)
+                }
             }
         }
     }

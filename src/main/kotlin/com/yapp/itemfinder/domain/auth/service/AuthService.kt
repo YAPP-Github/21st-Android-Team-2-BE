@@ -2,6 +2,7 @@ package com.yapp.itemfinder.domain.auth.service
 
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.api.exception.NotFoundException
+import com.yapp.itemfinder.api.exception.UnauthorizedException
 import com.yapp.itemfinder.config.JwtTokenProvider
 import com.yapp.itemfinder.domain.auth.dto.LoginRequest
 import com.yapp.itemfinder.domain.member.Social
@@ -9,6 +10,8 @@ import com.yapp.itemfinder.domain.token.TokenEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.auth.repository.TokenRepository
 import com.yapp.itemfinder.domain.auth.dto.LoginResponse
+import com.yapp.itemfinder.domain.auth.dto.ReissueRequest
+import com.yapp.itemfinder.domain.auth.dto.ReissueResponse
 import com.yapp.itemfinder.domain.auth.dto.SignUpRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -56,5 +59,14 @@ class AuthService(
             )
         )
         return LoginResponse(accessToken, refreshToken)
+    }
+
+    fun reissueToken(request: ReissueRequest): ReissueResponse {
+        val subject = tokenProvider.getSubject(request.refreshToken)
+        if (subject != tokenProvider.getSubjectFromExpiredToken(request.accessToken)) {
+            throw UnauthorizedException(message = "유효하지 않은 토큰입니다.")
+        }
+        memberRepository.findActiveMemberById(subject.toLong()) ?: throw NotFoundException(message = "존재하지 않는 회원입니다.")
+        return ReissueResponse(tokenProvider.createAccessToken(subject))
     }
 }
