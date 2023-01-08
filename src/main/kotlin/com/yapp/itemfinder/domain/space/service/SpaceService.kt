@@ -1,12 +1,13 @@
 package com.yapp.itemfinder.domain.space.service
 
 import com.yapp.itemfinder.api.exception.ConflictException
+import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.space.SpaceEntity
-import com.yapp.itemfinder.domain.space.dto.SpaceWithContainerIcon
+import com.yapp.itemfinder.domain.space.dto.SpaceWithTopContainerResponse
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,19 +32,20 @@ class SpaceService(
         val spaces = spaceRepository.findByMemberId(memberId)
         return SpacesResponse.from(spaces)
     }
-
-    fun getSpaceWithContainerIcons(memberId: Long): List<SpaceWithContainerIcon> {
+    fun getSpaceWithTopContainers(memberId: Long): List<SpaceWithTopContainerResponse> {
         val containerIconViewLimit = 4
         val spaceWithContainerCount = spaceRepository.getSpaceWithContainerCountByMemberId(memberId)
-        val spaceIdToContainerIconNames = containerService.getSpaceIdToContainerIconNames(spaceIds = spaceWithContainerCount.map { it.spaceId })
+        val spaceIdToContainers = containerService.getSpaceIdToContainers(spaceIds = spaceWithContainerCount.map { it.spaceId })
 
         return spaceWithContainerCount.map { spaceWithCount ->
-            SpaceWithContainerIcon(
+            val containersInSpace = spaceIdToContainers.getOrDefault(spaceWithCount.spaceId, emptyList())
+            SpaceWithTopContainerResponse(
                 spaceWithCount.spaceId,
                 spaceWithCount.spaceName,
                 spaceWithCount.containerCount,
-                spaceIdToContainerIconNames.getOrDefault(spaceWithCount.spaceId, emptyList())
+                containersInSpace
                     .take(containerIconViewLimit)
+                    .map { ContainerResponse(it) }
             )
         }
     }

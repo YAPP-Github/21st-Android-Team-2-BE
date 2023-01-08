@@ -20,26 +20,31 @@ class ContainerRepositoryTest(
         val givenMember = memberRepository.save(createFakeMemberEntity())
         val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
         val givenIconTypes = listOf(IconType.IC_CONTAINER_3, IconType.IC_CONTAINER_4)
+        val givenContainers = mutableListOf<ContainerEntity>()
 
         repeat(2) {
             containerRepository.save(
                 createFakeContainerEntity(space = givenSpace, iconType = givenIconTypes[it])
-            )
+            ).also { container ->
+                givenContainers.add(container)
+            }
         }
 
         When("등록한 공간 아이디 리스트를 전달하면") {
-            val result = containerRepository.findIconTypeBySpaceIdIsIn(listOf(givenSpace.id))
+            val result = containerRepository.findBySpaceIdIsIn(listOf(givenSpace.id))
 
-            Then("해당 공간들에 속한 보관함의 아이콘 값들을 찾아 반환한다") {
+            Then("해당 공간들에 속한 보관함 정보들을 찾아 반환한다") {
                 result.size shouldBe 2
                 with(result.first()) {
-                    spaceId shouldBe givenSpace.id
+                    space.id shouldBe givenSpace.id
                     iconType shouldBe givenIconTypes.first()
+                    id shouldBe givenContainers.first().id
                 }
 
                 with(result.last()) {
-                    spaceId shouldBe givenSpace.id
+                    space.id shouldBe givenSpace.id
                     iconType shouldBe givenIconTypes.last()
+                    id shouldBe givenContainers.last().id
                 }
             }
         }

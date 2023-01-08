@@ -1,13 +1,16 @@
 package com.yapp.itemfinder.domain.space.service
 
+import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.ConflictException
-import com.yapp.itemfinder.domain.container.IconType
+import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_2
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_3
 import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_4
+import com.yapp.itemfinder.domain.container.IconType.IC_CONTAINER_5
+import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
@@ -91,20 +94,30 @@ class SpaceServiceTest : BehaviorSpec({
         }
     }
 
-    Given("유저가 홈 뷰에서 본인이 등록한 공간과 대표 보관함 아이콘을 확인할 때") {
+    Given("유저가 홈 뷰에서 본인이 등록한 공간과 대표 보관함 정보들을 확인할 때") {
         val givenMemberId = generateRandomPositiveLongValue()
         val (givenSpaceId, givenSpaceName, givenContainerCount) = Triple(generateRandomPositiveLongValue(), "공간 이름", 5L)
-        val givenContainerIconNames = listOf(IC_CONTAINER_2, IC_CONTAINER_2, IC_CONTAINER_3, IC_CONTAINER_4, IconType.IC_CONTAINER_5).map { it.name }
+
+        val givenContainers = mutableListOf<ContainerEntity>()
+
         every {
             spaceRepository.getSpaceWithContainerCountByMemberId(givenMemberId)
         } returns listOf(SpaceWithContainerCount(givenSpaceId, givenSpaceName, givenContainerCount))
 
-        every { containerService.getSpaceIdToContainerIconNames(listOf(givenSpaceId)) } returns mapOf(givenSpaceId to givenContainerIconNames)
-
         When("유저가 등록한 공간에 보관함이 5개 이상 있다면") {
-            val result = spaceService.getSpaceWithContainerIcons(givenMemberId)
+            listOf(IC_CONTAINER_2, IC_CONTAINER_2, IC_CONTAINER_3, IC_CONTAINER_4, IC_CONTAINER_5).forEach {
+                createFakeContainerEntity(
+                    iconType = it,
+                    space = createFakeSpaceEntity(id = givenSpaceId)
+                ).apply {
+                    givenContainers.add(this)
+                }
+            }
+            every { containerService.getSpaceIdToContainers(listOf(givenSpaceId)) } returns mapOf(givenSpaceId to givenContainers)
 
-            Then("전달받은 보관함 아이콘들을 모두 전달하지 않고 중 최대 4개까지만 제한해서 전달한다") {
+            val result = spaceService.getSpaceWithTopContainers(givenMemberId)
+
+            Then("전달받은 보관함 정보들을 모두 전달하지 않고 중 최대 4개까지만 제한해서 전달한다") {
                 assertSoftly {
                     result.size shouldBe 1
                     with(result.first()) {
@@ -112,11 +125,43 @@ class SpaceServiceTest : BehaviorSpec({
                         spaceName shouldBe givenSpaceName
                         containerCount shouldBe givenContainerCount
 
-                        containerIcons.size shouldBe 4
-                        containerIcons[0] shouldBe givenContainerIconNames[0]
-                        containerIcons[1] shouldBe givenContainerIconNames[1]
-                        containerIcons[2] shouldBe givenContainerIconNames[2]
-                        containerIcons[3] shouldBe givenContainerIconNames[3]
+                        topContainers.size shouldBe 4
+                        topContainers[0] shouldBe ContainerResponse(givenContainers[0])
+                        topContainers[1] shouldBe ContainerResponse(givenContainers[1])
+                        topContainers[2] shouldBe ContainerResponse(givenContainers[2])
+                        topContainers[3] shouldBe ContainerResponse(givenContainers[3])
+                    }
+                }
+            }
+        }
+
+        When("유저가 등록한 공간에 보관함이 4개 이하 있다면") {
+            givenContainers.clear()
+            givenContainers.add(createFakeContainerEntity(iconType = IC_CONTAINER_2, space = createFakeSpaceEntity(id = givenSpaceId)))
+
+            every {
+                containerService.getSpaceIdToContainers(listOf(givenSpaceId))
+            } returns mapOf(
+                givenSpaceId to givenContainers
+            )
+
+            val result = spaceService.getSpaceWithTopContainers(givenMemberId)
+
+            Then("전달받은 보관함 정보들을 모두 전달한다") {
+                assertSoftly {
+                    result.size shouldBe 1
+                    with(result.first()) {
+                        spaceId shouldBe givenSpaceId
+                        spaceName shouldBe givenSpaceName
+                        containerCount shouldBe givenContainerCount
+
+                        topContainers.size shouldBe 1
+                        topContainers[0].id shouldBe givenContainers[0].id
+                        topContainers[0].icon shouldBe givenContainers[0].iconType.name
+                        topContainers[0].description shouldBe givenContainers[0].description
+                        topContainers[0].imageUrl shouldBe givenContainers[0].imageUrl
+                        topContainers[0].spaceId shouldBe givenContainers[0].space.id
+                        topContainers[0].defaultItemType shouldBe givenContainers[0].defaultItemType.name
                     }
                 }
             }
