@@ -132,11 +132,6 @@ class AuthController(
             ApiResponse(
                 responseCode = "401",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "존재하지 않는 회원",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )

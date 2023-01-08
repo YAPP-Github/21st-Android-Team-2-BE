@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.config
 
+import com.yapp.itemfinder.api.exception.INVALID_TOKEN_MESSAGE
 import com.yapp.itemfinder.api.exception.UnauthorizedException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -50,8 +51,8 @@ class JwtTokenProvider(
                 .build()
                 .parseClaimsJws(token)
                 .body
-        } catch (e: IllegalArgumentException) {
-            throw UnauthorizedException(message = "토큰이 없습니다.")
+        } catch (e: Exception) {
+            throw UnauthorizedException(message = INVALID_TOKEN_MESSAGE)
         }
     }
 }
