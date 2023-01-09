@@ -3,8 +3,10 @@ package com.yapp.itemfinder.domain.space.controller
 import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
+import com.yapp.itemfinder.domain.space.dto.SpaceResponse
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
@@ -54,13 +56,18 @@ class SpaceControllerTest : ControllerIntegrationTest() {
         // given
         val givenNonExistSpaceName = "새로운 공간명"
 
-        // when & expect
-        mockMvc.post("/spaces") {
+        // when
+        val mvcResult = mockMvc.post("/spaces") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(CreateSpaceRequest(givenNonExistSpaceName))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
-        }
+        }.andReturn()
+
+        // then
+        val result = objectMapper.readValue(mvcResult.response.contentAsString, SpaceResponse::class.java)
+        result.id shouldNotBe null
+        result.name shouldBe givenNonExistSpaceName
     }
 }

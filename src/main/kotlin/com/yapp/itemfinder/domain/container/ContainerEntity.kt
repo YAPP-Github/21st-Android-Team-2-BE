@@ -25,7 +25,7 @@ import javax.persistence.Table
 )
 class ContainerEntity(
     space: SpaceEntity,
-    name: String,
+    name: String = DEFAULT_CONTAINER_NAME,
     defaultItemType: ItemType = ItemType.LIFESTYLE,
     iconType: IconType = IconType.IC_CONTAINER_1,
     description: String? = null,
@@ -58,6 +58,9 @@ class ContainerEntity(
 
     var imageUrl: String? = imageUrl
         protected set
+    companion object {
+        const val DEFAULT_CONTAINER_NAME = "보관함"
+    }
 }
 
 enum class IconType(val value: Int) {

@@ -32,13 +32,17 @@ class SpaceEntity(
     var member: MemberEntity = member
         protected set
 
-    @Column(length = 30, nullable = false)
+    @Column(length = SPACE_NAME_LENGTH_LIMIT, nullable = false)
     var name: String = name
         protected set
 
     private fun validateName(name: String) {
-        require(name.isNotBlank() && name.length <= 30) {
-            throw BadRequestException(message = "1자 이상 30자 이내로 이름을 등록해 주세요.")
+        require(name.isNotBlank() && name.length <= SPACE_NAME_LENGTH_LIMIT) {
+            throw BadRequestException(message = "1자 이상 ${SPACE_NAME_LENGTH_LIMIT}자 이내로 이름을 등록해 주세요.")
         }
+    }
+
+    companion object {
+        const val SPACE_NAME_LENGTH_LIMIT = 9
     }
 }

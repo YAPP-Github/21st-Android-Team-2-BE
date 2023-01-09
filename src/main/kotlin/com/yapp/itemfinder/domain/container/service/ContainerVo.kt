@@ -1,11 +1,10 @@
-package com.yapp.itemfinder.domain.container.dto
+package com.yapp.itemfinder.domain.container.service
 
 import com.yapp.itemfinder.domain.container.ContainerEntity
-import com.yapp.itemfinder.domain.container.service.ContainerVo
 
-data class ContainerResponse(
+data class ContainerVo(
     val id: Long,
-    val icon: String,
+    val iconType: String,
     val spaceId: Long,
     val name: String,
     val defaultItemType: String,
@@ -14,21 +13,11 @@ data class ContainerResponse(
 ) {
     constructor(containerEntity: ContainerEntity) : this(
         id = containerEntity.id,
-        icon = containerEntity.iconType.name,
+        iconType = containerEntity.iconType.name,
         spaceId = containerEntity.space.id,
         name = containerEntity.name,
         defaultItemType = containerEntity.defaultItemType.name,
         description = containerEntity.description,
         imageUrl = containerEntity.imageUrl
-    )
-
-    constructor(containerVo: ContainerVo) : this(
-        id = containerVo.id,
-        icon = containerVo.iconType,
-        spaceId = containerVo.spaceId,
-        name = containerVo.name,
-        defaultItemType = containerVo.defaultItemType,
-        description = containerVo.description,
-        imageUrl = containerVo.imageUrl
     )
 }

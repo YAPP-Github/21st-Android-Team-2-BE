@@ -8,6 +8,7 @@ import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
 import com.yapp.itemfinder.domain.space.SpaceEntity
+import com.yapp.itemfinder.domain.space.SpaceEntity.Companion.SPACE_NAME_LENGTH_LIMIT
 import java.util.UUID
 
 object FakeEntity {
@@ -27,7 +28,7 @@ object FakeEntity {
     }
     fun createFakeSpaceEntity(
         id: Long = generateRandomPositiveLongValue(),
-        name: String = TestUtil.generateRandomString(30),
+        name: String = generateRandomString(SPACE_NAME_LENGTH_LIMIT),
         member: MemberEntity = createFakeMemberEntity(),
     ): SpaceEntity {
         return SpaceEntity(
@@ -41,13 +42,17 @@ object FakeEntity {
         id: Long = generateRandomPositiveLongValue(),
         name: String = "컨테이너 이름",
         space: SpaceEntity,
-        iconType: IconType = IconType.IC_CONTAINER_1
+        iconType: IconType = IconType.IC_CONTAINER_1,
+        description: String = "설명",
+        imageUrl: String = "image URL"
     ): ContainerEntity {
         return ContainerEntity(
             id = id,
             name = name,
             space = space,
-            iconType = iconType
+            iconType = iconType,
+            description = description,
+            imageUrl = imageUrl
         )
     }
 }
