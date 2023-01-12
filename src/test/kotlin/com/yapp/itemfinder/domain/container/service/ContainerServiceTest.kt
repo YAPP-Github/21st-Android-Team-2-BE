@@ -3,11 +3,14 @@ package com.yapp.itemfinder.domain.container.service
 import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerEntity.Companion.DEFAULT_CONTAINER_NAME
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.IconType
+import com.yapp.itemfinder.domain.space.SpaceRepository
 import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -16,7 +19,8 @@ import io.mockk.slot
 
 class ContainerServiceTest : BehaviorSpec({
     val containerRepository = mockk<ContainerRepository>()
-    val containerService = ContainerService(containerRepository)
+    val spaceRepository = mockk<SpaceRepository>()
+    val containerService = ContainerService(containerRepository, spaceRepository)
 
     Given("특정 공간에 보관함이 등록되어 있을 때") {
         val givenSpaceId = generateRandomPositiveLongValue()
@@ -60,6 +64,43 @@ class ContainerServiceTest : BehaviorSpec({
                 containerCaptor.captured.name shouldBe DEFAULT_CONTAINER_NAME
                 containerCaptor.captured.name shouldBe "보관함"
                 containerCaptor.captured.iconType shouldBe IconType.IC_CONTAINER_1
+            }
+        }
+    }
+
+    Given("공간에 등록된 보관함을 조회할 때") {
+        val (givenMemberId, givenSpaceId) = generateRandomPositiveLongValue() to generateRandomPositiveLongValue()
+
+        When("요청한 유저가 전달한 공간 아이디로 실제 등록된 공간이 존재하지 않는다면") {
+            every { spaceRepository.findByIdAndMemberId(id = givenSpaceId, memberId = givenMemberId) } returns null
+
+            Then("예외가 발생한다") {
+                shouldThrow<BadRequestException> {
+                    containerService.findContainersInSpace(requestMemberId = givenMemberId, spaceId = givenSpaceId)
+                }
+            }
+        }
+
+        When("요청한 유저가 전달한 공간 아이디로 실제 등록된 공간이 존재한다면") {
+            val givenSpace = createFakeSpaceEntity(id = givenSpaceId)
+            val givenContainer = createFakeContainerEntity(space = givenSpace)
+
+            every { spaceRepository.findByIdAndMemberId(id = givenSpaceId, memberId = givenMemberId) } returns givenSpace
+            every { containerRepository.findBySpaceOrderByCreatedAtAsc(givenSpace) } returns listOf(givenContainer)
+
+            val response = containerService.findContainersInSpace(requestMemberId = givenMemberId, spaceId = givenSpaceId)
+
+            Then("해당하는 보관함 정보를 반환한다") {
+                response.size shouldBe 1
+                with(response.first()) {
+                    id shouldBe givenContainer.id
+                    icon shouldBe givenContainer.iconType.name
+                    spaceId shouldBe givenContainer.space.id
+                    name shouldBe givenContainer.name
+                    defaultItemType shouldBe givenContainer.defaultItemType.name
+                    description shouldBe givenContainer.description
+                    imageUrl shouldBe givenContainer.imageUrl
+                }
             }
         }
     }
