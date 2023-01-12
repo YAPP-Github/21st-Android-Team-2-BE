@@ -2,12 +2,9 @@ package com.yapp.itemfinder.api.exception
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
-import io.jsonwebtoken.JwtException
-import io.jsonwebtoken.security.SignatureException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -55,13 +52,6 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         logger.error("message=${ex.message}")
         return ResponseEntity.status(ex.httpStatus)
             .body(ErrorResponse(ex.message, ex.errorCode?.value))
-    }
-
-    @ExceptionHandler(JwtException::class, SignatureException::class)
-    fun handleJwtException(ex: JwtException): ResponseEntity<ErrorResponse> {
-        logger.error("message=${ex.message}")
-        return ResponseEntity.status(UNAUTHORIZED)
-            .body(ErrorResponse(message = INVALID_TOKEN_MESSAGE))
     }
 
     @ExceptionHandler(Exception::class)
