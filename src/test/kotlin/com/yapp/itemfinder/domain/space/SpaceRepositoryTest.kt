@@ -4,8 +4,10 @@ import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.RepositoryTest
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.member.MemberRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity as createFakeMemberEntity1
@@ -70,6 +72,30 @@ class SpaceRepositoryTest(
 
             Then("공간이 조회되지 않는다") {
                 result shouldBe null
+            }
+        }
+    }
+
+    Given("특정 회원이 특정 공간을 등록했을 때") {
+        val givenMember = memberRepository.save(createFakeMemberEntity1())
+        val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
+        val (givenSavedMemberId, givenSavedSpaceId) = givenMember.id to givenSpace.id
+
+        When("해당 회원이 등록하지 않은 공간에 대해 조회한다면") {
+            val otherOtherSpaceId = generateRandomPositiveLongValue()
+
+            Then("조회한 결과가 없으므로 예외가 발생한다") {
+                shouldThrow<BadRequestException> {
+                    spaceRepository.findByIdAndMemberIdOrThrowException(id = otherOtherSpaceId, memberId = givenSavedMemberId)
+                }
+            }
+        }
+
+        When("해당 회원이 등록한 공간에 대해 조회한다면") {
+            val result = spaceRepository.findByIdAndMemberIdOrThrowException(id = givenSavedSpaceId, memberId = givenSavedMemberId)
+
+            Then("해당하는 공간의 정보를 반환한다") {
+                result shouldBe givenSpace
             }
         }
     }

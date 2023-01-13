@@ -38,7 +38,7 @@ class ContainerEntity(
     var space: SpaceEntity = space
         protected set
 
-    @Column(length = 30, nullable = false)
+    @Column(length = CONTAINER_NAME_LENGTH_LIMIT, nullable = false)
     var name: String = name
         protected set
 
@@ -60,6 +60,7 @@ class ContainerEntity(
         protected set
     companion object {
         const val DEFAULT_CONTAINER_NAME = "보관함"
+        const val CONTAINER_NAME_LENGTH_LIMIT = 15
     }
 }
 
