@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.domain.space.controller
+package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity

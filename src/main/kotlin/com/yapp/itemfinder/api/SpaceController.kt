@@ -1,6 +1,5 @@
-package com.yapp.itemfinder.domain.space.controller
+package com.yapp.itemfinder.api
 
-import com.yapp.itemfinder.api.LoginMember
 import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import com.yapp.itemfinder.domain.space.service.SpaceService
