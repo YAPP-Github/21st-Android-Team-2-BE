@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 
 const val FILE_UPLOAD_FAIL = "파일 업로드 실패하였습니다."
 

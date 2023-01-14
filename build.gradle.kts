@@ -7,6 +7,7 @@ val mockkVersion: String by project
 val jjwtVersion: String by project
 val embeddedRedisVersion: String by project
 val springCloudAWSVersion: String by project
+val s3MockVersion: String by project
 
 plugins {
     id("org.springframework.boot") version "2.7.5"
@@ -67,6 +68,8 @@ dependencies {
 
     // aws
     implementation("io.awspring.cloud:spring-cloud-starter-aws:$springCloudAWSVersion")
+    // s3 mock
+    implementation("io.findify:s3mock_2.13:$s3MockVersion")
 }
 
 noArg {
