@@ -47,7 +47,6 @@ class ContainerService(
             space = space,
             name = containerRequest.name,
             iconType = containerRequest.icon,
-            description = containerRequest.description,
             imageUrl = containerRequest.url
         )
 

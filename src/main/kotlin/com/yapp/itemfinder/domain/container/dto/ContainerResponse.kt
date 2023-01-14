@@ -8,8 +8,6 @@ data class ContainerResponse(
     val icon: String,
     val spaceId: Long,
     val name: String,
-    val defaultItemType: String,
-    val description: String? = null,
     val imageUrl: String? = null
 ) {
     constructor(containerEntity: ContainerEntity) : this(
@@ -17,8 +15,6 @@ data class ContainerResponse(
         icon = containerEntity.iconType.name,
         spaceId = containerEntity.space.id,
         name = containerEntity.name,
-        defaultItemType = containerEntity.defaultItemType.name,
-        description = containerEntity.description,
         imageUrl = containerEntity.imageUrl
     )
 
@@ -27,8 +23,6 @@ data class ContainerResponse(
         icon = containerVo.iconType,
         spaceId = containerVo.spaceId,
         name = containerVo.name,
-        defaultItemType = containerVo.defaultItemType,
-        description = containerVo.description,
         imageUrl = containerVo.imageUrl
     )
 }

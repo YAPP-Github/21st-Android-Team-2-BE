@@ -43,8 +43,6 @@ class ContainerServiceTest : BehaviorSpec({
                         it.spaceId shouldBe givenSpaceId
                         it.iconType shouldBe givenContainer.iconType.name
                         it.name shouldBe givenContainer.name
-                        it.defaultItemType shouldBe givenContainer.defaultItemType.name
-                        it.description shouldBe givenContainer.description
                         it.imageUrl shouldBe givenContainer.imageUrl
                     }
                 }
@@ -90,8 +88,6 @@ class ContainerServiceTest : BehaviorSpec({
                     icon shouldBe givenContainer.iconType.name
                     spaceId shouldBe givenContainer.space.id
                     name shouldBe givenContainer.name
-                    defaultItemType shouldBe givenContainer.defaultItemType.name
-                    description shouldBe givenContainer.description
                     imageUrl shouldBe givenContainer.imageUrl
                 }
             }
@@ -108,7 +104,6 @@ class ContainerServiceTest : BehaviorSpec({
             name = "name",
             _icon = givenIconType.name,
             url = "https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png",
-            description = "description"
         )
 
         every { spaceRepository.findByIdAndMemberIdOrThrowException(givenSpaceId, givenMemberId) } returns givenSpace
@@ -136,7 +131,6 @@ class ContainerServiceTest : BehaviorSpec({
                         space.id shouldBe givenSpaceId
                         name shouldBe givenCreateContainerRequest.name
                         iconType shouldBe givenIconType
-                        description shouldBe givenCreateContainerRequest.description
                         imageUrl shouldBe givenCreateContainerRequest.url
                     }
                 }
