@@ -25,7 +25,7 @@ const val INVALID_FILE_FORMAT = "잘못된 파일 형식입니다."
 class ImageController(
     private val amazonS3Uploader: AmazonS3Uploader
 ) {
-    val fileMaxCnt = 1
+    val fileMaxCnt = 10
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(summary = "이미지 파일 등록")
