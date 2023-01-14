@@ -5,4 +5,7 @@ import java.time.ZoneId
 object Const {
     val KST_ZONE_ID = ZoneId.of("Asia/Seoul")
     const val BEARER = "Bearer"
+    enum class ImageFormat {
+        JPEG, JPG, PNG
+    }
 }
