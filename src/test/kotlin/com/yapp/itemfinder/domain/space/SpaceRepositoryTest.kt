@@ -10,7 +10,7 @@ import com.yapp.itemfinder.domain.member.MemberRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity as createFakeMemberEntity1
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 
 @RepositoryTest
 class SpaceRepositoryTest(
@@ -20,7 +20,7 @@ class SpaceRepositoryTest(
 ) : BehaviorSpec({
 
     Given("회원이 여러 공간에 해당하는 보관함을 등록했을 때") {
-        val givenMember = memberRepository.save(createFakeMemberEntity1())
+        val givenMember = memberRepository.save(createFakeMemberEntity())
         val firstSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
         val secondSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
 
@@ -55,7 +55,7 @@ class SpaceRepositoryTest(
     }
 
     Given("회원이 특정 공간을 저장했을 때") {
-        val givenMember = memberRepository.save(createFakeMemberEntity1())
+        val givenMember = memberRepository.save(createFakeMemberEntity())
         val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
 
         When("해당하는 회원 아이디와 저장한 공간 아이디로 공간을 조회한다면") {
@@ -77,7 +77,7 @@ class SpaceRepositoryTest(
     }
 
     Given("특정 회원이 특정 공간을 등록했을 때") {
-        val givenMember = memberRepository.save(createFakeMemberEntity1())
+        val givenMember = memberRepository.save(createFakeMemberEntity())
         val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
         val (givenSavedMemberId, givenSavedSpaceId) = givenMember.id to givenSpace.id
 
