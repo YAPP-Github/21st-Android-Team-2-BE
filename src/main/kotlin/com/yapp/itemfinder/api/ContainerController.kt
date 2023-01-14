@@ -1,6 +1,5 @@
-package com.yapp.itemfinder.domain.container.controller
+package com.yapp.itemfinder.api
 
-import com.yapp.itemfinder.api.LoginMember
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.service.ContainerService
