@@ -43,7 +43,6 @@ object FakeEntity {
         name: String = "컨테이너 이름",
         space: SpaceEntity,
         iconType: IconType = IconType.IC_CONTAINER_1,
-        description: String = "설명",
         imageUrl: String = "image URL"
     ): ContainerEntity {
         return ContainerEntity(
@@ -51,7 +50,6 @@ object FakeEntity {
             name = name,
             space = space,
             iconType = iconType,
-            description = description,
             imageUrl = imageUrl
         )
     }

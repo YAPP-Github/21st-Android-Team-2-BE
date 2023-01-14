@@ -7,8 +7,6 @@ data class ContainerVo(
     val iconType: String,
     val spaceId: Long,
     val name: String,
-    val defaultItemType: String,
-    val description: String? = null,
     val imageUrl: String? = null
 ) {
     constructor(containerEntity: ContainerEntity) : this(
@@ -16,8 +14,6 @@ data class ContainerVo(
         iconType = containerEntity.iconType.name,
         spaceId = containerEntity.space.id,
         name = containerEntity.name,
-        defaultItemType = containerEntity.defaultItemType.name,
-        description = containerEntity.description,
         imageUrl = containerEntity.imageUrl
     )
 }

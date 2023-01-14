@@ -169,10 +169,8 @@ class SpaceServiceTest : BehaviorSpec({
                         topContainers.size shouldBe 1
                         topContainers[0].id shouldBe givenContainerVos[0].id
                         topContainers[0].icon shouldBe givenContainerVos[0].iconType
-                        topContainers[0].description shouldBe givenContainerVos[0].description
                         topContainers[0].imageUrl shouldBe givenContainerVos[0].imageUrl
                         topContainers[0].spaceId shouldBe givenContainerVos[0].spaceId
-                        topContainers[0].defaultItemType shouldBe givenContainerVos[0].defaultItemType
                     }
                 }
             }

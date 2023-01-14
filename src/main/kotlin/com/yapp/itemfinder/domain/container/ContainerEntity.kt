@@ -1,15 +1,11 @@
 package com.yapp.itemfinder.domain.container
 
 import com.yapp.itemfinder.domain.BaseEntity
-import com.yapp.itemfinder.domain.item.ItemType
 import com.yapp.itemfinder.domain.space.SpaceEntity
-import org.hibernate.annotations.ColumnDefault
 import javax.persistence.AttributeConverter
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -26,9 +22,7 @@ import javax.persistence.Table
 class ContainerEntity(
     space: SpaceEntity,
     name: String = DEFAULT_CONTAINER_NAME,
-    defaultItemType: ItemType = ItemType.LIFESTYLE,
     iconType: IconType = IconType.IC_CONTAINER_1,
-    description: String? = null,
     imageUrl: String? = null,
     id: Long = 0L
 ) : BaseEntity(id) {
@@ -38,14 +32,8 @@ class ContainerEntity(
     var space: SpaceEntity = space
         protected set
 
-    @Column(length = 30, nullable = false)
+    @Column(length = CONTAINER_NAME_LENGTH_LIMIT, nullable = false)
     var name: String = name
-        protected set
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
-    @ColumnDefault("'LIFESTYLE'")
-    var defaultItemType: ItemType = defaultItemType
         protected set
 
     @Convert(converter = IconTypeConverter::class)
@@ -53,13 +41,11 @@ class ContainerEntity(
     var iconType: IconType = iconType
         protected set
 
-    var description: String? = description
-        protected set
-
     var imageUrl: String? = imageUrl
         protected set
     companion object {
         const val DEFAULT_CONTAINER_NAME = "보관함"
+        const val CONTAINER_NAME_LENGTH_LIMIT = 15
     }
 }
 
