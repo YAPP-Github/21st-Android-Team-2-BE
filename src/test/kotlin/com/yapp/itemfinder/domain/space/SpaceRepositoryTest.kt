@@ -84,7 +84,7 @@ class SpaceRepositoryTest(
         When("해당 회원이 등록하지 않은 공간에 대해 조회한다면") {
             val otherOtherSpaceId = generateRandomPositiveLongValue()
 
-            Then("조회한 결과가 없으므로 예외가 발생한다") {
+            Then("조회된 공간이 없으므로 예외가 발생한다") {
                 shouldThrow<BadRequestException> {
                     spaceRepository.findByIdAndMemberIdOrThrowException(id = otherOtherSpaceId, memberId = givenSavedMemberId)
                 }
@@ -94,7 +94,7 @@ class SpaceRepositoryTest(
         When("해당 회원이 등록한 공간에 대해 조회한다면") {
             val result = spaceRepository.findByIdAndMemberIdOrThrowException(id = givenSavedSpaceId, memberId = givenSavedMemberId)
 
-            Then("해당하는 공간의 정보를 반환한다") {
+            Then("조회된 공간이 있으므로 해당하는 공간의 정보를 반환한다") {
                 result shouldBe givenSpace
             }
         }

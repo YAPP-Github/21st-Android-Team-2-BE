@@ -72,7 +72,7 @@ class ContainerServiceTest : BehaviorSpec({
     Given("공간에 등록된 보관함을 조회할 때") {
         val (givenMemberId, givenSpaceId) = generateRandomPositiveLongValue() to generateRandomPositiveLongValue()
 
-        When("요청한 유저가 전달한 공간 아이디로 실제 등록된 공간이 존재한다면") {
+        When("유저가 전달한 공간 아이디로 실제 등록된 공간이 존재한다면") {
             val givenSpace = createFakeSpaceEntity(id = givenSpaceId)
             val givenContainer = createFakeContainerEntity(space = givenSpace)
 
@@ -81,7 +81,7 @@ class ContainerServiceTest : BehaviorSpec({
 
             val response = containerService.findContainersInSpace(requestMemberId = givenMemberId, spaceId = givenSpaceId)
 
-            Then("해당하는 보관함 정보를 반환한다") {
+            Then("해당하는 공간에 등록된 보관함 정보들을 반환한다") {
                 response.size shouldBe 1
                 with(response.first()) {
                     id shouldBe givenContainer.id
@@ -111,7 +111,7 @@ class ContainerServiceTest : BehaviorSpec({
         When("요청한 보관함명과 동일한 이름으로 등록된 보관함이 이미 존재한다면") {
             every { containerRepository.findBySpaceIdAndName(givenSpaceId, givenCreateContainerRequest.name) } returns createFakeContainerEntity(space = givenSpace)
 
-            Then("해당 보관함을 추가할 수 있다") {
+            Then("해당 보관함을 추가할 수 없다") {
                 shouldThrow<ConflictException> {
                     containerService.createContainer(givenMemberId, givenCreateContainerRequest)
                 }
@@ -124,7 +124,7 @@ class ContainerServiceTest : BehaviorSpec({
             every { containerRepository.findBySpaceIdAndName(givenSpaceId, givenCreateContainerRequest.name) } returns null
             every { containerRepository.save(capture(containerCaptor)) } returns createFakeContainerEntity(space = givenSpace)
 
-            Then("해당 보관함을 공간에 추가할 수 없다") {
+            Then("해당 보관함을 공간에 추가할 수 있다") {
                 assertSoftly {
                     containerService.createContainer(givenMemberId, givenCreateContainerRequest)
                     with(containerCaptor.captured) {
