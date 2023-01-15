@@ -35,5 +35,6 @@ cloud:
     aws:
         s3:
             bucket: bucket
+            region: ap-northeast-2
         stack:
             auto: false
