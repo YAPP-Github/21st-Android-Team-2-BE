@@ -55,7 +55,7 @@ class ImageControllerTest : ControllerIntegrationTest() {
     @Test
     fun `파일 개수가 10개를 초과하면 등록할 수 없다`() {
         // given
-        val key = "image"
+        val key = "images"
         val multipartFile = MockMultipartFile(key, "fileName.pdf", APPLICATION_PDF_VALUE, "test".toByteArray())
 
         // when & expect
