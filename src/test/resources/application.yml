@@ -30,8 +30,9 @@ jwt:
 
 cloud:
     aws:
+        region.static: ap-northeast-2
         s3:
             bucket: bucket
-            region: ap-northeast-2
+            mock.port: 8001
         stack:
             auto: false

@@ -14,11 +14,14 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 @TestConfiguration
-class AmazonS3TestConfig {
-    private val port = 8001
-    private val region = "ap-northeast-2"
+class AmazonS3TestConfig(
+    @Value("\${cloud.aws.s3.mock.port}")
+    private val port: Int,
+    @Value("\${cloud.aws.region.static}")
+    private val region: String,
     @Value("\${cloud.aws.s3.bucket}")
-    private val bucket = ""
+    private val bucket: String
+) {
     private lateinit var s3Mock: S3Mock
 
     @Bean
