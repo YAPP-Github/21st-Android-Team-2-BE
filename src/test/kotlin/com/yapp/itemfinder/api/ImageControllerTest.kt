@@ -15,7 +15,7 @@ class ImageControllerTest : ControllerIntegrationTest() {
     @Test
     fun `회원은 이미지를 등록할 수 있다`() {
         // given
-        val key = "image"
+        val key = "images"
         val multipartFile = MockMultipartFile(key, "imageName.png", IMAGE_PNG.mimeType, "test".toByteArray())
 
         // when
@@ -35,7 +35,7 @@ class ImageControllerTest : ControllerIntegrationTest() {
     @Test
     fun `이미지가 아닌 파일은 등록할 수 없다`() {
         // given
-        val key = "image"
+        val key = "images"
         val multipartFile = MockMultipartFile(key, "fileName.pdf", APPLICATION_PDF_VALUE, "test".toByteArray())
 
         // when

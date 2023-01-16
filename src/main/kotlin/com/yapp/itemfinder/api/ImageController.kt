@@ -19,14 +19,13 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 const val INVALID_FILE_FORMAT = "잘못된 파일 형식입니다."
+const val FILE_MAX_AVAILABLE_COUNT = 10
 
 @RestController
 @RequestMapping("/images")
 class ImageController(
     private val amazonS3Uploader: AmazonS3Uploader
 ) {
-    val fileMaxCnt = 10
-
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(summary = "이미지 파일 등록")
     @ApiResponses(
@@ -41,15 +40,15 @@ class ImageController(
     )
     fun addImage(
         @LoginMember member: MemberEntity,
-        @Parameter(description = "multipart/form-data 형식의 이미지 리스트(개수 제한 10개).<br> key 값은 image.")
+        @Parameter(description = "multipart/form-data 형식의 이미지 리스트(개수 제한 10개).<br> key 값은 images.")
         @RequestPart
-        image: List<MultipartFile>
+        images: List<MultipartFile>
     ): List<ImageResponse> {
-        if (image.size > fileMaxCnt) {
-            throw BadRequestException(message = "파일은 최대 ${fileMaxCnt}개까지 업로드할 수 있습니다.")
+        if (images.size > FILE_MAX_AVAILABLE_COUNT) {
+            throw BadRequestException(message = "파일은 최대 ${FILE_MAX_AVAILABLE_COUNT}개까지 업로드할 수 있습니다.")
         }
-        image.map { validateImageFile(it) }
-        return image.map { ImageResponse(url = amazonS3Uploader.uploadFile(it)) }
+        images.map { validateImageFile(it) }
+        return images.map { ImageResponse(url = amazonS3Uploader.uploadFile(it)) }
     }
 
     private fun validateImageFile(file: MultipartFile) {
