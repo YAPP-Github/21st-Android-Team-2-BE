@@ -1,6 +1,5 @@
-package com.yapp.itemfinder.domain.auth.controller
+package com.yapp.itemfinder.api
 
-import com.yapp.itemfinder.api.LoginMember
 import com.yapp.itemfinder.api.exception.ErrorResponse
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.auth.service.AuthService

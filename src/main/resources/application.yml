@@ -5,6 +5,11 @@ spring:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MariaDBDialect
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+      
 springdoc:
   api-docs:
     path: "/api-docs"
@@ -24,7 +29,7 @@ spring:
   redis:
     host: localhost
     port: 6379
-
+    
 admin:
   username: "1"
   password: "test"
@@ -35,7 +40,17 @@ logging:
 
 jwt:
     secret: 5dc5ef5de6e3094ec5fd308585eeff44950e9d8b87e95044bcbf7ec7200fd968632d73ee605c07df2a9d1f7dd6e5ced6903f9d029f682464079d311daeebb339
-
+    
+cloud:
+    aws:
+        region.static: ap-northeast-2
+        s3:
+            bucket: bucket
+            mock.port: 8001
+        stack:
+            auto: false
+        
+            
 ---
 spring:
   config:

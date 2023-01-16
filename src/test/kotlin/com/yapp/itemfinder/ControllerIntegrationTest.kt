@@ -22,7 +22,7 @@ import org.springframework.web.filter.CharacterEncodingFilter
 
 @SpringBootTest
 @Transactional
-@Import(EmbeddedRedisConfig::class)
+@Import(EmbeddedRedisConfig::class, AmazonS3TestConfig::class)
 abstract class ControllerIntegrationTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper

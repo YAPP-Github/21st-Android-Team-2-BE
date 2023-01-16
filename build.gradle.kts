@@ -6,6 +6,8 @@ val kotestVersion: String by project
 val mockkVersion: String by project
 val jjwtVersion: String by project
 val embeddedRedisVersion: String by project
+val springCloudAWSVersion: String by project
+val s3MockVersion: String by project
 
 plugins {
     id("org.springframework.boot") version "2.7.5"
@@ -63,6 +65,11 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
+
+    // aws
+    implementation("io.awspring.cloud:spring-cloud-starter-aws:$springCloudAWSVersion")
+    // s3 mock
+    implementation("io.findify:s3mock_2.13:$s3MockVersion")
 }
 
 noArg {

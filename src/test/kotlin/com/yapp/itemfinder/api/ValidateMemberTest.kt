@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.domain.auth.controller
+package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.common.Const.BEARER
