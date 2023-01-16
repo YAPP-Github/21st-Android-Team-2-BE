@@ -47,6 +47,9 @@ cloud:
         s3:
             bucket: bucket
             mock.port: 8001
+        stack:
+            auto: false
+        
             
 ---
 spring:
