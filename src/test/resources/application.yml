@@ -15,9 +15,6 @@ spring:
   redis:
       host: localhost
       port: 6379
-  
-  main:
-      allow-circular-references: true
 
 admin:
   username: "test"
