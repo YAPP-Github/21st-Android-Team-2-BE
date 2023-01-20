@@ -68,7 +68,7 @@ class ItemEntity(
     @OneToMany(mappedBy = "item", orphanRemoval = true)
     var tags: MutableList<ItemTagEntity> = mutableListOf()
 
-    @Column(length = 255)
+    @Column(length = 200)
     var description: String? = description
         protected set
 
