@@ -9,7 +9,6 @@ import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
 import javax.persistence.CollectionTable
 import javax.persistence.Column
-import javax.persistence.Convert
 import javax.persistence.ElementCollection
 import javax.persistence.Embedded
 import javax.persistence.Entity
@@ -31,7 +30,6 @@ import javax.persistence.Table
 class ItemEntity(
     id: Long = 0L,
     container: ContainerEntity,
-    detailTemplate: ItemDetailTemplate,
     name: String,
     type: ItemType,
     dueDate: LocalDateTime? = null,
@@ -39,9 +37,6 @@ class ItemEntity(
     imageUrls: MutableList<String> = mutableListOf(),
     itemPin: ItemPin? = null
 ) : BaseEntity(id) {
-    @Convert(converter = ItemDetailTemplateConverter::class)
-    var detailTemplate: ItemDetailTemplate = detailTemplate
-        protected set
 
     @Column(length = 30, nullable = false)
     var name: String = name
