@@ -4,6 +4,8 @@ import com.yapp.itemfinder.domain.BaseEntity
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.tag.ItemTagEntity
 import org.hibernate.annotations.DynamicUpdate
+import scala.reflect.internal.util.Statistics.Quantity
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
@@ -32,7 +34,9 @@ class ItemEntity(
     container: ContainerEntity,
     name: String,
     type: ItemType,
+    quantity: Int,
     dueDate: LocalDateTime? = null,
+    purchaseDate: LocalDate? = null,
     description: String? = null,
     imageUrls: MutableList<String> = mutableListOf(),
     itemPin: ItemPin? = null
@@ -44,6 +48,10 @@ class ItemEntity(
 
     @Column(nullable = false)
     var type: ItemType = type
+        protected set
+
+    @Column(nullable = false)
+    var quantity: Int = quantity
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -73,6 +81,9 @@ class ItemEntity(
         protected set
 
     var dueDate: LocalDateTime? = dueDate
+        protected set
+
+    var purchaseDate: LocalDate? = purchaseDate
         protected set
 
     fun updateTags(tags: List<ItemTagEntity>) {
