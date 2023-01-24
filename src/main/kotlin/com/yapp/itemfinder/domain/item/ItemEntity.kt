@@ -1,18 +1,16 @@
 package com.yapp.itemfinder.domain.item
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.BaseEntity
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.tag.ItemTagEntity
 import org.hibernate.annotations.DynamicUpdate
-import scala.reflect.internal.util.Statistics.Quantity
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
-import javax.persistence.CollectionTable
 import javax.persistence.Column
 import javax.persistence.Convert
-import javax.persistence.ElementCollection
 import javax.persistence.Embedded
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -42,6 +40,9 @@ class ItemEntity(
     imageUrls: MutableList<String> = mutableListOf(),
     itemPin: ItemPin? = null
 ) : BaseEntity(id) {
+    init {
+        validateItemPin(itemPin, container)
+    }
 
     @Column(length = 30, nullable = false)
     var name: String = name
@@ -88,5 +89,13 @@ class ItemEntity(
 
     fun updateTags(tags: List<ItemTagEntity>) {
         this.tags = tags.toMutableList()
+    }
+
+    private fun validateItemPin(itemPin: ItemPin?, container: ContainerEntity) {
+        itemPin?.let {
+            requireNotNull(container.imageUrl) {
+                throw BadRequestException(message = "핀을 등록할 수 없습니다")
+            }
+        }
     }
 }
