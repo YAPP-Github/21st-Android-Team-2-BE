@@ -4,7 +4,7 @@ import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
 enum class ItemType(val value: String) {
-    LIFESTYLE("생활용품"),
+    LIFESTYLE("생활"),
     FOOD("식품"),
     CLOTH("의류"),
 }
