@@ -9,6 +9,7 @@ import com.yapp.itemfinder.domain.space.SpaceRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
 @RepositoryTest
 class ContainerRepositoryTest(
@@ -47,6 +48,17 @@ class ContainerRepositoryTest(
                     iconType shouldBe givenIconTypes.last()
                     id shouldBe givenContainers.last().id
                 }
+            }
+        }
+
+        When("등록된 보관함을 보관함 아이디와 회원 아이디로 조회하면") {
+            val container = containerRepository.findWithSpaceByIdAndMemberId(givenContainers[0].id, givenMember.id)
+
+            Then("보관함과 공간 정보를 반환한다") {
+                container shouldNotBe null
+                container!!.id shouldBe(givenContainers[0].id)
+                container.space.name shouldBe givenSpace.name
+                container.space.member.id shouldBe givenMember.id
             }
         }
     }

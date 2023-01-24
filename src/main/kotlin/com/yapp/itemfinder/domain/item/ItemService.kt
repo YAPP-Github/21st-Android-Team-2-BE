@@ -33,7 +33,9 @@ class ItemService(
                 itemPin = request.pinX?.let { x -> request.pinY?.let { y -> ItemPin(x, y) } }
             )
         )
-        item.updateTags(itemTagService.createItemTags(item, request.tagIds, memberId))
+        if (request.tagIds.isNotEmpty()) {
+            itemTagService.createItemTags(item, request.tagIds, memberId)
+        }
         return ItemResponse(item)
     }
 }

@@ -16,7 +16,6 @@ import javax.validation.Valid
 class ItemController(
     private val itemService: ItemService
 ) {
-
     @Operation(summary = "물건 등록")
     @PostMapping
     fun createItem(
