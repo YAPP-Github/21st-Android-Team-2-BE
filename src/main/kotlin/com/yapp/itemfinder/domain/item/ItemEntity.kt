@@ -11,6 +11,7 @@ import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
 import javax.persistence.CollectionTable
 import javax.persistence.Column
+import javax.persistence.Convert
 import javax.persistence.ElementCollection
 import javax.persistence.Embedded
 import javax.persistence.Entity
@@ -67,8 +68,7 @@ class ItemEntity(
     var itemPin: ItemPin? = itemPin
         protected set
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "item_image", joinColumns = [JoinColumn(name = "item_id")])
+    @Convert(converter = ItemImageUrlsConverter::class)
     @Column(name = "url")
     var imageUrls: MutableList<String> = imageUrls
         protected set
