@@ -2,7 +2,7 @@ package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
-import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
+import com.yapp.itemfinder.domain.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.dto.SpaceResponse
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
 import io.kotest.matchers.shouldBe
