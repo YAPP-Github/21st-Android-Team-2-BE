@@ -13,9 +13,10 @@ class ItemTagService(
 ) {
     @Transactional
     fun createItemTags(item: ItemEntity, tagIds: List<Long>, memberId: Long): List<ItemTagEntity> {
-        val itemTags = tagRepository.findByIdIsInAndMemberId(tagIds, memberId)
+        val distinctTagIds = tagIds.distinct()
+        val itemTags = tagRepository.findByIdIsInAndMemberId(distinctTagIds, memberId)
             .also {
-                require(it.size == tagIds.size) {
+                require(it.size == distinctTagIds.size) {
                     throw BadRequestException(message = "존재하지 않는 태그 아이디입니다.")
                 }
             }
