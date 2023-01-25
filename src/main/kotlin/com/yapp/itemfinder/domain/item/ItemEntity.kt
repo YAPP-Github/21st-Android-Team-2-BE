@@ -71,7 +71,6 @@ class ItemEntity(
         protected set
 
     @Convert(converter = ItemImageUrlsConverter::class)
-    @Column(name = "url")
     var imageUrls: MutableList<String> = imageUrls
         protected set
 
