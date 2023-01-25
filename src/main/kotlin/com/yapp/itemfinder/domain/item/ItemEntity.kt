@@ -42,6 +42,7 @@ class ItemEntity(
 ) : BaseEntity(id) {
     init {
         validateItemPin(itemPin, container)
+        validateDueDate(type, dueDate)
     }
 
     @Column(length = 30, nullable = false)
@@ -95,6 +96,14 @@ class ItemEntity(
         itemPin?.let {
             requireNotNull(container.imageUrl) {
                 throw BadRequestException(message = "핀을 등록할 수 없습니다")
+            }
+        }
+    }
+
+    private fun validateDueDate(itemType: ItemType, dueDate: LocalDateTime?) {
+        dueDate?.let {
+            require(itemType != ItemType.FASHION) {
+                throw BadRequestException(message = "패션 카테고리에는 소비기한을 등록할 수 없습니다")
             }
         }
     }
