@@ -61,7 +61,7 @@ object FakeEntity {
         id: Long = generateRandomPositiveLongValue(),
         container: ContainerEntity = createFakeContainerEntity(space = createFakeSpaceEntity()),
         name: String = generateRandomString(10),
-        type: ItemType = ItemType.LIFESTYLE,
+        type: ItemType = ItemType.LIFE,
         quantity: Int = 1
     ): ItemEntity {
         return ItemEntity(

@@ -27,7 +27,7 @@ class ItemServiceTest : BehaviorSpec({
         every { itemTagService.createItemTags(any(), any(), any()) } returns listOf()
 
         When("회원이 핀 정보가 없는 물건을 등록하면") {
-            val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFESTYLE.name, quantity = 1)
+            val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFE.name, quantity = 1)
             val itemResponse = itemService.createItem(request, givenMember.id)
 
             Then("물건이 추가된다") {
@@ -39,7 +39,7 @@ class ItemServiceTest : BehaviorSpec({
         }
 
         When("회원이 핀 정보가 있는 물건을 등록하면") {
-            val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFESTYLE.name, quantity = 1, pinX = 2F, pinY = 3F)
+            val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFE.name, quantity = 1, pinX = 2F, pinY = 3F)
 
             Then("예외가 발생한다") {
                 shouldThrow<BadRequestException> {

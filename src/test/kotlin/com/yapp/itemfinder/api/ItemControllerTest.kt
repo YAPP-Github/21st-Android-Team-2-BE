@@ -17,7 +17,7 @@ class ItemControllerTest : ControllerIntegrationTest() {
         // given
         val givenSpace = spaceRepository.save(FakeEntity.createFakeSpaceEntity(member = testMember))
         val givenContainer = containerRepository.save(FakeEntity.createFakeContainerEntity(space = givenSpace))
-        val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFESTYLE.name, quantity = 1)
+        val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFE.name, quantity = 1)
 
         // when
         val result = mockMvc.post("/items") {
@@ -32,7 +32,7 @@ class ItemControllerTest : ControllerIntegrationTest() {
         val itemResponse = objectMapper.readValue(result.response.contentAsString, ItemResponse::class.java)
         with(itemResponse) {
             name shouldBe request.name
-            category shouldBe ItemType.LIFESTYLE.value
+            category shouldBe ItemType.LIFE.value
             quantity shouldBe request.quantity
             containerName shouldBe givenContainer.name
             containerImageUrl shouldBe givenContainer.imageUrl
