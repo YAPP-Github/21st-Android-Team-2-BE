@@ -11,6 +11,6 @@ class EnumValidator : ConstraintValidator<EnumType, String> {
     }
 
     override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
-        return this.annotation.enumClass.java.enumConstants.firstOrNull() { it.name == value } != null
+        return this.annotation.enumClass.java.enumConstants.firstOrNull { it.name == value } != null
     }
 }
