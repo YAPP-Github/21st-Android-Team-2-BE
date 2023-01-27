@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.domain.item.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.yapp.itemfinder.domain.item.ItemEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -13,7 +14,9 @@ data class ItemDetailResponse(
     val containerName: String,
     val tags: List<String>,
     val description: String? = null,
+    @JsonFormat(pattern = "yyyy.MM.dd")
     val purchaseDate: LocalDate? = null,
+    @JsonFormat(pattern = "yyyy.MM.dd")
     val useByDate: LocalDateTime? = null,
     val containerImageUrl: String? = null,
     val pinX: Float? = null,
