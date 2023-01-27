@@ -40,6 +40,33 @@ class ItemEntity(
     imageUrls: List<String> = emptyList(),
     itemPin: ItemPin? = null
 ) : BaseEntity(id) {
+    constructor(
+        id: Long = 0L,
+        container: ContainerEntity,
+        name: String,
+        type: ItemType,
+        quantity: Int,
+        dueDate: LocalDateTime? = null,
+        purchaseDate: LocalDate? = null,
+        description: String? = null,
+        imageUrls: List<String> = emptyList(),
+        pinX: Float? = null,
+        pinY: Float? = null
+    ) : this(
+        id = id,
+        container = container,
+        name = name,
+        type = type,
+        quantity = quantity,
+        dueDate = dueDate,
+        purchaseDate = purchaseDate,
+        description = description,
+        imageUrls = imageUrls,
+        itemPin = if (pinX != null && pinY != null) {
+            ItemPin(pinX, pinY)
+        } else null
+    )
+
     init {
         validateItemPin(itemPin, container)
         validateDueDate(type, dueDate)

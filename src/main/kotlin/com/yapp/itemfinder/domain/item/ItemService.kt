@@ -30,7 +30,8 @@ class ItemService(
                 purchaseDate = request.purchaseDate,
                 description = request.description,
                 imageUrls = request.imageUrls,
-                itemPin = request.pinX?.let { x -> request.pinY?.let { y -> ItemPin(x, y) } }
+                pinX = request.pinX,
+                pinY = request.pinY
             )
         )
         if (request.tagIds.isNotEmpty()) {
