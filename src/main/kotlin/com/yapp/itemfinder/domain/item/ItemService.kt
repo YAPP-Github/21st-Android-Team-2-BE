@@ -29,7 +29,7 @@ class ItemService(
                 dueDate = request.useByDate,
                 purchaseDate = request.purchaseDate,
                 description = request.description,
-                imageUrls = request.imageUrls.map { it.url } as MutableList<String>,
+                imageUrls = request.imageUrls.map { it.url },
                 itemPin = request.pinX?.let { x -> request.pinY?.let { y -> ItemPin(x, y) } }
             )
         )

@@ -37,7 +37,7 @@ class ItemEntity(
     dueDate: LocalDateTime? = null,
     purchaseDate: LocalDate? = null,
     description: String? = null,
-    imageUrls: MutableList<String> = mutableListOf(),
+    imageUrls: List<String> = emptyList(),
     itemPin: ItemPin? = null
 ) : BaseEntity(id) {
     init {
@@ -71,7 +71,7 @@ class ItemEntity(
         protected set
 
     @Convert(converter = ItemImageUrlsConverter::class)
-    var imageUrls: MutableList<String> = imageUrls
+    var imageUrls: List<String> = imageUrls
         protected set
 
     @OneToMany(mappedBy = "item", orphanRemoval = true)

@@ -11,8 +11,7 @@ class ItemImageUrlsConverter : AttributeConverter<List<String>, String> {
         return attribute.joinToString(splitChar)
     }
 
-    override fun convertToEntityAttribute(dbData: String?): List<String> {
-        return dbData?.split(splitChar)?.toMutableList()
-            ?: listOf()
+    override fun convertToEntityAttribute(dbData: String): List<String> {
+        return dbData.split(splitChar)
     }
 }
