@@ -17,7 +17,7 @@ class ItemControllerTest : ControllerIntegrationTest() {
         // given
         val givenSpace = spaceRepository.save(FakeEntity.createFakeSpaceEntity(member = testMember))
         val givenContainer = containerRepository.save(FakeEntity.createFakeContainerEntity(space = givenSpace))
-        val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", category = ItemType.LIFE.name, quantity = 1)
+        val request = CreateItemRequest(containerId = givenContainer.id, name = "물건 이름", itemType = ItemType.LIFE.name, quantity = 1)
 
         // when
         val result = mockMvc.post("/items") {

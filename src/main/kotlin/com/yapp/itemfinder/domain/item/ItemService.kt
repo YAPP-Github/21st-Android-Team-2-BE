@@ -24,12 +24,12 @@ class ItemService(
             ItemEntity(
                 container = container,
                 name = request.name,
-                type = ItemType.valueOf(request.category),
+                type = ItemType.valueOf(request.itemType),
                 quantity = request.quantity,
                 dueDate = request.useByDate,
                 purchaseDate = request.purchaseDate,
                 description = request.description,
-                imageUrls = request.imageUrls.map { it.url },
+                imageUrls = request.imageUrls,
                 itemPin = request.pinX?.let { x -> request.pinY?.let { y -> ItemPin(x, y) } }
             )
         )
