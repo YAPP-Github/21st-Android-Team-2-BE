@@ -4,7 +4,7 @@ import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.domain.item.ItemType
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
-import com.yapp.itemfinder.domain.item.dto.ItemResponse
+import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -29,10 +29,10 @@ class ItemControllerTest : ControllerIntegrationTest() {
         }.andReturn()
 
         // then
-        val itemResponse = objectMapper.readValue(result.response.contentAsString, ItemResponse::class.java)
+        val itemResponse = objectMapper.readValue(result.response.contentAsString, ItemDetailResponse::class.java)
         with(itemResponse) {
             name shouldBe request.name
-            category shouldBe ItemType.LIFE.value
+            itemType shouldBe ItemType.LIFE.name
             quantity shouldBe request.quantity
             containerName shouldBe givenContainer.name
             containerImageUrl shouldBe givenContainer.imageUrl

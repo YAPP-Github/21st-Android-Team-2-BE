@@ -4,9 +4,9 @@ import com.yapp.itemfinder.domain.item.ItemEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class ItemResponse(
+data class ItemDetailResponse(
     val name: String,
-    val category: String,
+    val itemType: String,
     val quantity: Int,
     val imageUrls: List<String>,
     val spaceName: String,
@@ -21,7 +21,7 @@ data class ItemResponse(
 ) {
     constructor(item: ItemEntity) : this(
         name = item.name,
-        category = item.type.value,
+        itemType = item.type.name,
         quantity = item.quantity,
         imageUrls = item.imageUrls,
         spaceName = item.container.space.name,

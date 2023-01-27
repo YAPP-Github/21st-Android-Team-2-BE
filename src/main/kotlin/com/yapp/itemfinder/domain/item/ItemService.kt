@@ -3,7 +3,7 @@ package com.yapp.itemfinder.domain.item
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
-import com.yapp.itemfinder.domain.item.dto.ItemResponse
+import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +16,7 @@ class ItemService(
     private val itemTagService: ItemTagService
 ) {
     @Transactional
-    fun createItem(request: CreateItemRequest, memberId: Long): ItemResponse {
+    fun createItem(request: CreateItemRequest, memberId: Long): ItemDetailResponse {
         val container = containerRepository.findWithSpaceByIdAndMemberId(request.containerId, memberId)
             ?: throw BadRequestException(message = "존재하지 않는 보관함입니다")
 
@@ -36,6 +36,6 @@ class ItemService(
         if (request.tagIds.isNotEmpty()) {
             itemTagService.createItemTags(item, request.tagIds, memberId)
         }
-        return ItemResponse(item)
+        return ItemDetailResponse(item)
     }
 }
