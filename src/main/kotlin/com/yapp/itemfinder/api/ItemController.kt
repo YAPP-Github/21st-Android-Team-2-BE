@@ -1,5 +1,7 @@
 package com.yapp.itemfinder.api
 
+import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.validation.UrlValidator
 import com.yapp.itemfinder.domain.item.ItemService
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemResponse
@@ -14,7 +16,8 @@ import javax.validation.Valid
 @RequestMapping("/items")
 @RestController
 class ItemController(
-    private val itemService: ItemService
+    private val itemService: ItemService,
+    private val urlValidator: UrlValidator
 ) {
     @Operation(summary = "물건 등록")
     @PostMapping
@@ -22,6 +25,10 @@ class ItemController(
         @LoginMember member: MemberEntity,
         @RequestBody @Valid createItemRequest: CreateItemRequest
     ): ItemResponse {
+        require(urlValidator.isValid(createItemRequest.imageUrls)) {
+            throw BadRequestException(message = "url 형식이 올바르지 않습니다")
+        }
+
         return itemService.createItem(createItemRequest, member.id)
     }
 }
