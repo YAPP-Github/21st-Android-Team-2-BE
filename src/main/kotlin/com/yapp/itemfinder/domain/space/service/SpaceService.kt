@@ -4,7 +4,7 @@ import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.space.SpaceRepository
-import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
+import com.yapp.itemfinder.domain.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.dto.SpaceResponse

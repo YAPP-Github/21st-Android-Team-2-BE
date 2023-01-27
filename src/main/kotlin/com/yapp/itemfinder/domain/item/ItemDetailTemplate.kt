@@ -33,7 +33,7 @@ class ClothDetailTemplate(
     val color: String? = null,
     val season: ClothSeason? = null,
     val purpose: String? = null,
-    override val type: ItemType = ItemType.CLOTH
+    override val type: ItemType = ItemType.FASHION
 ) : ItemDetailTemplate {
     enum class ClothSeason {
         SPRING, SUMMER, AUTUMN, WINTER,
@@ -42,7 +42,7 @@ class ClothDetailTemplate(
 
 class LifeStyleDetailTemplate(
     val brand: String? = null,
-    override val type: ItemType = ItemType.LIFESTYLE
+    override val type: ItemType = ItemType.LIFE
 ) : ItemDetailTemplate
 
 @Converter

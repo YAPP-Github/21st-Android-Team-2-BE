@@ -13,7 +13,7 @@ import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.container.service.ContainerVo
 import com.yapp.itemfinder.domain.space.SpaceRepository
-import com.yapp.itemfinder.domain.entity.space.dto.CreateSpaceRequest
+import com.yapp.itemfinder.domain.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceWithContainerCount
 import io.kotest.assertions.assertSoftly

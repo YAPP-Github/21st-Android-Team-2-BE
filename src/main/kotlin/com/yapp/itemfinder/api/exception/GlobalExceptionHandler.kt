@@ -26,7 +26,13 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any> {
         logger.error("message=${ex.message}")
-        val message = ex.bindingResult.fieldErrors.joinToString(", ") { fieldError -> fieldError.defaultMessage.orEmpty() }
+        val message = ex.bindingResult.fieldErrors.joinToString(", ") { fieldError ->
+            if (fieldError.defaultMessage == null) {
+                "${fieldError.field} 의 형식이 올바르지 않습니다"
+            } else {
+                "${fieldError.field} 는 ${fieldError.defaultMessage}"
+            }
+        }
         return ResponseEntity.badRequest()
             .body(ErrorResponse(message = message))
     }

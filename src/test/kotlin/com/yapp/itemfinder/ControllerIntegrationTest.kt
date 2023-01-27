@@ -3,6 +3,7 @@ package com.yapp.itemfinder
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import com.yapp.itemfinder.api.LoginMemberResolver
+import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
@@ -34,6 +35,9 @@ abstract class ControllerIntegrationTest {
 
     @Autowired
     lateinit var spaceRepository: SpaceRepository
+
+    @Autowired
+    lateinit var containerRepository: ContainerRepository
 
     @MockkBean
     lateinit var loginMemberArgumentResolver: LoginMemberResolver
