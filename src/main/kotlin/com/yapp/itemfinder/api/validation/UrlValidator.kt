@@ -33,7 +33,7 @@ class ImageUrlValidator(
     }
 }
 
-@Profile("!dev", "!prod")
+@Profile("!dev & !prod")
 @Component
 class SimpleUrlValidator : UrlValidator {
     override fun isValid(url: String): Boolean {
