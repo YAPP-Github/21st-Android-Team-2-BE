@@ -62,29 +62,31 @@ class ItemRepositoryTest(
         }
     }
 
-    Given("보관함에 2개의 태그를 설정한 아이템이 저장되어 있을 때") {
+    Given("2개의 태그가 설정된 아이템이 저장되어 있을 때") {
         val givenPageable = PageRequest.of(0, 20)
         val (givenMember, givenContainer) = testCaseUtil.`한 명의 회원과 해당 회원이 저장한 보관함 반환`()
-        val (givenItemName, givenFirstTagName, givenSecondTagName) = Triple(generateRandomString(10), generateRandomString(10), generateRandomString(10))
 
+        val (givenItemName, givenFirstTagName, givenSecondTagName) = Triple(generateRandomString(10), generateRandomString(10), generateRandomString(10))
         val givenItem = itemRepository.save(createFakeItemEntity(container = givenContainer, name = givenItemName))
+
         testCaseUtil.`한 개의 아이템에 전달받은 태그 이름들에 대한 태그 등록`(item = givenItem, tagNames = listOf(givenFirstTagName, givenSecondTagName), member = givenMember)
 
         When("태그 이름에 대한 필터를 설정하고 조회한다면") {
-            val searchOptionWithSavedTags = SearchOption(tagNames = listOf(givenFirstTagName, givenSecondTagName))
-            val searchOptionWithUnsavedTags = SearchOption(tagNames = listOf(generateRandomString(10), givenFirstTagName, givenSecondTagName))
-            val searchResultWithSavedTags = itemRepository.search(searchOptionWithSavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
-            val searchResultWithUnsavedTags = itemRepository.search(searchOptionWithUnsavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchOptionContainSavedTags = SearchOption(tagNames = listOf(givenFirstTagName, givenSecondTagName))
+            val searchOptionContainUnsavedTags = SearchOption(tagNames = listOf(generateRandomString(10), givenFirstTagName, givenSecondTagName))
+
+            val searchResultContainSavedTags = itemRepository.search(searchOptionContainSavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchResultContainUnsavedTags = itemRepository.search(searchOptionContainUnsavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 태그를 모두 보유한 아이템만 조회된다") {
-                searchResultWithSavedTags.content.size shouldBe 1
-                searchResultWithSavedTags.totalElements shouldBe 1
-                searchResultWithSavedTags.totalPages shouldBe 1
-                searchResultWithSavedTags.content shouldContain givenItem
+                searchResultContainSavedTags.content.size shouldBe 1
+                searchResultContainSavedTags.totalElements shouldBe 1
+                searchResultContainSavedTags.totalPages shouldBe 1
+                searchResultContainSavedTags.content shouldContain givenItem
 
-                searchResultWithUnsavedTags.content.size shouldBe 0
-                searchResultWithUnsavedTags.totalElements shouldBe 0
-                searchResultWithUnsavedTags.totalPages shouldBe 0
+                searchResultContainUnsavedTags.content.size shouldBe 0
+                searchResultContainUnsavedTags.totalElements shouldBe 0
+                searchResultContainUnsavedTags.totalPages shouldBe 0
             }
         }
 
@@ -130,7 +132,7 @@ class ItemRepositoryTest(
         }
     }
 
-    Given("보관함에 2개의 아이템이 저장되어 있을 때") {
+    Given("2개의 이름이 설정된 아이템이 저장되어 있을 때") {
         val (_, givenContainer) = testCaseUtil.`한 명의 회원과 해당 회원이 저장한 보관함 반환`()
         val (givenFirstItemName, givenSecondItemName) = "가나다" to "마바사"
         val givenFirstItem = itemRepository.save(createFakeItemEntity(container = givenContainer, name = givenFirstItemName)).also {
@@ -139,11 +141,8 @@ class ItemRepositoryTest(
         val givenSecondItem = itemRepository.save(createFakeItemEntity(container = givenContainer, name = givenSecondItemName))
 
         When("이름 오름차 순으로 조회한다면") {
-            val searchOption = SearchOption(
-                sortOrderOption = SortOrderOption.NameAsc
-            )
-            val givenPageable = PageRequest.of(0, 20, searchOption.getSort())
-            val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchOption = SearchOption(sortOrderOption = SortOrderOption.NameAsc)
+            val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
                 result.content.size shouldBe 2
@@ -152,11 +151,8 @@ class ItemRepositoryTest(
         }
 
         When("이름 내림자 순으로 조회한다면") {
-            val searchOption = SearchOption(
-                sortOrderOption = SortOrderOption.NameDesc
-            )
-            val givenPageable = PageRequest.of(0, 20, searchOption.getSort())
-            val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchOption = SearchOption(sortOrderOption = SortOrderOption.NameDesc)
+            val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
                 result.content.size shouldBe 2
@@ -165,11 +161,8 @@ class ItemRepositoryTest(
         }
 
         When("예전에 생성된 시간 순으로 조회한다면") {
-            val searchOption = SearchOption(
-                sortOrderOption = SortOrderOption.PastCreated
-            )
-            val givenPageable = PageRequest.of(0, 20, searchOption.getSort())
-            val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchOption = SearchOption(sortOrderOption = SortOrderOption.PastCreated)
+            val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
                 result.content.size shouldBe 2
@@ -178,11 +171,8 @@ class ItemRepositoryTest(
         }
 
         When("최근에 생성된 시간 순으로 조회한다면") {
-            val searchOption = SearchOption(
-                sortOrderOption = SortOrderOption.RecentCreated
-            )
-            val givenPageable = PageRequest.of(0, 20, searchOption.getSort())
-            val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
+            val searchOption = SearchOption(sortOrderOption = SortOrderOption.RecentCreated)
+            val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
                 result.content.size shouldBe 2

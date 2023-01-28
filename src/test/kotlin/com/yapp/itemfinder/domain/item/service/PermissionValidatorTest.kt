@@ -25,7 +25,7 @@ class PermissionValidatorTest : BehaviorSpec({
         val givenSpace = createFakeSpaceEntity(member = givenMember)
         val (givenMemberId, givenSpaceId) = givenMember.id to givenSpace.id
 
-        When("존재하지 않은 공간으로 유저가 등록했는지에 대해 요청한 경우") {
+        When("등록하지 않은 공간으로 유저가 헤딩 공간에 대한 권한을 검즐한다면") {
             val givenNonExistSpaceId = generateRandomPositiveLongValue()
             every { spaceRepository.findByIdOrNull(givenNonExistSpaceId) } returns null
 
@@ -39,7 +39,7 @@ class PermissionValidatorTest : BehaviorSpec({
             }
         }
 
-        When("해당 공간이 존재하지만 요청한 유저가 등록한 공간이 아니라면") {
+        When("존재하는 공간이지만 요청한 유저가 등록한 공간이 아닌 상황에서 권한을 검즐한다면") {
             every { spaceRepository.findByIdOrNull(givenSpaceId) } returns givenSpace
 
             val givenAnotherMemberId = generateRandomPositiveLongValue()
@@ -54,7 +54,7 @@ class PermissionValidatorTest : BehaviorSpec({
             }
         }
 
-        When("해당 공간이 존재하고, 요청한 유저가 등록한 공간이라면") {
+        When("해당 공간이 존재하고, 요청한 유저가 등록한 공간인 상황에서 권한을 검증한다면") {
             every { spaceRepository.findByIdOrNull(givenSpaceId) } returns givenSpace
 
             val result = permissionValidator.validateSpaceByMemberId(
@@ -62,7 +62,7 @@ class PermissionValidatorTest : BehaviorSpec({
                 spaceId = givenSpaceId
             )
 
-            Then("검증을 통과한 공간을 반환한다") {
+            Then("검증을 통과한 해당 공간을 반환한다") {
                 result shouldBe givenSpace
             }
         }
@@ -73,7 +73,7 @@ class PermissionValidatorTest : BehaviorSpec({
         val givenContainer = createFakeContainerEntity(space = createFakeSpaceEntity(member = givenMember))
         val (givenMemberId, givenContainerId) = givenMember.id to givenContainer.id
 
-        When("존재하지 않은 보관함으로 유저가 등록했는지에 대해 요청한 경우") {
+        When("존재하지 않은 보관함으로 유저가 등록했는지에 대해 권한을 검증한 경우") {
             val givenNonExistContainerId = generateRandomPositiveLongValue()
             every { containerRepository.findByIdWithSpace(givenNonExistContainerId) } returns null
 

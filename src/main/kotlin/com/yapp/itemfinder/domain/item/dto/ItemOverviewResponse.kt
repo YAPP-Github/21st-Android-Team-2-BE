@@ -7,7 +7,7 @@ data class ItemOverviewResponse(
     val tags: List<String>,
     val id: Long,
     val name: String,
-    val quantity: Int = 0,
+    val quantity: Int,
     val itemType: String,
     val useByDate: String? = null,
     val representativeImageUrl: String? = null,
