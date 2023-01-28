@@ -1,10 +1,19 @@
 package com.yapp.itemfinder.domain.item
 
+import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
+import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
+import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.SearchTarget
+import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.CONTAINER
+import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.SPACE
+import com.yapp.itemfinder.domain.item.service.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional
 class ItemService(
     private val itemRepository: ItemRepository,
     private val containerRepository: ContainerRepository,
-    private val itemTagService: ItemTagService
+    private val itemTagService: ItemTagService,
+    private val permissionValidator: PermissionValidator
 ) {
     @Transactional
     fun createItem(request: CreateItemRequest, memberId: Long): ItemDetailResponse {
@@ -38,5 +48,39 @@ class ItemService(
             itemTagService.createItemTags(item, request.tagIds, memberId)
         }
         return ItemDetailResponse(item)
+    }
+
+    fun search(searchOption: SearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
+        val targetContainerIds = searchOption.searchTarget?.let {
+            findSearchTargetContainerIds(it.location, memberId, it.id)
+        } ?: emptyList()
+
+        val pagedItems: Page<ItemEntity> = itemRepository.search(
+            searchOption = searchOption,
+            pageable = pageRequest,
+            targetContainerIds = targetContainerIds,
+        )
+
+        val itemIdToTagNames = itemTagService.createItemIdToTagNames(itemIds = pagedItems.content.map { it.id })
+        val maxTagNumberPerItem = 4
+        return PageResponse(
+            page = pagedItems.map {
+                val tagNames = itemIdToTagNames.getOrDefault(it.id, emptyList()).take(maxTagNumberPerItem)
+                ItemOverviewResponse(it, tagNames)
+            }
+        )
+    }
+
+    private fun findSearchTargetContainerIds(searchLocation: SearchTarget.SearchLocation, memberId: Long, targetId: Long): List<Long> {
+        return when (searchLocation) {
+            SPACE -> {
+                val space = permissionValidator.validateSpaceByMemberId(memberId, targetId)
+                containerRepository.findBySpaceOrderByCreatedAtAsc(space).map { it.id }
+            }
+            CONTAINER -> {
+                val container = permissionValidator.validateContainerByMemberId(memberId = memberId, containerId = targetId)
+                listOf(container.id)
+            }
+        }
     }
 }

@@ -69,10 +69,12 @@ class ItemTagRepositoryTest(
             listOf(createFakeTagEntity(name = "first", member = givenMember), createFakeTagEntity(name = "second", member = givenMember))
         )
 
-        itemTagRepository.saveAll(listOf(
-            FakeEntity.createFakeItemTagEntity(item = givenItem, tag = givenFirstTag),
-            FakeEntity.createFakeItemTagEntity(item = givenItem, tag = givenSecondTag),
-        ))
+        itemTagRepository.saveAll(
+            listOf(
+                FakeEntity.createFakeItemTagEntity(item = givenItem, tag = givenFirstTag),
+                FakeEntity.createFakeItemTagEntity(item = givenItem, tag = givenSecondTag)
+            )
+        )
 
         When("회원이 등록한 아이템 아이디 리스트로 태그 정보(item id, tag, name) 조회한다면") {
             val itemTagNames = itemTagRepository.findItemTagNameItemIdIsIn(itemIds = listOf(givenItem.id))

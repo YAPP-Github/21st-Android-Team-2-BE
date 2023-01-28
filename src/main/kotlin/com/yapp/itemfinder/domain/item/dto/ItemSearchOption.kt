@@ -1,20 +1,17 @@
 package com.yapp.itemfinder.domain.item.dto
 
 import com.yapp.itemfinder.domain.item.ItemType
-import org.springframework.data.domain.PageRequest
+import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.data.domain.Sort
 
 data class SearchOption(
-    val sortOrderOption: SortOrderOption = SortOrderOption.NameAsc,
+    val sortOrderOption: SortOrderOption = SortOrderOption.RecentCreated,
     val itemTypes: List<ItemType> = emptyList(),
     val tagNames: List<String> = emptyList(),
     val itemName: String? = null,
     val searchTarget: SearchTarget? = null
 ) {
-    fun toPageRequest(page: Int = 0, size: Int = 20): PageRequest {
-        return PageRequest.of(page, size, sortOrderOption.toSort())
-    }
-
+    @Hidden
     fun getSort(): Sort {
         return sortOrderOption.toSort()
     }
