@@ -11,6 +11,7 @@ import com.yapp.itemfinder.domain.member.Social
 import com.yapp.itemfinder.domain.member.SocialType
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceEntity.Companion.SPACE_NAME_LENGTH_LIMIT
+import com.yapp.itemfinder.domain.tag.ItemTagEntity
 import com.yapp.itemfinder.domain.tag.TagEntity
 import java.util.UUID
 
@@ -82,6 +83,17 @@ object FakeEntity {
             id = id,
             member = member,
             name = name
+        )
+    }
+    fun createFakeItemTagEntity(
+        id: Long = generateRandomPositiveLongValue(),
+        item: ItemEntity = createFakeItemEntity(),
+        tag: TagEntity = createFakeTagEntity()
+    ): ItemTagEntity {
+        return ItemTagEntity(
+            id = id,
+            item = item,
+            tag = tag
         )
     }
 }
