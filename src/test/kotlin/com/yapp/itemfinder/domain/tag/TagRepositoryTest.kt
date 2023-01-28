@@ -44,11 +44,11 @@ class TagRepositoryTest(
         }
 
         When("회원의 전체 태그 목록을 최신순으로 조회하면") {
-            val tags = tagRepository.findByMemberOrderByCreatedAtDesc(givenMember)
+            val tags = tagRepository.findByMember(givenMember)
 
-            Then("전체 태그가 최신순으로 조회된다") {
+            Then("전체 태그가 조회된다") {
                 tags.size shouldBe tagCnt
-                tags shouldContainInOrder givenTags.reversed()
+                tags shouldContainAll givenTags
             }
         }
 

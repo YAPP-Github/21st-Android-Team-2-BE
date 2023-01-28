@@ -5,6 +5,7 @@ import com.yapp.itemfinder.domain.item.ItemType
 import com.yapp.itemfinder.domain.tag.dto.CreateTagsRequest
 import com.yapp.itemfinder.domain.tag.dto.TagWithItemTypeDto
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -25,7 +26,7 @@ class TagServiceTest : BehaviorSpec({
         }
 
         every { tagRepository.findByNameIsInAndMember(any(), givenMember) } returns givenTags
-        every { tagRepository.findByMemberOrderByCreatedAtDesc(givenMember) } returns givenTags.reversed()
+        every { tagRepository.findByMember(givenMember) } returns givenTags
 
         When("태그를 등록하면") {
             val request = CreateTagsRequest(givenTags.map { it.name })
@@ -40,9 +41,9 @@ class TagServiceTest : BehaviorSpec({
         When("전체 태그를 조회하면") {
             val tags = tagService.findTags(givenMember).tags
 
-            Then("회원의 모든 태그를 최신순으로 반환한다") {
+            Then("회원의 모든 태그를 반환한다") {
                 tags.size shouldBe givenTags.size
-                tags.map { it.id } shouldContainInOrder givenTags.reversed().map { it.id }
+                tags.map { it.id } shouldContainAll givenTags.map { it.id }
             }
         }
 

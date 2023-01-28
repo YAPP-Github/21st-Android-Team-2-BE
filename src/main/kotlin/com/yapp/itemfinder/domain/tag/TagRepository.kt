@@ -10,6 +10,6 @@ interface TagRepository : JpaRepository<TagEntity, Long> {
     @Query("select t from TagEntity t where t.id in :ids and t.member.id = :memberId")
     fun findByIdIsInAndMemberId(ids: List<Long>, memberId: Long): List<TagEntity>
     fun findByNameIsInAndMember(name: List<String>, member: MemberEntity): List<TagEntity>
-    fun findByMemberOrderByCreatedAtDesc(member: MemberEntity): List<TagEntity>
+    fun findByMember(member: MemberEntity): List<TagEntity>
     fun findByMemberOrderByCreatedAtDesc(member: MemberEntity, pageable: Pageable): PageImpl<TagEntity>
 }

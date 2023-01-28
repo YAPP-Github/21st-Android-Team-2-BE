@@ -35,7 +35,7 @@ class TagService(
     }
 
     fun findTags(member: MemberEntity): TagsResponse {
-        val tags = tagRepository.findByMemberOrderByCreatedAtDesc(member)
+        val tags = tagRepository.findByMember(member)
         return TagsResponse.from(tags)
     }
 
