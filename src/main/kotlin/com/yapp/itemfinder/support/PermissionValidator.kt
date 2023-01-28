@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.domain.item.service
+package com.yapp.itemfinder.support
 
 import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.api.exception.NotFoundException

@@ -11,7 +11,7 @@ import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.SearchOption
 import com.yapp.itemfinder.domain.item.dto.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation
-import com.yapp.itemfinder.domain.item.service.PermissionValidator
+import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow

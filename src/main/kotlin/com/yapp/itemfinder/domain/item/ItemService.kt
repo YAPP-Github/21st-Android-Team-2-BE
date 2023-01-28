@@ -10,7 +10,7 @@ import com.yapp.itemfinder.domain.item.dto.SearchOption
 import com.yapp.itemfinder.domain.item.dto.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.CONTAINER
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.SPACE
-import com.yapp.itemfinder.domain.item.service.PermissionValidator
+import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest

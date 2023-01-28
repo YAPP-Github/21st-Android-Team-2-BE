@@ -8,6 +8,7 @@ import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
+import com.yapp.itemfinder.support.PermissionValidator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

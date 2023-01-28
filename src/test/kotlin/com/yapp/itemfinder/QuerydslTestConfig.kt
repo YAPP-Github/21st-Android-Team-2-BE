@@ -5,7 +5,7 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
-import com.yapp.itemfinder.domain.support.PaginationHelper
+import com.yapp.itemfinder.support.PaginationHelper
 import com.yapp.itemfinder.domain.tag.ItemTagRepository
 import com.yapp.itemfinder.domain.tag.TagRepository
 import org.springframework.boot.test.context.TestConfiguration

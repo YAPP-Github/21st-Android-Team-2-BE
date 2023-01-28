@@ -1,4 +1,4 @@
-package com.yapp.itemfinder.domain.support
+package com.yapp.itemfinder.support
 
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.PathBuilderFactory

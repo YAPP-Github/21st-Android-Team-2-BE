@@ -6,7 +6,7 @@ import com.yapp.itemfinder.domain.item.QItemEntity.itemEntity
 import com.yapp.itemfinder.domain.item.dto.SearchOption
 import com.yapp.itemfinder.domain.tag.QItemTagEntity.itemTagEntity
 import com.yapp.itemfinder.domain.tag.QTagEntity.tagEntity
-import com.yapp.itemfinder.domain.support.PaginationHelper
+import com.yapp.itemfinder.support.PaginationHelper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

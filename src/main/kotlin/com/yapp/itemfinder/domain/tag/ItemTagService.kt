@@ -32,6 +32,6 @@ class ItemTagService(
 
         return itemTagRepository.findItemTagNameItemIdIsIn(itemIds)
             .groupBy { it.itemId }
-            .mapValues { (_, itemTagNames) -> itemTagNames.map { it.tagName }}
+            .mapValues { (_, itemTagNames) -> itemTagNames.map { it.tagName } }
     }
 }
