@@ -4,7 +4,9 @@ spring:
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MariaDBDialect
-
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
   servlet:
     multipart:
       max-file-size: 50MB
