@@ -43,7 +43,7 @@ class TagRepositoryTest(
             }
         }
 
-        When("회원의 전체 태그 목록을 최신순으로 조회하면") {
+        When("회원의 전체 태그 목록을 조회하면") {
             val tags = tagRepository.findByMember(givenMember)
 
             Then("전체 태그가 조회된다") {
