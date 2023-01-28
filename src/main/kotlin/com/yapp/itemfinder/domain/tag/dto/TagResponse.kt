@@ -1,6 +1,5 @@
 package com.yapp.itemfinder.domain.tag.dto
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.yapp.itemfinder.domain.tag.TagEntity
 
 data class TagResponse(
@@ -13,7 +12,6 @@ data class TagResponse(
     )
 }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class TagsResponse(
     val tags: List<TagResponse>
 ) {
