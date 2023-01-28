@@ -83,4 +83,30 @@ class TagControllerTest : ControllerIntegrationTest() {
             tag.itemType.map { typeCount -> typeCount.count shouldBe 0 }
         }
     }
+
+    @Test
+    fun `태그 상세 조회 시 page가 0 미만이면 예외가 발생한다`() {
+        // given
+        val page = -1
+
+        // when & expect
+        mockMvc.get("/tags/detail") {
+            param("page", page.toString())
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    @Test
+    fun `태그 상세 조회 시 size가 10 초과이면 예외가 발생한다`() {
+        // given
+        val size = 11
+
+        // when & expect
+        mockMvc.get("/tags/detail") {
+            param("size", size.toString())
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
 }
