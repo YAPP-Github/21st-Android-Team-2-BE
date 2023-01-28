@@ -1,21 +1,28 @@
 package com.yapp.itemfinder.api
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.yapp.itemfinder.ControllerIntegrationTest
+import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.TestUtil.generateRandomString
-import com.yapp.itemfinder.domain.tag.dto.CreateTagRequest
+import com.yapp.itemfinder.domain.item.ItemType
+import com.yapp.itemfinder.domain.tag.TagRepository
 import com.yapp.itemfinder.domain.tag.dto.CreateTagsRequest
+import com.yapp.itemfinder.domain.tag.dto.TagWithItemTypeResponse
 import com.yapp.itemfinder.domain.tag.dto.TagsResponse
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 class TagControllerTest : ControllerIntegrationTest() {
+    @Autowired
+    lateinit var tagRepository: TagRepository
     @Test
     fun `회원은 10글자 이내의 태그를 등록할 수 있다`() {
         // given
-        val request = CreateTagsRequest(listOf(CreateTagRequest(name = generateRandomString(10))))
-
+        val request = CreateTagsRequest(listOf(generateRandomString(10)))
         // when
         val result = mockMvc.post("/tags") {
             contentType = MediaType.APPLICATION_JSON
@@ -28,21 +35,52 @@ class TagControllerTest : ControllerIntegrationTest() {
         // then
         val tagResponse = objectMapper.readValue(result.response.contentAsString, TagsResponse::class.java)
         tagResponse.tags.size shouldBe 1
-        tagResponse.tags[0].name shouldBe request.tags[0].name
+        tagResponse.tags[0].name shouldBe request.tags[0]
     }
 
     @Test
-    fun `회원은 10글자를 초과하는 태그를 등록할 수 없다`() {
+    fun `회원의 전체 태그 목록을 조회할 수 있다`() {
         // given
-        val request = CreateTagsRequest(listOf(CreateTagRequest(name = generateRandomString(11))))
+        val tagCnt = 3
+        repeat(tagCnt) {
+            tagRepository.save(FakeEntity.createFakeTagEntity(member = testMember))
+        }
 
-        // when & expect
-        mockMvc.post("/tags") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(request)
-            accept = MediaType.APPLICATION_JSON
+        // when
+        val result = mockMvc.get("/tags")
+            .andExpect {
+                status { isOk() }
+            }.andReturn()
+
+        // then
+        val tagResponse = objectMapper.readValue(result.response.contentAsString, TagsResponse::class.java)
+        tagResponse.tags.size shouldBe tagCnt
+    }
+
+    @Test
+    fun `회원의 태그를 상세 조회할 수 있다`() {
+        // given
+        val tagCnt = 3
+        repeat(tagCnt) {
+            tagRepository.save(FakeEntity.createFakeTagEntity(member = testMember))
+        }
+
+        // when
+        val page = 0
+        val size = 10
+        val result = mockMvc.get("/tags/detail") {
+            param("page", page.toString())
+            param("size", size.toString())
         }.andExpect {
-            status { isBadRequest() }
+            status { isOk() }
+        }.andReturn()
+
+        // then
+        val tagResponse = objectMapper.readValue<PageResponse<TagWithItemTypeResponse>>(result.response.contentAsString)
+        tagResponse.data.size shouldBe tagCnt
+        for (tag in tagResponse.data) {
+            tag.itemType.size shouldBe ItemType.values().size
+            tag.itemType.map { typeCount -> typeCount.count shouldBe 0 }
         }
     }
 }
