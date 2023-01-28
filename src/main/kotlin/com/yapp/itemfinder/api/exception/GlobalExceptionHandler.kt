@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import javax.validation.ConstraintViolationException
 
 private const val INTERNAL_SERVER_ERROR_MESSAGE = "알 수 없는 오류가 발생하였습니다."
 
@@ -35,6 +36,13 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         }
         return ResponseEntity.badRequest()
             .body(ErrorResponse(message = message))
+    }
+
+    // validation 오류
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<ErrorResponse> {
+        val message = ex.constraintViolations.joinToString(", ") { "${it.propertyPath.last()} 는 ${it.message}" }
+        return ResponseEntity.badRequest().body(ErrorResponse(message = message))
     }
 
     // null 혹은 형식 오류
