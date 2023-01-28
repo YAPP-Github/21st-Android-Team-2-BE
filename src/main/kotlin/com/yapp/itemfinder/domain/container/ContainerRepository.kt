@@ -10,6 +10,8 @@ interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
 
     fun findBySpaceOrderByCreatedAtAsc(space: SpaceEntity): List<ContainerEntity>
     fun findBySpaceIdAndName(spaceId: Long, name: String): ContainerEntity?
+    @Query("select c from ContainerEntity c join fetch c.space s where c.id = :id")
+    fun findByIdWithSpace(id: Long): ContainerEntity?
     @Query("select c from ContainerEntity c join fetch c.space where c.id = :id and c.space.member.id = :memberId")
     fun findWithSpaceByIdAndMemberId(id: Long, memberId: Long): ContainerEntity?
 }
