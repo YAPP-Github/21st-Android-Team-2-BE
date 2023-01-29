@@ -77,7 +77,7 @@ class ItemTagRepositoryTest(
         )
 
         When("회원이 등록한 아이템 아이디 리스트로 태그 정보(item id, tag, name) 조회한다면") {
-            val itemTagNames = itemTagRepository.findItemTagNameItemIdIsIn(itemIds = listOf(givenItem.id))
+            val itemTagNames = itemTagRepository.findItemIdAndTagNameByItemIdIsIn(itemIds = listOf(givenItem.id))
 
             Then("관련 태그 정보가 모두 조회된다") {
                 itemTagNames.size shouldBe 2

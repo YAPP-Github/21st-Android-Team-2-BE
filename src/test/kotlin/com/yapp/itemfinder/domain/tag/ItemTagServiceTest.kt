@@ -63,7 +63,7 @@ class ItemTagServiceTest : BehaviorSpec({
             ItemIdWithTagName(itemId = givenItemIds[0], givenTagNames[1]),
         )
 
-        every { itemTagRepository.findItemTagNameItemIdIsIn(givenItemIds) } returns givenItemIdWithTagNames
+        every { itemTagRepository.findItemIdAndTagNameByItemIdIsIn(givenItemIds) } returns givenItemIdWithTagNames
 
         When("아이템 아이디 리스트로 해당 아이디에 속한 태그 이름을 조회하면") {
             val itemIdToTagNames = itemTagService.createItemIdToTagNames(itemIds = givenItemIds)
@@ -80,7 +80,7 @@ class ItemTagServiceTest : BehaviorSpec({
 
             Then("실제로 태그를 조회하지 않고 빈 map을 반환한다") {
                 verify(exactly = 0) {
-                    itemTagRepository.findItemTagNameItemIdIsIn(any())
+                    itemTagRepository.findItemIdAndTagNameByItemIdIsIn(any())
                 }
                 result shouldBe emptyMap()
             }

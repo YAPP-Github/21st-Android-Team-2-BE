@@ -18,7 +18,7 @@ interface ItemTagRepository : JpaRepository<ItemTagEntity, Long> {
         value = "select new com.yapp.itemfinder.domain.tag.ItemIdWithTagName(itemTag.item.id, tag.name) " +
             "from ItemTagEntity itemTag inner join TagEntity tag on itemTag.tag = tag where itemTag.item.id in :itemIds"
     )
-    fun findItemTagNameItemIdIsIn(itemIds: List<Long>): List<ItemIdWithTagName>
+    fun findItemIdAndTagNameByItemIdIsIn(itemIds: List<Long>): List<ItemIdWithTagName>
 }
 
 data class ItemIdWithTagName(
