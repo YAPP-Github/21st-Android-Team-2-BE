@@ -1,12 +1,14 @@
 package com.yapp.itemfinder.domain.tag
 
 import com.yapp.itemfinder.FakeEntity
+import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.BadRequestException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 
 class ItemTagServiceTest : BehaviorSpec({
     val tagRepository = mockk<TagRepository>()
@@ -49,6 +51,38 @@ class ItemTagServiceTest : BehaviorSpec({
                 shouldThrow<BadRequestException> {
                     itemTagService.createItemTags(item, givenTags.map { it.id }, givenMember.id)
                 }
+            }
+        }
+    }
+
+    Given("아이템에 등록된 태그들이 존재하는 경우") {
+        val givenTagNames = listOf("tag1", "tag2")
+        val givenItemIds = listOf(generateRandomPositiveLongValue())
+        val givenItemIdWithTagNames: List<ItemIdWithTagName> = listOf(
+            ItemIdWithTagName(itemId = givenItemIds[0], givenTagNames[0]),
+            ItemIdWithTagName(itemId = givenItemIds[0], givenTagNames[1]),
+        )
+
+        every { itemTagRepository.findItemIdAndTagNameByItemIdIsIn(givenItemIds) } returns givenItemIdWithTagNames
+
+        When("아이템 아이디 리스트로 해당 아이디에 속한 태그 이름을 조회하면") {
+            val itemIdToTagNames = itemTagService.createItemIdToTagNames(itemIds = givenItemIds)
+
+            Then("아이템 아이디: key, 해당 아이템에 매핑된 태그 이름들이 value인 맵 형태로 해당 정보를 반환한다") {
+                itemIdToTagNames.size shouldBe 1
+                itemIdToTagNames[givenItemIds.first()] shouldBe givenTagNames
+            }
+        }
+
+        When("빈 아이템 아이디 리스트로 해당 아이디에 속한 태그 이름을 조회하면") {
+            val givenEmptyIds = emptyList<Long>()
+            val result = itemTagService.createItemIdToTagNames(givenEmptyIds)
+
+            Then("실제로 태그를 조회하지 않고 빈 map을 반환한다") {
+                verify(exactly = 0) {
+                    itemTagRepository.findItemIdAndTagNameByItemIdIsIn(any())
+                }
+                result shouldBe emptyMap()
             }
         }
     }

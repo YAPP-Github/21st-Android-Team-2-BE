@@ -24,4 +24,14 @@ class ItemTagService(
         item.updateTags(itemTags)
         return itemTags
     }
+
+    fun createItemIdToTagNames(itemIds: List<Long>): Map<Long, List<String>> {
+        if (itemIds.isEmpty()) {
+            return emptyMap()
+        }
+
+        return itemTagRepository.findItemIdAndTagNameByItemIdIsIn(itemIds)
+            .groupBy { it.itemId }
+            .mapValues { (_, itemTagNames) -> itemTagNames.map { it.tagName } }
+    }
 }

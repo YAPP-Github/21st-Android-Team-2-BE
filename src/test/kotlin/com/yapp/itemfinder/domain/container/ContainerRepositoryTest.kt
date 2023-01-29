@@ -61,6 +61,15 @@ class ContainerRepositoryTest(
                 container.space.member.id shouldBe givenMember.id
             }
         }
+
+        When("회원 아이디를 전달받으면") {
+            val containers = containerRepository.findByMemberId(givenMember.id)
+
+            Then("회원이 등록한 공간 정보들을 반환한다") {
+                containers.size shouldBe 2
+                containers shouldBe givenContainers
+            }
+        }
     }
 
     Given("특정 공간에 여러 보관함이 저장되어 있을 때") {

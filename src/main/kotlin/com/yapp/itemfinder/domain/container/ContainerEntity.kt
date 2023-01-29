@@ -43,6 +43,11 @@ class ContainerEntity(
 
     var imageUrl: String? = imageUrl
         protected set
+
+    fun getCreatorId(): Long {
+        return space.getCreatorId()
+    }
+
     companion object {
         const val DEFAULT_CONTAINER_NAME = "보관함"
         const val CONTAINER_NAME_LENGTH_LIMIT = 15
