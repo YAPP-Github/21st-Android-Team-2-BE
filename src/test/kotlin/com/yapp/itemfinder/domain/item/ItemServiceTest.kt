@@ -77,7 +77,7 @@ class ItemServiceTest : BehaviorSpec({
             )
 
             every { permissionValidator.validateSpaceByMemberId(givenMemberId, givenSpaceId) } returns givenSpace
-            every { containerRepository.findBySpaceOrderByCreatedAtAsc(givenSpace) } returns listOf(
+            every { containerRepository.findBySpace(givenSpace) } returns listOf(
                 createFakeContainerEntity(id = givenFirstContainerIdInSpace, space = givenSpace),
                 createFakeContainerEntity(id = givenSecondContainerIdInSpace, space = givenSpace)
             )

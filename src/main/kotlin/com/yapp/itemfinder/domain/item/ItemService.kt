@@ -75,7 +75,7 @@ class ItemService(
         return when (searchLocation) {
             SPACE -> {
                 val space = permissionValidator.validateSpaceByMemberId(memberId, targetId)
-                containerRepository.findBySpaceOrderByCreatedAtAsc(space).map { it.id }
+                containerRepository.findBySpace(space).map { it.id }
             }
             CONTAINER -> {
                 val container = permissionValidator.validateContainerByMemberId(memberId = memberId, containerId = targetId)
