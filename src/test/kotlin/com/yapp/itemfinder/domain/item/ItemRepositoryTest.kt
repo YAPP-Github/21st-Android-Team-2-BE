@@ -150,7 +150,7 @@ class ItemRepositoryTest(
             }
         }
 
-        When("이름 내림자 순으로 조회한다면") {
+        When("이름 내림차 순으로 조회한다면") {
             val searchOption = ItemSearchOption(sortOrderOption = SortOrderOption.NameDesc)
             val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 

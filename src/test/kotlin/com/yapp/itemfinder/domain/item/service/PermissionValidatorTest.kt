@@ -26,7 +26,7 @@ class PermissionValidatorTest : BehaviorSpec({
         val givenSpace = createFakeSpaceEntity(member = givenMember)
         val (givenMemberId, givenSpaceId) = givenMember.id to givenSpace.id
 
-        When("등록하지 않은 공간으로 유저가 헤딩 공간에 대한 권한을 검즐한다면") {
+        When("등록하지 않은 공간으로 유저가 해당 공간에 대한 권한을 검증한다면") {
             val givenNonExistSpaceId = generateRandomPositiveLongValue()
             every { spaceRepository.findByIdOrNull(givenNonExistSpaceId) } returns null
 
