@@ -7,9 +7,9 @@ import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
-import com.yapp.itemfinder.domain.item.dto.SearchTarget
-import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.CONTAINER
-import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.SPACE
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.CONTAINER
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.SPACE
 import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import org.springframework.data.domain.Page

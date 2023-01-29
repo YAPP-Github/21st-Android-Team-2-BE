@@ -9,8 +9,8 @@ import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
-import com.yapp.itemfinder.domain.item.dto.SearchTarget
-import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation
 import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import io.kotest.assertions.assertSoftly

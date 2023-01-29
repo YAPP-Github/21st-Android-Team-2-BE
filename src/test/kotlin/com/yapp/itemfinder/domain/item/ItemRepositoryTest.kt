@@ -6,7 +6,7 @@ import com.yapp.itemfinder.TestCaseUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
-import com.yapp.itemfinder.domain.item.dto.SortOrderOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SortOrderOption
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainInOrder

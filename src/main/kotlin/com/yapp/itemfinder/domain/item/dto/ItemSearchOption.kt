@@ -15,27 +15,27 @@ data class ItemSearchOption(
     fun getSort(): Sort {
         return sortOrderOption.toSort()
     }
-}
 
-data class SearchTarget(
-    val location: SearchLocation,
-    val id: Long
-) {
-    enum class SearchLocation {
-        SPACE, CONTAINER
+    enum class SortOrderOption(
+        private val targetField: String,
+        private val sortOrder: Sort.Direction
+    ) {
+        RecentCreated("createdAt", Sort.Direction.DESC),
+        PastCreated("createdAt", Sort.Direction.ASC),
+        NameAsc("name", Sort.Direction.ASC),
+        NameDesc("name", Sort.Direction.DESC);
+
+        fun toSort(): Sort {
+            return Sort.by(sortOrder, targetField)
+        }
     }
-}
 
-enum class SortOrderOption(
-    private val targetField: String,
-    private val sortOrder: Sort.Direction
-) {
-    RecentCreated("createdAt", Sort.Direction.DESC),
-    PastCreated("createdAt", Sort.Direction.ASC),
-    NameAsc("name", Sort.Direction.ASC),
-    NameDesc("name", Sort.Direction.DESC);
-
-    fun toSort(): Sort {
-        return Sort.by(sortOrder, targetField)
+    data class SearchTarget(
+        val location: SearchLocation,
+        val id: Long
+    ) {
+        enum class SearchLocation {
+            SPACE, CONTAINER
+        }
     }
 }
