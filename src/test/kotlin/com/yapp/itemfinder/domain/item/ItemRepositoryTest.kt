@@ -5,7 +5,7 @@ import com.yapp.itemfinder.RepositoryTest
 import com.yapp.itemfinder.TestCaseUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
-import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.SortOrderOption
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
@@ -36,7 +36,7 @@ class ItemRepositoryTest(
         }
 
         When("아이템 타입 필터 조건 없이 페이징 데이터를 요청한다면") {
-            val searchOption = SearchOption(
+            val searchOption = ItemSearchOption(
                 itemTypes = emptyList()
             )
             val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
@@ -49,7 +49,7 @@ class ItemRepositoryTest(
         }
 
         When("아이템 타입 필터 조건을 포함해서 페이징 데이터를 요청한다면") {
-            val searchOption = SearchOption(
+            val searchOption = ItemSearchOption(
                 itemTypes = listOf(ItemType.FASHION, ItemType.LIFE)
             )
             val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
@@ -72,8 +72,8 @@ class ItemRepositoryTest(
         testCaseUtil.`한 개의 아이템에 전달받은 태그 이름들에 대한 태그 등록`(item = givenItem, tagNames = listOf(givenFirstTagName, givenSecondTagName), member = givenMember)
 
         When("태그 이름에 대한 필터를 설정하고 조회한다면") {
-            val searchOptionContainSavedTags = SearchOption(tagNames = listOf(givenFirstTagName, givenSecondTagName))
-            val searchOptionContainUnsavedTags = SearchOption(tagNames = listOf(generateRandomString(10), givenFirstTagName, givenSecondTagName))
+            val searchOptionContainSavedTags = ItemSearchOption(tagNames = listOf(givenFirstTagName, givenSecondTagName))
+            val searchOptionContainUnsavedTags = ItemSearchOption(tagNames = listOf(generateRandomString(10), givenFirstTagName, givenSecondTagName))
 
             val searchResultContainSavedTags = itemRepository.search(searchOptionContainSavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
             val searchResultContainUnsavedTags = itemRepository.search(searchOptionContainUnsavedTags, givenPageable, targetContainerIds = listOf(givenContainer.id))
@@ -91,7 +91,7 @@ class ItemRepositoryTest(
         }
 
         When("아이템 이름에 대한 필터를 설정했을 때 해당 이름을 포함하고 있는 아이템이 존재한다면") {
-            val searchOption = SearchOption(
+            val searchOption = ItemSearchOption(
                 tagNames = listOf(givenFirstTagName, givenSecondTagName),
                 itemName = givenItemName.substring(2 until 5)
             )
@@ -107,7 +107,7 @@ class ItemRepositoryTest(
         }
 
         When("아이템 이름에 대한 필터를 설정했을 때 해당 이름을 포함하고 있는 아이템이 존재하지 않는다면") {
-            val searchOption = SearchOption(
+            val searchOption = ItemSearchOption(
                 itemName = givenItemName.substring(2 until 5).plus(generateRandomString(20))
             )
             val result = itemRepository.search(searchOption, givenPageable, targetContainerIds = listOf(givenContainer.id))
@@ -121,7 +121,7 @@ class ItemRepositoryTest(
 
         When("아이템이 존재하지 않는 보관함에 대한 아이디로 조회한다면") {
             val result = itemRepository.search(
-                SearchOption(), givenPageable, targetContainerIds = listOf(generateRandomPositiveLongValue())
+                ItemSearchOption(), givenPageable, targetContainerIds = listOf(generateRandomPositiveLongValue())
             )
 
             Then("해당 아이템이 조회되지 않는다") {
@@ -141,7 +141,7 @@ class ItemRepositoryTest(
         val givenSecondItem = itemRepository.save(createFakeItemEntity(container = givenContainer, name = givenSecondItemName))
 
         When("이름 오름차 순으로 조회한다면") {
-            val searchOption = SearchOption(sortOrderOption = SortOrderOption.NameAsc)
+            val searchOption = ItemSearchOption(sortOrderOption = SortOrderOption.NameAsc)
             val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
@@ -151,7 +151,7 @@ class ItemRepositoryTest(
         }
 
         When("이름 내림자 순으로 조회한다면") {
-            val searchOption = SearchOption(sortOrderOption = SortOrderOption.NameDesc)
+            val searchOption = ItemSearchOption(sortOrderOption = SortOrderOption.NameDesc)
             val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
@@ -161,7 +161,7 @@ class ItemRepositoryTest(
         }
 
         When("예전에 생성된 시간 순으로 조회한다면") {
-            val searchOption = SearchOption(sortOrderOption = SortOrderOption.PastCreated)
+            val searchOption = ItemSearchOption(sortOrderOption = SortOrderOption.PastCreated)
             val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {
@@ -171,7 +171,7 @@ class ItemRepositoryTest(
         }
 
         When("최근에 생성된 시간 순으로 조회한다면") {
-            val searchOption = SearchOption(sortOrderOption = SortOrderOption.RecentCreated)
+            val searchOption = ItemSearchOption(sortOrderOption = SortOrderOption.RecentCreated)
             val result = itemRepository.search(searchOption, PageRequest.of(0, 20, searchOption.getSort()), targetContainerIds = listOf(givenContainer.id))
 
             Then("해당 순서대로 정렬해서 반환한다") {

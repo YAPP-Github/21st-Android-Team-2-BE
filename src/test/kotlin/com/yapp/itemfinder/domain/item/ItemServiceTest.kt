@@ -8,7 +8,7 @@ import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
-import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation
 import com.yapp.itemfinder.support.PermissionValidator
@@ -72,7 +72,7 @@ class ItemServiceTest : BehaviorSpec({
 
         When("공간을 대상으로 해당 공간에 등록된 아이템에 대한 검색을 진행했다면") {
             val (givenFirstContainerIdInSpace, givenSecondContainerIdInSpace) = generateRandomPositiveLongValue() to generateRandomPositiveLongValue()
-            val givenSearchOption = SearchOption(
+            val givenSearchOption = ItemSearchOption(
                 searchTarget = SearchTarget(location = SearchLocation.SPACE, id = givenSpaceId)
             )
 
@@ -100,7 +100,7 @@ class ItemServiceTest : BehaviorSpec({
         }
 
         When("보관함을 대상으로 해당 보관함에 등록된 아이템에 대한 검색을 진행했다면") {
-            val givenSearchOption = SearchOption(
+            val givenSearchOption = ItemSearchOption(
                 searchTarget = SearchTarget(location = SearchLocation.CONTAINER, id = givenContainerId)
             )
 
@@ -121,7 +121,7 @@ class ItemServiceTest : BehaviorSpec({
         }
 
         When("검색을 통해 태그가 5개 등록된 아이템이 조회된 경우") {
-            val givenSearchOption = SearchOption(
+            val givenSearchOption = ItemSearchOption(
                 searchTarget = SearchTarget(location = SearchLocation.CONTAINER, id = givenContainerId)
             )
             val givenItemId = generateRandomPositiveLongValue()

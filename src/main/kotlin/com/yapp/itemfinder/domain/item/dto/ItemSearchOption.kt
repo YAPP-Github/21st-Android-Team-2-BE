@@ -4,7 +4,7 @@ import com.yapp.itemfinder.domain.item.ItemType
 import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.data.domain.Sort
 
-data class SearchOption(
+data class ItemSearchOption(
     val sortOrderOption: SortOrderOption = SortOrderOption.RecentCreated,
     val itemTypes: List<ItemType> = emptyList(),
     val tagNames: List<String> = emptyList(),

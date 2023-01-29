@@ -4,7 +4,7 @@ import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.validation.UrlValidator
 import com.yapp.itemfinder.domain.item.ItemService
-import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
@@ -46,7 +46,7 @@ class ItemController(
         @LoginMember member: MemberEntity,
         @RequestParam(required = false, defaultValue = "0") @Min(0) page: Int,
         @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(20) size: Int,
-        @RequestBody searchOption: SearchOption
+        @RequestBody searchOption: ItemSearchOption
     ): PageResponse<ItemOverviewResponse> {
         val pageRequest = PageRequest.of(page, size, searchOption.getSort())
         return itemService.search(searchOption, pageRequest, member.id)

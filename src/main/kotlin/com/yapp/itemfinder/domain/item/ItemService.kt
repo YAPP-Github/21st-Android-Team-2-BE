@@ -6,7 +6,7 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
-import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.CONTAINER
 import com.yapp.itemfinder.domain.item.dto.SearchTarget.SearchLocation.SPACE
@@ -50,7 +50,7 @@ class ItemService(
         return ItemDetailResponse(item)
     }
 
-    fun search(searchOption: SearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
+    fun search(searchOption: ItemSearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
         val targetContainerIds = searchOption.searchTarget?.let {
             findSearchTargetContainerIds(it.location, memberId, it.id)
         } ?: emptyList()

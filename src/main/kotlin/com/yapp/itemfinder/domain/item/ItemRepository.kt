@@ -3,7 +3,7 @@ package com.yapp.itemfinder.domain.item
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.yapp.itemfinder.domain.item.QItemEntity.itemEntity
-import com.yapp.itemfinder.domain.item.dto.SearchOption
+import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.tag.QItemTagEntity.itemTagEntity
 import com.yapp.itemfinder.domain.tag.QTagEntity.tagEntity
 import com.yapp.itemfinder.support.PaginationHelper
@@ -13,14 +13,14 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySupport
 interface ItemRepositorySupport {
-    fun search(searchOption: SearchOption, pageable: Pageable, targetContainerIds: List<Long>): Page<ItemEntity>
+    fun search(searchOption: ItemSearchOption, pageable: Pageable, targetContainerIds: List<Long>): Page<ItemEntity>
 }
 
 class ItemRepositorySupportImpl(
     private val queryFactory: JPAQueryFactory,
     private val paginationHelper: PaginationHelper
 ) : ItemRepositorySupport {
-    override fun search(searchOption: SearchOption, pageable: Pageable, targetContainerIds: List<Long>): Page<ItemEntity> {
+    override fun search(searchOption: ItemSearchOption, pageable: Pageable, targetContainerIds: List<Long>): Page<ItemEntity> {
         val query = queryFactory.select(itemEntity)
             .from(itemEntity)
             .leftJoin(itemEntity.tags, itemTagEntity)
