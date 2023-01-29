@@ -179,5 +179,16 @@ class ItemRepositoryTest(
                 result.content shouldContainInOrder listOf(givenSecondItem, givenFirstItem)
             }
         }
+
+        When("찾을 대상으로 전달받은 보관함 아이디가 없다면") {
+            val emptyContainers = emptyList<Long>()
+
+            val result = itemRepository.search(ItemSearchOption(), PageRequest.of(0, 20), emptyContainers)
+
+            Then("아이템이 조회되지 않는다") {
+                result.content.size shouldBe 0
+                result.content shouldBe emptyList()
+            }
+        }
     }
 })

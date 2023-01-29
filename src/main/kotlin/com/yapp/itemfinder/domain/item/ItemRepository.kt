@@ -37,12 +37,8 @@ class ItemRepositorySupportImpl(
         return paginationHelper.getPage(pageable, query, ItemEntity::class.java)
     }
 
-    private fun containerIdIsIn(targetContainerIds: List<Long>): BooleanExpression? {
-        return if (targetContainerIds.isNotEmpty()) {
-            itemEntity.container.id.`in`(targetContainerIds)
-        } else {
-            null
-        }
+    private fun containerIdIsIn(targetContainerIds: List<Long>): BooleanExpression {
+        return itemEntity.container.id.`in`(targetContainerIds)
     }
 
     private fun itemNameContains(itemName: String?): BooleanExpression? {
