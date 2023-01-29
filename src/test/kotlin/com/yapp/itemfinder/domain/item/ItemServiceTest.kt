@@ -120,6 +120,30 @@ class ItemServiceTest : BehaviorSpec({
             }
         }
 
+        When("공간/보관함 등 특정 위치을 대상으로 아이템 검색을 진행하지 않았다면") {
+            val givenSearchOption = ItemSearchOption()
+            val givenContainerIdsOfMember = listOf(1L, 2L)
+            val givenContainersOfMember = listOf(
+                createFakeContainerEntity(id = givenContainerIdsOfMember.first(), space = givenSpace),
+                createFakeContainerEntity(id = givenContainerIdsOfMember.last(), space = givenSpace),
+            )
+
+            every { containerRepository.findByMemberId(givenMemberId) } returns givenContainersOfMember
+
+            itemService.search(givenSearchOption, givenPageRequest, givenMemberId)
+
+            Then("해당 회원이 등록한 모든 보관함에 등록된 아이템을 대상으로 조회한다") {
+                verify(exactly = 1) {
+                    itemRepository.search(
+                        givenSearchOption,
+                        givenPageRequest,
+                        capture(searchTargetContainerIds)
+                    )
+                }
+                searchTargetContainerIds.captured shouldBe givenContainerIdsOfMember
+            }
+        }
+
         When("검색을 통해 태그가 5개 등록된 아이템이 조회된 경우") {
             val givenSearchOption = ItemSearchOption(
                 searchTarget = SearchTarget(location = SearchLocation.CONTAINER, id = givenContainerId)

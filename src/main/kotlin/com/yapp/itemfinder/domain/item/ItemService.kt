@@ -53,7 +53,7 @@ class ItemService(
     fun search(searchOption: ItemSearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
         val targetContainerIds = searchOption.searchTarget?.let {
             findSearchTargetContainerIds(it.location, memberId, it.id)
-        } ?: emptyList()
+        } ?: containerRepository.findByMemberId(memberId).map { it.id }
 
         val pagedItems: Page<ItemEntity> = itemRepository.search(
             searchOption = searchOption,

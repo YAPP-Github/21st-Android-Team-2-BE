@@ -17,4 +17,7 @@ interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
     fun findByIdWithSpace(id: Long): ContainerEntity?
     @Query("select c from ContainerEntity c join fetch c.space where c.id = :id and c.space.member.id = :memberId")
     fun findWithSpaceByIdAndMemberId(id: Long, memberId: Long): ContainerEntity?
+
+    @Query("select c from ContainerEntity c join fetch c.space where c.space.member.id = :memberId")
+    fun findByMemberId(memberId: Long): List<ContainerEntity>
 }
