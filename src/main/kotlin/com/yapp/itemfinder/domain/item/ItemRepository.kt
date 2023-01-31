@@ -2,6 +2,7 @@ package com.yapp.itemfinder.domain.item
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.domain.item.QItemEntity.itemEntity
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.tag.QItemTagEntity.itemTagEntity
@@ -10,8 +11,22 @@ import com.yapp.itemfinder.support.PaginationHelper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
-interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySupport
+interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySupport {
+    @Query(
+        "select i from ItemEntity i " +
+            "join fetch i.container c " +
+            "join fetch c.space " +
+            "where i.id = :id"
+    )
+    fun findByIdWithContainerAndSpace(id: Long): ItemEntity?
+}
+
+fun ItemRepository.findByIdWithContainerAndSpaceOrThrowException(id: Long): ItemEntity {
+    return findByIdWithContainerAndSpace(id) ?: throw NotFoundException(message = "존재하지 않는 물건 아이디입니다")
+}
+
 interface ItemRepositorySupport {
     fun search(searchOption: ItemSearchOption, pageable: Pageable, targetContainerIds: List<Long>): Page<ItemEntity>
 }

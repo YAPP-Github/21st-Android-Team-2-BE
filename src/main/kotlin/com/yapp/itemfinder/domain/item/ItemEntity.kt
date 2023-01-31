@@ -133,4 +133,8 @@ class ItemEntity(
             }
         }
     }
+
+    fun isValidMemberId(memberId: Long): Boolean {
+        return this.container.space.member.id == memberId
+    }
 }

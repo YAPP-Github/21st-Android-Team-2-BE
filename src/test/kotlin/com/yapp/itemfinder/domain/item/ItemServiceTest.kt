@@ -3,9 +3,11 @@ package com.yapp.itemfinder.domain.item
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
 import com.yapp.itemfinder.FakeEntity.createFakeItemEntity
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
@@ -171,6 +173,35 @@ class ItemServiceTest : BehaviorSpec({
                             id shouldBe givenItemId
                         }
                     }
+                }
+            }
+        }
+    }
+
+    Given("물건이 등록된 경우") {
+        val givenMember = createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(member = givenMember)
+        val givenContainer = createFakeContainerEntity(space = givenSpace)
+        val givenItem = createFakeItemEntity(container = givenContainer)
+
+        every { itemRepository.findByIdWithContainerAndSpaceOrThrowException(givenItem.id) } returns givenItem
+
+        When("물건을 등록한 회원이 해당 물건을 조회하면") {
+            val item = itemService.findItem(itemId = givenItem.id, memberId = givenMember.id)
+
+            Then("물건이 조회된다") {
+                item.id shouldBe givenItem.id
+                item.containerName shouldBe givenContainer.name
+                item.spaceName shouldBe givenSpace.name
+            }
+        }
+
+        When("물건을 등록하지 않은 회원이 해당 물건을 조회하면") {
+            val otherMember = createFakeMemberEntity()
+
+            Then("예외가 발생한다") {
+                shouldThrow<ForbiddenException> {
+                    itemService.findItem(itemId = givenItem.id, memberId = otherMember.id)
                 }
             }
         }

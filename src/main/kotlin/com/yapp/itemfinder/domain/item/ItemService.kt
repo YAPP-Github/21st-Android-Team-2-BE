@@ -2,6 +2,7 @@ package com.yapp.itemfinder.domain.item
 
 import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
@@ -46,6 +47,14 @@ class ItemService(
         )
         if (request.tagIds.isNotEmpty()) {
             itemTagService.createItemTags(item, request.tagIds, memberId)
+        }
+        return ItemDetailResponse(item)
+    }
+
+    fun findItem(itemId: Long, memberId: Long): ItemDetailResponse {
+        val item = itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
+        require(item.isValidMemberId(memberId)) {
+            throw ForbiddenException(message = "권한이 없습니다")
         }
         return ItemDetailResponse(item)
     }

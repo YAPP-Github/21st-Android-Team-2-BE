@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import com.yapp.itemfinder.api.LoginMemberResolver
 import com.yapp.itemfinder.domain.container.ContainerRepository
+import com.yapp.itemfinder.domain.item.ItemEntity
+import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
@@ -39,6 +41,9 @@ abstract class ControllerIntegrationTest {
     @Autowired
     lateinit var containerRepository: ContainerRepository
 
+    @Autowired
+    lateinit var itemRepository: ItemRepository
+
     @MockkBean
     lateinit var loginMemberArgumentResolver: LoginMemberResolver
 
@@ -61,5 +66,11 @@ abstract class ControllerIntegrationTest {
         every { loginMemberArgumentResolver.resolveArgument(any(), any(), any(), any()) } returns givenMember
 
         return givenMember
+    }
+
+    fun createItem(member: MemberEntity): ItemEntity {
+        val givenSpace = spaceRepository.save(FakeEntity.createFakeSpaceEntity(member = member))
+        val givenContainer = containerRepository.save(FakeEntity.createFakeContainerEntity(space = givenSpace))
+        return itemRepository.save(FakeEntity.createFakeItemEntity(container = givenContainer))
     }
 }

@@ -12,6 +12,8 @@ import com.yapp.itemfinder.domain.member.MemberEntity
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.PageRequest
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,6 +40,15 @@ class ItemController(
             throw BadRequestException(message = "url 형식이 올바르지 않습니다")
         }
         return itemService.createItem(createItemRequest, member.id)
+    }
+
+    @Operation(summary = "물건 상세 조회")
+    @GetMapping("/{itemId}")
+    fun getItem(
+        @LoginMember member: MemberEntity,
+        @PathVariable itemId: Long
+    ): ItemDetailResponse {
+        return itemService.findItem(itemId, member.id)
     }
 
     @Operation(summary = "물건 검색")
