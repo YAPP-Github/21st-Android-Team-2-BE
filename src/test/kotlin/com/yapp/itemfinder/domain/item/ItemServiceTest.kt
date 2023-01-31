@@ -205,5 +205,15 @@ class ItemServiceTest : BehaviorSpec({
                 }
             }
         }
+
+        When("물건을 등록하지 않은 회원이 해당 물건을 삭제하면") {
+            val otherMember = createFakeMemberEntity()
+
+            Then("예외가 발생한다") {
+                shouldThrow<ForbiddenException> {
+                    itemService.deleteItem(itemId = givenItem.id, memberId = otherMember.id)
+                }
+            }
+        }
     }
 })

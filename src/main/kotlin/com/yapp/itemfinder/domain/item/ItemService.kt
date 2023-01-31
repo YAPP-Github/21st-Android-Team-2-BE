@@ -52,10 +52,7 @@ class ItemService(
     }
 
     fun findItem(itemId: Long, memberId: Long): ItemDetailResponse {
-        val item = itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
-        require(item.isValidMemberId(memberId)) {
-            throw ForbiddenException(message = "권한이 없습니다")
-        }
+        val item = findMemberItemOrThrowException(itemId, memberId)
         return ItemDetailResponse(item)
     }
 
@@ -91,5 +88,20 @@ class ItemService(
                 listOf(container.id)
             }
         }
+    }
+
+    @Transactional
+    fun deleteItem(itemId: Long, memberId: Long) {
+        val item = findMemberItemOrThrowException(itemId, memberId)
+        itemRepository.delete(item)
+    }
+
+    private fun findMemberItemOrThrowException(itemId: Long, memberId: Long): ItemEntity {
+        return itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
+            .also {
+                require(it.isValidMemberId(memberId)) {
+                    throw ForbiddenException(message = "권한이 없습니다")
+                }
+            }
     }
 }
