@@ -49,6 +49,7 @@ class ItemServiceTest : BehaviorSpec({
                 itemResponse.containerName shouldBe givenContainer.name
                 itemResponse.spaceName shouldBe givenSpace.name
                 itemResponse.quantity shouldBe request.quantity
+                itemResponse.imageUrls.isEmpty() shouldBe true
             }
         }
 
