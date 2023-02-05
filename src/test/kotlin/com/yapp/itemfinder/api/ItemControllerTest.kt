@@ -6,6 +6,7 @@ import com.yapp.itemfinder.TestUtil
 import com.yapp.itemfinder.domain.item.ItemType
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
+import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.domain.tag.ItemTagEntity
 import com.yapp.itemfinder.domain.tag.ItemTagRepository
 import com.yapp.itemfinder.domain.tag.TagEntity
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
@@ -143,5 +145,28 @@ class ItemControllerTest : ControllerIntegrationTest() {
             .andExpect {
                 status { isForbidden() }
             }.andReturn()
+    }
+
+    @Test
+    fun `회원이 등록한 물건을 수정할 수 있다`() {
+        // given
+        val givenItem = createItem(testMember)
+        val givenTag = tagRepository.save(TagEntity(member = testMember, name = TestUtil.generateRandomString(4)))
+        itemTagRepository.save(ItemTagEntity(item = givenItem, tag = givenTag))
+        val newName = "새로운 물건 이름"
+        val request = UpdateItemRequest(containerId = givenItem.container.id, name = newName, itemType = givenItem.type.name, quantity = givenItem.quantity)
+
+        // when
+        val result = mockMvc.put("/items/${givenItem.id}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(request)
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+        }.andReturn()
+
+        // then
+        val itemResponse = objectMapper.readValue(result.response.contentAsString, ItemDetailResponse::class.java)
+        itemResponse.name shouldBe newName
     }
 }

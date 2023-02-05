@@ -11,6 +11,7 @@ import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.CONTAINER
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.SPACE
+import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import org.springframework.data.domain.Page
@@ -64,7 +65,7 @@ class ItemService(
         val pagedItems: Page<ItemEntity> = itemRepository.search(
             searchOption = searchOption,
             pageable = pageRequest,
-            targetContainerIds = targetContainerIds,
+            targetContainerIds = targetContainerIds
         )
 
         val itemIdToTagNames = itemTagService.createItemIdToTagNames(itemIds = pagedItems.content.map { it.id })
@@ -94,6 +95,25 @@ class ItemService(
     fun deleteItem(itemId: Long, memberId: Long) {
         val item = findMemberItemOrThrowException(itemId, memberId)
         itemRepository.delete(item)
+    }
+
+    @Transactional
+    fun updateItem(itemId: Long, memberId: Long, request: UpdateItemRequest): ItemDetailResponse {
+        val item = findMemberItemOrThrowException(itemId, memberId)
+        item.updateItem(
+            container = containerRepository.findWithSpaceByIdAndMemberId(request.containerId, memberId)
+                ?: throw BadRequestException(message = "존재하지 않는 보관함입니다"),
+            name = request.name,
+            type = ItemType.valueOf(request.itemType),
+            quantity = request.quantity,
+            dueDate = request.useByDate,
+            purchaseDate = request.purchaseDate,
+            description = request.description,
+            imageUrls = request.imageUrls,
+            pinX = request.pinX,
+            pinY = request.pinY
+        )
+        return ItemDetailResponse(item)
     }
 
     private fun findMemberItemOrThrowException(itemId: Long, memberId: Long): ItemEntity {

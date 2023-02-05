@@ -8,6 +8,7 @@ import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
+import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.domain.member.MemberEntity
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.PageRequest
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -74,5 +76,15 @@ class ItemController(
         @PathVariable itemId: Long
     ) {
         itemService.deleteItem(itemId, member.id)
+    }
+
+    @Operation(summary = "물건 수정")
+    @PutMapping("/{itemId}")
+    fun updateItem(
+        @LoginMember member: MemberEntity,
+        @PathVariable itemId: Long,
+        @RequestBody @Valid updateItemRequest: UpdateItemRequest
+    ): ItemDetailResponse {
+        return itemService.updateItem(itemId, member.id, updateItemRequest)
     }
 }
