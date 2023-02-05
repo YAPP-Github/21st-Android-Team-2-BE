@@ -5,6 +5,7 @@ import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerEntity.Companion.DEFAULT_CONTAINER_NAME
@@ -12,6 +13,8 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.IconType
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
+import com.yapp.itemfinder.domain.container.findWithSpaceByIdOrThrowException
+import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
 import com.yapp.itemfinder.support.PermissionValidator
@@ -28,7 +31,8 @@ class ContainerServiceTest : BehaviorSpec({
     val containerRepository = mockk<ContainerRepository>(relaxed = true)
     val spaceRepository = mockk<SpaceRepository>(relaxed = true)
     val permissionValidator = mockk<PermissionValidator>(relaxed = true)
-    val containerService = ContainerService(containerRepository, spaceRepository, permissionValidator)
+    val itemRepository = mockk<ItemRepository>()
+    val containerService = ContainerService(containerRepository, spaceRepository, permissionValidator, itemRepository)
 
     Given("특정 공간에 보관함이 등록되어 있을 때") {
         val givenSpaceId = generateRandomPositiveLongValue()
@@ -195,6 +199,23 @@ class ContainerServiceTest : BehaviorSpec({
                         iconType shouldBe givenIconType
                         imageUrl shouldBe givenCreateContainerRequest.url
                     }
+                }
+            }
+        }
+    }
+
+    Given("공간에 보관함이 1개 등록되어 있는 경우") {
+        val givenMember = createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(member = givenMember)
+        val givenContainer = createFakeContainerEntity(space = givenSpace)
+
+        every { containerRepository.findWithSpaceByIdOrThrowException(givenContainer.id) } returns givenContainer
+        every { containerRepository.countBySpace(givenSpace) } returns 1L
+
+        When("보관함을 삭제하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<BadRequestException> {
+                    containerService.deleteContainer(givenMember.id, givenContainer.id)
                 }
             }
         }
