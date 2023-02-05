@@ -62,6 +62,7 @@ class ContainerService(
     fun updateContainer(memberId: Long, containerId: Long, updateContainerRequest: UpdateContainerRequest): ContainerResponse {
         val existContainer = permissionValidator.validateContainerByMemberId(memberId, containerId)
         val (name, icon, url) = Triple(updateContainerRequest.name, updateContainerRequest.icon, updateContainerRequest.url)
+        validateContainerExist(spaceId = updateContainerRequest.spaceId, name)
 
         val space = if (existContainer.space.id != updateContainerRequest.spaceId) {
             permissionValidator.validateSpaceByMemberId(memberId = memberId, spaceId = updateContainerRequest.spaceId)

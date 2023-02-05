@@ -61,8 +61,9 @@ class ContainerServiceTest : BehaviorSpec({
             When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보만 수정한다면") {
                 val givenUpdateRequest = UpdateContainerRequest(spaceId = currentSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
 
-                And("수정하려는 보관함에 대한 권한을 검증한 후") {
+                And("수정하려는 보관함에 대한 권한이 있고, 해당 공간에 동일한 보관한 명으로 존재하는 보관함이 존재하지 않는다면") {
                     every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
+                    every { containerRepository.findBySpaceIdAndName(currentSpaceId, givenName) } returns null
 
                     Then("보관함이 저장되는 공간은 변하지 않았으므로 공간 정보는 별도로 찾지 않고 전달받은 정보로 보관함 업데이트를 진행한다") {
                         val response = containerService.updateContainer(givenMemberId, givenContainer.id, givenUpdateRequest)
@@ -76,14 +77,26 @@ class ContainerServiceTest : BehaviorSpec({
                         }
                     }
                 }
+
+                And("수정하려는 보관함에 대한 권한이 있지만 해당 공간에 동일한 보관함 명으로 존재하는 보관함이 존재한다면") {
+                    every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
+                    every { containerRepository.findBySpaceIdAndName(currentSpaceId, givenName) } returns createFakeContainerEntity(space = givenSpace)
+
+                    Then("요청한 보관함 이름으로 보관함을 수정할 수 없다") {
+                        shouldThrow<ConflictException> {
+                            containerService.updateContainer(givenMemberId, givenContainer.id, givenUpdateRequest)
+                        }
+                    }
+                }
             }
 
             When("보관함이 위치하는 공간 정보 또한 수정한다면") {
                 val newSpaceId = generateRandomPositiveLongValue()
                 val givenUpdateRequest = UpdateContainerRequest(spaceId = newSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
 
-                And("수정하려는 보관함에 대한 권한을 검증한 후") {
+                And("수정하려는 보관함에 대한 권한이 있고, 해당 공간에 동일한 보관한 명으로 존재하는 보관함이 존재하지 않는다면") {
                     every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
+                    every { containerRepository.findBySpaceIdAndName(newSpaceId, givenName) } returns null
 
                     Then("보관함이 저장되는 공간이 변했으므로 해당 공간에 대한 검증 또한 진행한 후, 전달받은 정보로 업데이트를 진행한다") {
                         every { permissionValidator.validateSpaceByMemberId(givenMemberId, newSpaceId) } returns createFakeSpaceEntity(id = newSpaceId)
