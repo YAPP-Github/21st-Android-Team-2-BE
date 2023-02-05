@@ -16,6 +16,8 @@ import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceWithContainerCount
+import com.yapp.itemfinder.domain.space.dto.UpdateSpaceRequest
+import com.yapp.itemfinder.support.PermissionValidator
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -28,7 +30,9 @@ import io.mockk.verify
 class SpaceServiceTest : BehaviorSpec({
     val spaceRepository = mockk<SpaceRepository>()
     val containerService = mockk<ContainerService>(relaxed = true)
-    val spaceService = SpaceService(spaceRepository, containerService)
+    val permissionValidator = mockk<PermissionValidator>(relaxed = true)
+
+    val spaceService = SpaceService(spaceRepository, containerService, permissionValidator)
 
     Given("공간을 새로 추가할 때") {
         val givenSpaceName = "공간 이름1"
@@ -172,6 +176,48 @@ class SpaceServiceTest : BehaviorSpec({
                         topContainers[0].imageUrl shouldBe givenContainerVos[0].imageUrl
                         topContainers[0].spaceId shouldBe givenContainerVos[0].spaceId
                     }
+                }
+            }
+        }
+    }
+
+    Given("기존에 등록한 공간을 수정할 때") {
+        val givenNewSpaceName = "새로운 공간 이름"
+        val givenMember = createFakeMemberEntity()
+        val givenUpdateSpaceRequest = UpdateSpaceRequest(name = givenNewSpaceName)
+        val givenExistSpace = createFakeSpaceEntity()
+
+        When("유저가 요청한 새로운 공간명으로 이미 해당 유저가 등록한 공간이 존재한다면") {
+            every {
+                spaceRepository.findByMemberIdAndName(givenMember.id, givenNewSpaceName)
+            } returns createFakeSpaceEntity(name = givenNewSpaceName, member = givenMember)
+
+            Then("예외를 발생시킨다") {
+                shouldThrow<ConflictException> {
+                    spaceService.updateSpace(
+                        memberId = givenMember.id,
+                        spaceId = givenExistSpace.id,
+                        spaceName = givenUpdateSpaceRequest.name
+                    )
+                }
+
+                verify(exactly = 0) {
+                    permissionValidator.validateSpaceByMemberId(any(), any())
+                    givenExistSpace.updateSpace(givenNewSpaceName)
+                }
+            }
+        }
+
+        When("해당 유저가 요청한 새로운 공간명으로 해당 유저가 등록한 공간이 존재하지 않는다면") {
+            And("해당 공간에 대한 유저의 권한을 확인하고") {
+                every {
+                    permissionValidator.validateSpaceByMemberId(memberId = givenMember.id, spaceId = givenExistSpace.id)
+                } returns givenExistSpace
+
+                Then("공간에 대한 권한이 있다면(해당 유저가 등록한 공간임) 해당 공간명을 수정할 수 있다") {
+                    val response = givenExistSpace.updateSpace(givenNewSpaceName)
+                    response.id shouldBe givenExistSpace.id
+                    response.name shouldBe givenNewSpaceName
                 }
             }
         }

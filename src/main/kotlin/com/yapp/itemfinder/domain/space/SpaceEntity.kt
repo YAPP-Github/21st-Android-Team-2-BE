@@ -40,6 +40,12 @@ class SpaceEntity(
         return member.id
     }
 
+    fun updateSpace(name: String): SpaceEntity {
+        validateName(name)
+        this.name = name
+        return this
+    }
+
     private fun validateName(name: String) {
         require(name.isNotBlank() && name.length <= SPACE_NAME_LENGTH_LIMIT) {
             throw BadRequestException(message = "1자 이상 ${SPACE_NAME_LENGTH_LIMIT}자 이내로 이름을 등록해 주세요.")

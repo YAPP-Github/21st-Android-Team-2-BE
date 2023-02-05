@@ -6,9 +6,12 @@ import com.yapp.itemfinder.domain.space.service.SpaceService
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.space.dto.SpaceResponse
 import com.yapp.itemfinder.domain.space.dto.SpaceWithTopContainerResponse
+import com.yapp.itemfinder.domain.space.dto.UpdateSpaceRequest
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -34,5 +37,15 @@ class SpaceController(
     @GetMapping("/spaces/containers")
     fun getSpaceWithTopContainers(@LoginMember member: MemberEntity): List<SpaceWithTopContainerResponse> {
         return spaceService.getSpaceWithTopContainers(member.id)
+    }
+
+    @Operation(summary = "멤버가 등록한 공간의 정보를 수정")
+    @PutMapping("/spaces/{spaceId}")
+    fun updateSpace(
+        @LoginMember member: MemberEntity,
+        @PathVariable spaceId: Long,
+        @RequestBody updateSpaceReq: UpdateSpaceRequest
+    ): SpaceResponse {
+        return spaceService.updateSpace(member.id, spaceId, updateSpaceReq.name)
     }
 }
