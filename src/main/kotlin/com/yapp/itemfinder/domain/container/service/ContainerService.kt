@@ -43,7 +43,7 @@ class ContainerService(
     @Transactional
     fun createContainer(memberId: Long, containerRequest: CreateContainerRequest): ContainerResponse {
         val space = spaceRepository.findByIdAndMemberIdOrThrowException(id = containerRequest.spaceId, memberId = memberId).also {
-            validateContainerExist(spaceId = it.id, containerName = containerRequest.name)
+            validateContainerNameExistInSpace(spaceId = it.id, containerName = containerRequest.name)
         }
 
         val container = ContainerEntity(
@@ -62,7 +62,7 @@ class ContainerService(
     fun updateContainer(memberId: Long, containerId: Long, updateContainerRequest: UpdateContainerRequest): ContainerResponse {
         val existContainer = permissionValidator.validateContainerByMemberId(memberId, containerId)
         val (name, icon, url) = Triple(updateContainerRequest.name, updateContainerRequest.icon, updateContainerRequest.url)
-        validateContainerExist(spaceId = updateContainerRequest.spaceId, name)
+        validateContainerNameExistInSpace(spaceId = updateContainerRequest.spaceId, name)
 
         val space = if (existContainer.space.id != updateContainerRequest.spaceId) {
             permissionValidator.validateSpaceByMemberId(memberId = memberId, spaceId = updateContainerRequest.spaceId)
@@ -80,7 +80,7 @@ class ContainerService(
         }
     }
 
-    private fun validateContainerExist(spaceId: Long, containerName: String) {
+    private fun validateContainerNameExistInSpace(spaceId: Long, containerName: String) {
         containerRepository.findBySpaceIdAndName(spaceId = spaceId, name = containerName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 공간에 등록된 보관함 존재합니다.")
         }

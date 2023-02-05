@@ -24,7 +24,7 @@ class SpaceService(
     @Transactional
     fun createSpace(spaceRequest: CreateSpaceRequest, member: MemberEntity): SpaceResponse {
         val spaceName = spaceRequest.name
-        validateSpaceExist(member.id, spaceName)
+        validateSpaceNameExist(member.id, spaceName)
 
         val newSpace = spaceRepository.save(SpaceEntity(member = member, name = spaceName))
         return SpaceResponse(newSpace).also {
@@ -56,14 +56,14 @@ class SpaceService(
 
     @Transactional
     fun updateSpace(memberId: Long, spaceId: Long, spaceName: String): SpaceResponse {
-        validateSpaceExist(memberId, spaceName)
+        validateSpaceNameExist(memberId, spaceName)
         val space = permissionValidator.validateSpaceByMemberId(memberId = memberId, spaceId = spaceId)
         return space.updateSpace(spaceName).run {
             SpaceResponse(this)
         }
     }
 
-    private fun validateSpaceExist(memberId: Long, spaceName: String) {
+    private fun validateSpaceNameExist(memberId: Long, spaceName: String) {
         spaceRepository.findByMemberIdAndName(memberId = memberId, name = spaceName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 등록된 공간이 존재합니다.")
         }
