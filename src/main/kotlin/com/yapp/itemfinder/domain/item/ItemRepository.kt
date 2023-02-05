@@ -3,6 +3,7 @@ package com.yapp.itemfinder.domain.item
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.yapp.itemfinder.api.exception.NotFoundException
+import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.item.QItemEntity.itemEntity
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.tag.QItemTagEntity.itemTagEntity
@@ -21,6 +22,8 @@ interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySuppor
             "where i.id = :id"
     )
     fun findByIdWithContainerAndSpace(id: Long): ItemEntity?
+
+    fun deleteAllByContainer(container: ContainerEntity)
 }
 
 fun ItemRepository.findByIdWithContainerAndSpaceOrThrowException(id: Long): ItemEntity {

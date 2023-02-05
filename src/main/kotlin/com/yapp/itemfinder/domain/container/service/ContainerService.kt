@@ -1,11 +1,13 @@
 package com.yapp.itemfinder.domain.container.service
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
+import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
@@ -18,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 class ContainerService(
     private val containerRepository: ContainerRepository,
     private val spaceRepository: SpaceRepository,
-    private val permissionValidator: PermissionValidator
+    private val permissionValidator: PermissionValidator,
+    private val itemRepository: ItemRepository
 ) {
     fun getSpaceIdToContainers(spaceIds: List<Long>): Map<Long, List<ContainerVo>> {
         return containerRepository.findBySpaceIdIsIn(spaceIds)
@@ -84,5 +87,15 @@ class ContainerService(
         containerRepository.findBySpaceIdAndName(spaceId = spaceId, name = containerName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 공간에 등록된 보관함 존재합니다.")
         }
+    }
+
+    @Transactional
+    fun deleteContainer(memberId: Long, containerId: Long) {
+        val container = permissionValidator.validateContainerByMemberId(memberId, containerId)
+        if (containerRepository.countBySpace(container.space) == 1L) {
+            throw BadRequestException(message = "공간 내 보관함은 최소 1개 이상 존재해야 합니다")
+        }
+        itemRepository.deleteAllByContainer(container)
+        containerRepository.delete(container)
     }
 }

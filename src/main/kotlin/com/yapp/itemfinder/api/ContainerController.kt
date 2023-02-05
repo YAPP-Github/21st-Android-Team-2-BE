@@ -7,6 +7,7 @@ import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
 import com.yapp.itemfinder.domain.container.service.ContainerService
 import com.yapp.itemfinder.domain.member.MemberEntity
 import io.swagger.v3.oas.annotations.Operation
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -43,5 +44,11 @@ class ContainerController(
             urlValidator.validate(it)
         }
         return containerService.updateContainer(member.id, containerId, updateContainerRequest)
+    }
+
+    @Operation(summary = "보관함 삭제")
+    @DeleteMapping("/containers/{containerId}")
+    fun deleteContainer(@LoginMember member: MemberEntity, @PathVariable containerId: Long) {
+        return containerService.deleteContainer(member.id, containerId)
     }
 }

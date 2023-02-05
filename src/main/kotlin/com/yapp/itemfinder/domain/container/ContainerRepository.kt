@@ -20,4 +20,6 @@ interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
 
     @Query("select c from ContainerEntity c join fetch c.space where c.space.member.id = :memberId")
     fun findByMemberId(memberId: Long): List<ContainerEntity>
+
+    fun countBySpace(space: SpaceEntity): Long
 }
