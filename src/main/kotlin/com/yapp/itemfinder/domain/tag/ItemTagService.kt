@@ -21,7 +21,7 @@ class ItemTagService(
                 }
             }
             .map { itemTagRepository.save(ItemTagEntity(item = item, tag = it)) }
-        item.updateTags(itemTags)
+        item.tags.addAll(itemTags)
         return itemTags
     }
 

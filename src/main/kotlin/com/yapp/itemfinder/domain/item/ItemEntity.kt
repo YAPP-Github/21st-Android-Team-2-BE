@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Embedded
@@ -107,7 +108,7 @@ class ItemEntity(
     var imageUrls: List<String> = imageUrls
         protected set
 
-    @OneToMany(mappedBy = "item", orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = [CascadeType.ALL], orphanRemoval = true)
     var tags: MutableList<ItemTagEntity> = mutableListOf()
 
     @Column(length = 200)

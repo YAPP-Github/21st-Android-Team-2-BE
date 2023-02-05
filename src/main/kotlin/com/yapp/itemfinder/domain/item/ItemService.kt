@@ -113,6 +113,11 @@ class ItemService(
             pinX = request.pinX,
             pinY = request.pinY
         )
+        item.tags.removeIf { !request.tagIds.contains(it.tag.id) }
+        val newTags = request.tagIds.filterNot { tagId -> item.tags.map { it.tag.id }.contains(tagId) }
+        if (newTags.isNotEmpty()) {
+            itemTagService.createItemTags(item, newTags, memberId)
+        }
         return ItemDetailResponse(item)
     }
 
