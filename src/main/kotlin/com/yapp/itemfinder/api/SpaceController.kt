@@ -44,8 +44,8 @@ class SpaceController(
     fun updateSpace(
         @LoginMember member: MemberEntity,
         @PathVariable spaceId: Long,
-        @RequestBody updateSpaceReq: UpdateSpaceRequest
+        @RequestBody updateSpaceRequest: UpdateSpaceRequest
     ): SpaceResponse {
-        return spaceService.updateSpace(member.id, spaceId, updateSpaceReq.name)
+        return spaceService.updateSpace(member.id, spaceId, updateSpaceRequest.name)
     }
 }
