@@ -12,7 +12,7 @@ import javax.validation.constraints.Min
 import javax.validation.constraints.PastOrPresent
 import javax.validation.constraints.Size
 
-data class CreateItemRequest(
+data class UpdateItemRequest(
     @Schema(description = "보관함 아이디")
     val containerId: Long,
 
@@ -23,7 +23,7 @@ data class CreateItemRequest(
     @Schema(implementation = ItemType::class)
     val itemType: String,
 
-    @field:Min(1)
+    @field:Min(0)
     @field:Max(99)
     @Schema(description = "개수")
     val quantity: Int,
@@ -55,5 +55,5 @@ data class CreateItemRequest(
     @field:Min(0)
     @field:Max(100)
     @Schema(description = "핀 height 위치(%)")
-    val pinY: Float? = null
+    val pinY: Float? = null,
 )

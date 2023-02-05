@@ -1,16 +1,19 @@
 package com.yapp.itemfinder.domain.item
 
-import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
 import com.yapp.itemfinder.FakeEntity.createFakeItemEntity
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
+import com.yapp.itemfinder.TestUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation
+import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import io.kotest.assertions.assertSoftly
@@ -23,6 +26,7 @@ import io.mockk.slot
 import io.mockk.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import java.time.LocalDateTime
 
 class ItemServiceTest : BehaviorSpec({
     val itemRepository = mockk<ItemRepository>(relaxed = true)
@@ -32,7 +36,7 @@ class ItemServiceTest : BehaviorSpec({
     val itemService = ItemService(itemRepository, containerRepository, itemTagService, permissionValidator)
 
     Given("이미지가 없는 보관함이 등록된 경우") {
-        val givenMember = FakeEntity.createFakeMemberEntity()
+        val givenMember = createFakeMemberEntity()
         val givenSpace = createFakeSpaceEntity(member = givenMember)
         val givenContainer = createFakeContainerEntity(space = givenSpace, imageUrl = null)
 
@@ -49,6 +53,7 @@ class ItemServiceTest : BehaviorSpec({
                 itemResponse.containerName shouldBe givenContainer.name
                 itemResponse.spaceName shouldBe givenSpace.name
                 itemResponse.quantity shouldBe request.quantity
+                itemResponse.imageUrls.isEmpty() shouldBe true
             }
         }
 
@@ -125,7 +130,7 @@ class ItemServiceTest : BehaviorSpec({
             val givenContainerIdsOfMember = listOf(1L, 2L)
             val givenContainersOfMember = listOf(
                 createFakeContainerEntity(id = givenContainerIdsOfMember.first(), space = givenSpace),
-                createFakeContainerEntity(id = givenContainerIdsOfMember.last(), space = givenSpace),
+                createFakeContainerEntity(id = givenContainerIdsOfMember.last(), space = givenSpace)
             )
 
             every { containerRepository.findByMemberId(givenMemberId) } returns givenContainersOfMember
@@ -170,6 +175,125 @@ class ItemServiceTest : BehaviorSpec({
                             id shouldBe givenItemId
                         }
                     }
+                }
+            }
+        }
+    }
+
+    Given("패션 타입의 물건이 등록된 경우") {
+        val givenMember = createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(member = givenMember)
+        val givenContainer = createFakeContainerEntity(space = givenSpace)
+        val givenItem = createFakeItemEntity(container = givenContainer, type = ItemType.FASHION)
+
+        every { itemRepository.findByIdWithContainerAndSpaceOrThrowException(givenItem.id) } returns givenItem
+
+        When("물건을 등록한 회원이 해당 물건을 조회하면") {
+            val item = itemService.findItem(itemId = givenItem.id, memberId = givenMember.id)
+
+            Then("물건이 조회된다") {
+                item.id shouldBe givenItem.id
+                item.containerName shouldBe givenContainer.name
+                item.spaceName shouldBe givenSpace.name
+            }
+        }
+
+        When("물건을 등록한 회원이 해당 물건의 이름과 수량을 수정하면") {
+            val newName = TestUtil.generateRandomString(4)
+            val newQuantity = givenItem.quantity + 1
+            val request = UpdateItemRequest(
+                containerId = givenItem.container.id,
+                name = newName,
+                itemType = givenItem.type.name,
+                quantity = newQuantity
+            )
+            val updateItem = itemService.updateItem(itemId = givenItem.id, memberId = givenMember.id, request = request)
+
+            Then("물건의 이름과 수량이 수정된다") {
+                updateItem.id shouldBe givenItem.id
+                updateItem.containerName shouldBe givenItem.container.name
+                updateItem.itemType shouldBe givenItem.type.name
+                updateItem.name shouldBe newName
+                updateItem.quantity shouldBe newQuantity
+            }
+        }
+
+        And("물건을 등록하지 않은 회원이") {
+            val otherMember = createFakeMemberEntity()
+            When("해당 물건을 조회하면") {
+                Then("예외가 발생한다") {
+                    shouldThrow<ForbiddenException> {
+                        itemService.findItem(itemId = givenItem.id, memberId = otherMember.id)
+                    }
+                }
+            }
+            When("해당 물건을 삭제하면") {
+                Then("예외가 발생한다") {
+                    shouldThrow<ForbiddenException> {
+                        itemService.deleteItem(itemId = givenItem.id, memberId = otherMember.id)
+                    }
+                }
+            }
+            When("해당 물건을 수정하면") {
+                val request = UpdateItemRequest(
+                    containerId = givenItem.container.id,
+                    name = givenItem.name,
+                    itemType = givenItem.type.name,
+                    quantity = givenItem.quantity
+                )
+                Then("예외가 발생한다") {
+                    shouldThrow<ForbiddenException> {
+                        itemService.updateItem(
+                            itemId = givenItem.id,
+                            memberId = otherMember.id,
+                            request = request
+                        )
+                    }
+                }
+            }
+        }
+
+        When("물건에 소비기한을 추가하면") {
+            val request = UpdateItemRequest(
+                containerId = givenItem.container.id,
+                name = givenItem.name,
+                itemType = givenItem.type.name,
+                quantity = givenItem.quantity,
+                useByDate = LocalDateTime.now().plusDays(1)
+            )
+            Then("예외가 발생한다") {
+                shouldThrow<BadRequestException> {
+                    itemService.updateItem(
+                        itemId = givenItem.id,
+                        memberId = givenMember.id,
+                        request = request
+                    )
+                }
+            }
+        }
+    }
+
+    Given("이미지가 없는 보관함에 물건이 등록된 경우") {
+        val givenMember = createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(member = givenMember)
+        val givenContainer = createFakeContainerEntity(space = givenSpace, imageUrl = null)
+        val givenItem = createFakeItemEntity(container = givenContainer)
+
+        every { containerRepository.findWithSpaceByIdAndMemberId(givenContainer.id, givenMember.id) } returns givenContainer
+        every { itemRepository.findByIdWithContainerAndSpaceOrThrowException(givenItem.id) } returns givenItem
+
+        When("물건의 핀 정보를 추가하면") {
+            val request = UpdateItemRequest(
+                containerId = givenItem.container.id,
+                name = givenItem.name,
+                itemType = givenItem.type.name,
+                quantity = givenItem.quantity,
+                pinX = 0F,
+                pinY = 0F
+            )
+            Then("예외가 발생한다") {
+                shouldThrow<BadRequestException> {
+                    itemService.updateItem(givenItem.id, givenMember.id, request)
                 }
             }
         }

@@ -5,12 +5,15 @@ import com.yapp.itemfinder.RepositoryTest
 import com.yapp.itemfinder.TestCaseUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
+import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SortOrderOption
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
 
@@ -130,6 +133,15 @@ class ItemRepositoryTest(
                 result.totalPages shouldBe 0
             }
         }
+
+        When("아이디로 아이템을 찾으면") {
+            val item = itemRepository.findByIdWithContainerAndSpace(givenItem.id)
+
+            Then("해당 아이템이 조회된다") {
+                item shouldNotBe null
+                item shouldBe givenItem
+            }
+        }
     }
 
     Given("2개의 이름이 설정된 아이템이 저장되어 있을 때") {
@@ -188,6 +200,18 @@ class ItemRepositoryTest(
             Then("아이템이 조회되지 않는다") {
                 result.content.size shouldBe 0
                 result.content shouldBe emptyList()
+            }
+        }
+    }
+
+    Given("회원이 아이템을 등록하지 않은 경우") {
+        When("아이디로 아이템을 찾으면") {
+            val itemId = generateRandomPositiveLongValue()
+
+            Then("예외가 발생한다") {
+                shouldThrow<NotFoundException> {
+                    itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
+                }
             }
         }
     }

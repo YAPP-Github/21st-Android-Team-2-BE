@@ -2,6 +2,7 @@ package com.yapp.itemfinder.domain.item
 
 import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
+import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
@@ -10,6 +11,7 @@ import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.CONTAINER
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget.SearchLocation.SPACE
+import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.support.PermissionValidator
 import com.yapp.itemfinder.domain.tag.ItemTagService
 import org.springframework.data.domain.Page
@@ -50,6 +52,11 @@ class ItemService(
         return ItemDetailResponse(item)
     }
 
+    fun findItem(itemId: Long, memberId: Long): ItemDetailResponse {
+        val item = findMemberItemOrThrowException(itemId, memberId)
+        return ItemDetailResponse(item)
+    }
+
     fun search(searchOption: ItemSearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
         val targetContainerIds = searchOption.searchTarget?.let {
             findSearchTargetContainerIds(it.location, memberId, it.id)
@@ -58,7 +65,7 @@ class ItemService(
         val pagedItems: Page<ItemEntity> = itemRepository.search(
             searchOption = searchOption,
             pageable = pageRequest,
-            targetContainerIds = targetContainerIds,
+            targetContainerIds = targetContainerIds
         )
 
         val itemIdToTagNames = itemTagService.createItemIdToTagNames(itemIds = pagedItems.content.map { it.id })
@@ -82,5 +89,44 @@ class ItemService(
                 listOf(container.id)
             }
         }
+    }
+
+    @Transactional
+    fun deleteItem(itemId: Long, memberId: Long) {
+        val item = findMemberItemOrThrowException(itemId, memberId)
+        itemRepository.delete(item)
+    }
+
+    @Transactional
+    fun updateItem(itemId: Long, memberId: Long, request: UpdateItemRequest): ItemDetailResponse {
+        val item = findMemberItemOrThrowException(itemId, memberId)
+        item.updateItem(
+            container = containerRepository.findWithSpaceByIdAndMemberId(request.containerId, memberId)
+                ?: throw BadRequestException(message = "존재하지 않는 보관함입니다"),
+            name = request.name,
+            type = ItemType.valueOf(request.itemType),
+            quantity = request.quantity,
+            dueDate = request.useByDate,
+            purchaseDate = request.purchaseDate,
+            description = request.description,
+            imageUrls = request.imageUrls,
+            pinX = request.pinX,
+            pinY = request.pinY
+        )
+        item.tags.removeIf { !request.tagIds.contains(it.tag.id) }
+        val newTags = request.tagIds.filterNot { tagId -> item.tags.map { it.tag.id }.contains(tagId) }
+        if (newTags.isNotEmpty()) {
+            itemTagService.createItemTags(item, newTags, memberId)
+        }
+        return ItemDetailResponse(item)
+    }
+
+    private fun findMemberItemOrThrowException(itemId: Long, memberId: Long): ItemEntity {
+        return itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
+            .also {
+                require(it.isValidMemberId(memberId)) {
+                    throw ForbiddenException(message = "권한이 없습니다")
+                }
+            }
     }
 }

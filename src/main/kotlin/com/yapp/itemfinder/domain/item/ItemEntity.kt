@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Embedded
@@ -62,10 +63,16 @@ class ItemEntity(
         purchaseDate = purchaseDate,
         description = description,
         imageUrls = imageUrls,
-        itemPin = if (pinX != null && pinY != null) {
-            ItemPin(pinX, pinY)
-        } else null
+        itemPin = toItemPin(pinX, pinY)
     )
+
+    companion object {
+        private fun toItemPin(pinX: Float?, pinY: Float?): ItemPin? {
+            return if (pinX != null && pinY != null) {
+                ItemPin(pinX, pinY)
+            } else null
+        }
+    }
 
     init {
         validateItemPin(itemPin, container)
@@ -101,7 +108,7 @@ class ItemEntity(
     var imageUrls: List<String> = imageUrls
         protected set
 
-    @OneToMany(mappedBy = "item", orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = [CascadeType.ALL], orphanRemoval = true)
     var tags: MutableList<ItemTagEntity> = mutableListOf()
 
     @Column(length = 200)
@@ -118,6 +125,32 @@ class ItemEntity(
         this.tags = tags.toMutableList()
     }
 
+    fun updateItem(
+        container: ContainerEntity,
+        name: String,
+        type: ItemType,
+        quantity: Int,
+        dueDate: LocalDateTime? = null,
+        purchaseDate: LocalDate? = null,
+        description: String? = null,
+        imageUrls: List<String>,
+        pinX: Float? = null,
+        pinY: Float? = null
+    ) {
+        validateDueDate(type, dueDate)
+        validateItemPin(toItemPin(pinX, pinY), container)
+
+        this.container = container
+        this.name = name
+        this.type = type
+        this.quantity = quantity
+        this.dueDate = dueDate
+        this.purchaseDate = purchaseDate
+        this.description = description
+        this.imageUrls = imageUrls
+        this.itemPin = toItemPin(pinX, pinY)
+    }
+
     private fun validateItemPin(itemPin: ItemPin?, container: ContainerEntity) {
         itemPin?.let {
             requireNotNull(container.imageUrl) {
@@ -132,5 +165,9 @@ class ItemEntity(
                 throw BadRequestException(message = "패션 카테고리에는 소비기한을 등록할 수 없습니다")
             }
         }
+    }
+
+    fun isValidMemberId(memberId: Long): Boolean {
+        return this.container.space.member.id == memberId
     }
 }

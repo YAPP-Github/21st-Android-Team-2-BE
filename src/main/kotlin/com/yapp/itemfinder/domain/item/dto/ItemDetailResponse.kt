@@ -6,6 +6,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class ItemDetailResponse(
+    val id: Long,
     val name: String,
     val itemType: String,
     val quantity: Int,
@@ -23,6 +24,7 @@ data class ItemDetailResponse(
     val pinY: Float? = null
 ) {
     constructor(item: ItemEntity) : this(
+        id = item.id,
         name = item.name,
         itemType = item.type.name,
         quantity = item.quantity,
