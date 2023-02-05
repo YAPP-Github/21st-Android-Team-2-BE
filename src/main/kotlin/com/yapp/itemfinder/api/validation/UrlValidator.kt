@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.api.validation
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.common.Const
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -11,8 +12,15 @@ interface UrlValidator {
         val URL_PATTERN = Pattern.compile(Const.URL_REGEX)
     }
     fun isValid(url: String): Boolean
+
     fun isValid(urls: List<String>): Boolean {
         return urls.all { isValid(it) }
+    }
+
+    fun validate(url: String) {
+        require(isValid(url)) {
+            throw BadRequestException(message = "올바르지 않은 이미지로 요청하셨습니다.")
+        }
     }
 }
 
