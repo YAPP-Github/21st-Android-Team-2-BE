@@ -24,7 +24,7 @@ interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySuppor
 }
 
 fun ItemRepository.findByIdWithContainerAndSpaceOrThrowException(id: Long): ItemEntity {
-    return findByIdWithContainerAndSpace(id) ?: throw NotFoundException(message = "존재하지 않는 물건 아이디입니다")
+    return findByIdWithContainerAndSpace(id) ?: throw NotFoundException(message = "존재하지 않는 물건입니다")
 }
 
 interface ItemRepositorySupport {
