@@ -10,6 +10,7 @@ import javax.validation.constraints.Future
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.PastOrPresent
+import javax.validation.constraints.Size
 
 data class UpdateItemRequest(
     @Schema(description = "보관함 아이디")
@@ -28,6 +29,7 @@ data class UpdateItemRequest(
     val quantity: Int,
 
     @Schema(description = "이미지 url")
+    @field:Size(max = 10)
     val imageUrls: List<String> = listOf(),
 
     @Schema(description = "태그 아이디")

@@ -85,6 +85,9 @@ class ItemController(
         @PathVariable itemId: Long,
         @RequestBody @Valid updateItemRequest: UpdateItemRequest
     ): ItemDetailResponse {
+        require(urlValidator.isValid(updateItemRequest.imageUrls)) {
+            throw BadRequestException(message = "url 형식이 올바르지 않습니다")
+        }
         return itemService.updateItem(itemId, member.id, updateItemRequest)
     }
 }
