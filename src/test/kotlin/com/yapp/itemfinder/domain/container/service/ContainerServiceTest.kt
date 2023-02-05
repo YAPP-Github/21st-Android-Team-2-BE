@@ -4,14 +4,17 @@ import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
 import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
+import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.api.exception.ConflictException
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerEntity.Companion.DEFAULT_CONTAINER_NAME
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.IconType
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
+import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
+import com.yapp.itemfinder.support.PermissionValidator
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,11 +22,13 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 
 class ContainerServiceTest : BehaviorSpec({
     val containerRepository = mockk<ContainerRepository>(relaxed = true)
     val spaceRepository = mockk<SpaceRepository>(relaxed = true)
-    val containerService = ContainerService(containerRepository, spaceRepository)
+    val permissionValidator = mockk<PermissionValidator>(relaxed = true)
+    val containerService = ContainerService(containerRepository, spaceRepository, permissionValidator)
 
     Given("특정 공간에 보관함이 등록되어 있을 때") {
         val givenSpaceId = generateRandomPositiveLongValue()
@@ -44,6 +49,50 @@ class ContainerServiceTest : BehaviorSpec({
                         it.iconType shouldBe givenContainer.iconType.name
                         it.name shouldBe givenContainer.name
                         it.imageUrl shouldBe givenContainer.imageUrl
+                    }
+                }
+            }
+        }
+
+        And("존재하는 보관함에 대한 정보를 수정할 경우") {
+            val (givenName, givenIcon, givenUrl) = Triple(generateRandomString(4), IconType.IC_CONTAINER_7, generateRandomString(10))
+            val (currentSpaceId, givenMemberId) = givenContainer.space.id to givenSpace.member.id
+
+            When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보만 수정한다면") {
+                val givenUpdateRequest = UpdateContainerRequest(spaceId = currentSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
+
+                And("수정하려는 보관함에 대한 권한을 검증한 후") {
+                    every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
+
+                    Then("보관함이 저장되는 공간은 변하지 않았으므로 공간 정보는 별도로 찾지 않고 전달받은 정보로 보관함 업데이트를 진행한다") {
+                        val response = containerService.updateContainer(givenMemberId, givenContainer.id, givenUpdateRequest)
+                        response.name shouldBe givenName
+                        response.icon shouldBe givenIcon.name
+                        response.imageUrl shouldBe givenUrl
+                        response.spaceId shouldBe currentSpaceId
+
+                        verify(exactly = 0) {
+                            permissionValidator.validateSpaceByMemberId(any(), any())
+                        }
+                    }
+                }
+            }
+
+            When("보관함이 위치하는 공간 정보 또한 수정한다면") {
+                val newSpaceId = generateRandomPositiveLongValue()
+                val givenUpdateRequest = UpdateContainerRequest(spaceId = newSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
+
+                And("수정하려는 보관함에 대한 권한을 검증한 후") {
+                    every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
+
+                    Then("보관함이 저장되는 공간이 변했으므로 해당 공간에 대한 검증 또한 진행한 후, 전달받은 정보로 업데이트를 진행한다") {
+                        every { permissionValidator.validateSpaceByMemberId(givenMemberId, newSpaceId) } returns createFakeSpaceEntity(id = newSpaceId)
+
+                        val response = containerService.updateContainer(givenMemberId, givenContainer.id, givenUpdateRequest)
+                        response.name shouldBe givenName
+                        response.icon shouldBe givenIcon.name
+                        response.imageUrl shouldBe givenUrl
+                        response.spaceId shouldBe newSpaceId
                     }
                 }
             }
