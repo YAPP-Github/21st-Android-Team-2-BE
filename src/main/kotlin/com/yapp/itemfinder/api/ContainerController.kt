@@ -32,7 +32,7 @@ class ContainerController(
         return containerService.createContainer(member.id, createContainerReq)
     }
 
-    @Operation(summary = "기존 보관함 수정")
+    @Operation(summary = "기존에 등록했던 보관함 정보 수정")
     @PutMapping("/containers/{containerId}")
     fun updateContainer(
         @LoginMember member: MemberEntity,

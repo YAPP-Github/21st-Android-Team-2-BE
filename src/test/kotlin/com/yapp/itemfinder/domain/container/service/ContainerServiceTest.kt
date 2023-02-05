@@ -58,7 +58,7 @@ class ContainerServiceTest : BehaviorSpec({
             val (givenName, givenIcon, givenUrl) = Triple(generateRandomString(4), IconType.IC_CONTAINER_7, generateRandomString(10))
             val (currentSpaceId, givenMemberId) = givenContainer.space.id to givenSpace.member.id
 
-            When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보만 수정한다면") {
+            When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보만 수정하고") {
                 val givenUpdateRequest = UpdateContainerRequest(spaceId = currentSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
 
                 And("수정하려는 보관함에 대한 권한이 있고, 해당 공간에 동일한 보관한 명으로 존재하는 보관함이 존재하지 않는다면") {
