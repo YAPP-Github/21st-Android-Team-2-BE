@@ -1,5 +1,6 @@
 package com.yapp.itemfinder.domain.container
 
+import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.domain.BaseEntity
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import javax.persistence.AttributeConverter
@@ -46,6 +47,15 @@ class ContainerEntity(
 
     fun getCreatorId(): Long {
         return space.getCreatorId()
+    }
+
+    fun update(space: SpaceEntity, name: String, iconType: String, imageUrl: String?): ContainerEntity {
+        this.space = space
+        this.name = name
+        this.iconType = IconType.values().firstOrNull { it.name == iconType }
+            ?: throw BadRequestException(message = "올바르지 않은 아이콘으로 요청하셨습니다.")
+        this.imageUrl = imageUrl
+        return this
     }
 
     companion object {

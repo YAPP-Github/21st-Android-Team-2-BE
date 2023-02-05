@@ -5,9 +5,11 @@ import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
+import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
+import com.yapp.itemfinder.support.PermissionValidator
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ContainerService(
     private val containerRepository: ContainerRepository,
-    private val spaceRepository: SpaceRepository
+    private val spaceRepository: SpaceRepository,
+    private val permissionValidator: PermissionValidator
 ) {
     fun getSpaceIdToContainers(spaceIds: List<Long>): Map<Long, List<ContainerVo>> {
         return containerRepository.findBySpaceIdIsIn(spaceIds)
@@ -40,7 +43,7 @@ class ContainerService(
     @Transactional
     fun createContainer(memberId: Long, containerRequest: CreateContainerRequest): ContainerResponse {
         val space = spaceRepository.findByIdAndMemberIdOrThrowException(id = containerRequest.spaceId, memberId = memberId).also {
-            validateContainerExist(spaceId = it.id, containerName = containerRequest.name)
+            validateContainerNameExistInSpace(spaceId = it.id, containerName = containerRequest.name)
         }
 
         val container = ContainerEntity(
@@ -55,7 +58,29 @@ class ContainerService(
         }
     }
 
-    private fun validateContainerExist(spaceId: Long, containerName: String) {
+    @Transactional
+    fun updateContainer(memberId: Long, containerId: Long, updateContainerRequest: UpdateContainerRequest): ContainerResponse {
+        val currentContainer = permissionValidator.validateContainerByMemberId(memberId, containerId)
+        val (name, icon, url) = Triple(updateContainerRequest.name, updateContainerRequest.icon, updateContainerRequest.url)
+        validateContainerNameExistInSpace(spaceId = updateContainerRequest.spaceId, name)
+
+        val space = if (currentContainer.space.id != updateContainerRequest.spaceId) {
+            permissionValidator.validateSpaceByMemberId(memberId = memberId, spaceId = updateContainerRequest.spaceId)
+        } else {
+            currentContainer.space
+        }
+
+        return currentContainer.update(
+            space = space,
+            name = name,
+            iconType = icon,
+            imageUrl = url
+        ).run {
+            ContainerResponse(this)
+        }
+    }
+
+    private fun validateContainerNameExistInSpace(spaceId: Long, containerName: String) {
         containerRepository.findBySpaceIdAndName(spaceId = spaceId, name = containerName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 공간에 등록된 보관함 존재합니다.")
         }

@@ -10,6 +10,7 @@ import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.dto.SpaceResponse
 import com.yapp.itemfinder.domain.space.dto.SpaceWithTopContainerResponse
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
+import com.yapp.itemfinder.support.PermissionValidator
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,12 +18,13 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class SpaceService(
     private val spaceRepository: SpaceRepository,
-    private val containerService: ContainerService
+    private val containerService: ContainerService,
+    private val permissionValidator: PermissionValidator,
 ) {
     @Transactional
     fun createSpace(spaceRequest: CreateSpaceRequest, member: MemberEntity): SpaceResponse {
         val spaceName = spaceRequest.name
-        validateSpaceExist(member.id, spaceName)
+        validateSpaceNameExist(member.id, spaceName)
 
         val newSpace = spaceRepository.save(SpaceEntity(member = member, name = spaceName))
         return SpaceResponse(newSpace).also {
@@ -52,7 +54,16 @@ class SpaceService(
         }
     }
 
-    private fun validateSpaceExist(memberId: Long, spaceName: String) {
+    @Transactional
+    fun updateSpace(memberId: Long, spaceId: Long, spaceName: String): SpaceResponse {
+        validateSpaceNameExist(memberId, spaceName)
+        val space = permissionValidator.validateSpaceByMemberId(memberId = memberId, spaceId = spaceId)
+        return space.updateSpace(spaceName).run {
+            SpaceResponse(this)
+        }
+    }
+
+    private fun validateSpaceNameExist(memberId: Long, spaceName: String) {
         spaceRepository.findByMemberIdAndName(memberId = memberId, name = spaceName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 등록된 공간이 존재합니다.")
         }
