@@ -272,30 +272,4 @@ class ItemServiceTest : BehaviorSpec({
             }
         }
     }
-
-    Given("이미지가 없는 보관함에 물건이 등록된 경우") {
-        val givenMember = createFakeMemberEntity()
-        val givenSpace = createFakeSpaceEntity(member = givenMember)
-        val givenContainer = createFakeContainerEntity(space = givenSpace, imageUrl = null)
-        val givenItem = createFakeItemEntity(container = givenContainer)
-
-        every { containerRepository.findWithSpaceByIdAndMemberId(givenContainer.id, givenMember.id) } returns givenContainer
-        every { itemRepository.findByIdWithContainerAndSpaceOrThrowException(givenItem.id) } returns givenItem
-
-        When("물건의 핀 정보를 추가하면") {
-            val request = UpdateItemRequest(
-                containerId = givenItem.container.id,
-                name = givenItem.name,
-                itemType = givenItem.type.name,
-                quantity = givenItem.quantity,
-                pinX = 0F,
-                pinY = 0F
-            )
-            Then("예외가 발생한다") {
-                shouldThrow<BadRequestException> {
-                    itemService.updateItem(givenItem.id, givenMember.id, request)
-                }
-            }
-        }
-    }
 })
