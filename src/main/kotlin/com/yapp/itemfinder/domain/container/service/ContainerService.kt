@@ -2,13 +2,11 @@ package com.yapp.itemfinder.domain.container.service
 
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ConflictException
-import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
-import com.yapp.itemfinder.domain.container.findWithSpaceByIdOrThrowException
 import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceRepository
@@ -93,20 +91,11 @@ class ContainerService(
 
     @Transactional
     fun deleteContainer(memberId: Long, containerId: Long) {
-        val container = findMemberContainerByIdOrThrowException(memberId, containerId)
+        val container = permissionValidator.validateContainerByMemberId(memberId, containerId)
         if (containerRepository.countBySpace(container.space) == 1L) {
             throw BadRequestException(message = "공간 내 보관함은 최소 1개 이상 존재해야 합니다")
         }
         itemRepository.deleteAllByContainer(container)
         containerRepository.delete(container)
-    }
-
-    private fun findMemberContainerByIdOrThrowException(memberId: Long, containerId: Long): ContainerEntity {
-        return containerRepository.findWithSpaceByIdOrThrowException(containerId)
-            .also {
-                require(it.getCreatorId() == memberId) {
-                    throw ForbiddenException(message = "권한이 없습니다")
-                }
-            }
     }
 }

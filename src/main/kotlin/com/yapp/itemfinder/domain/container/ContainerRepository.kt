@@ -1,6 +1,5 @@
 package com.yapp.itemfinder.domain.container
 
-import com.yapp.itemfinder.api.exception.NotFoundException
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -25,8 +24,4 @@ interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
     @Query("select c from ContainerEntity c join fetch c.space where c.id = ?1")
     fun findWithSpaceById(id: Long): ContainerEntity?
     fun countBySpace(space: SpaceEntity): Long
-}
-
-fun ContainerRepository.findWithSpaceByIdOrThrowException(id: Long): ContainerEntity {
-    return findWithSpaceById(id) ?: throw NotFoundException(message = "존재하지 않는 보관함입니다")
 }

@@ -13,7 +13,6 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.IconType
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
-import com.yapp.itemfinder.domain.container.findWithSpaceByIdOrThrowException
 import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
@@ -169,7 +168,7 @@ class ContainerServiceTest : BehaviorSpec({
             spaceId = givenSpaceId,
             name = "name",
             _icon = givenIconType.name,
-            url = "https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png",
+            url = "https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png"
         )
 
         every { spaceRepository.findByIdAndMemberIdOrThrowException(givenSpaceId, givenMemberId) } returns givenSpace
@@ -209,7 +208,7 @@ class ContainerServiceTest : BehaviorSpec({
         val givenSpace = createFakeSpaceEntity(member = givenMember)
         val givenContainer = createFakeContainerEntity(space = givenSpace)
 
-        every { containerRepository.findWithSpaceByIdOrThrowException(givenContainer.id) } returns givenContainer
+        every { permissionValidator.validateContainerByMemberId(givenMember.id, givenContainer.id) } returns givenContainer
         every { containerRepository.countBySpace(givenSpace) } returns 1L
 
         When("보관함을 삭제하면") {
