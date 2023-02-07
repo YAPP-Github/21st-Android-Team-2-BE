@@ -12,6 +12,7 @@ import com.yapp.itemfinder.support.PaginationHelper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySupport {
@@ -23,7 +24,9 @@ interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySuppor
     )
     fun findByIdWithContainerAndSpace(id: Long): ItemEntity?
 
-    fun deleteAllByContainer(container: ContainerEntity)
+    @Modifying(clearAutomatically = true)
+    @Query("delete from ItemEntity i where i.container in :containers")
+    fun deleteAllByContainerIsIn(containers: List<ContainerEntity>)
 }
 
 fun ItemRepository.findByIdWithContainerAndSpaceOrThrowException(id: Long): ItemEntity {
