@@ -1,7 +1,10 @@
 package com.yapp.itemfinder.api
 
 import com.yapp.itemfinder.ControllerIntegrationTest
+import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
+import com.yapp.itemfinder.FakeEntity.createFakeItemEntity
 import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
+import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.space.dto.CreateSpaceRequest
 import com.yapp.itemfinder.domain.space.dto.SpaceResponse
 import com.yapp.itemfinder.domain.space.dto.SpacesResponse
@@ -9,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
@@ -69,5 +73,29 @@ class SpaceControllerTest : ControllerIntegrationTest() {
         val result = objectMapper.readValue(mvcResult.response.contentAsString, SpaceResponse::class.java)
         result.id shouldNotBe null
         result.name shouldBe givenNonExistSpaceName
+    }
+
+    @Test
+    fun `회원이 공간을 삭제하면 공간 내부의 모든 보관함과 물건이 함께 삭제된다`() {
+        // given
+        val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = testMember))
+        val givenContainers = mutableListOf<ContainerEntity>()
+        repeat(3) {
+            val container = containerRepository.save(createFakeContainerEntity(space = givenSpace))
+            givenContainers.add(container)
+            itemRepository.save(createFakeItemEntity(container = container))
+            itemRepository.save(createFakeItemEntity(container = container))
+        }
+
+        // when
+        mockMvc.delete("/spaces/${givenSpace.id}") {
+        }.andExpect {
+            status { isOk() }
+        }
+
+        // then
+        spaceRepository.findById(givenSpace.id).isEmpty shouldBe true
+        containerRepository.findBySpace(givenSpace).isEmpty() shouldBe true
+        itemRepository.findAll().none { givenContainers.contains(it.container) } shouldBe true
     }
 }

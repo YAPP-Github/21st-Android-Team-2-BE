@@ -89,13 +89,21 @@ class ContainerService(
         }
     }
 
-    @Transactional
     fun deleteContainer(memberId: Long, containerId: Long) {
         val container = permissionValidator.validateContainerByMemberId(memberId, containerId)
         if (containerRepository.countBySpace(container.space) == 1L) {
             throw BadRequestException(message = "공간 내 보관함은 최소 1개 이상 존재해야 합니다")
         }
-        itemRepository.deleteAllByContainer(container)
-        containerRepository.delete(container)
+        deleteContainers(listOf(container))
+    }
+
+    fun deleteContainersInSpace(space: SpaceEntity) {
+        deleteContainers(containerRepository.findBySpace(space))
+    }
+
+    @Transactional
+    fun deleteContainers(containers: List<ContainerEntity>) {
+        itemRepository.deleteAllByContainerIsIn(containers)
+        containerRepository.deleteByContainerIsIn(containers)
     }
 }

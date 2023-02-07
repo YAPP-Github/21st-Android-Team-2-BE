@@ -32,7 +32,7 @@ class PermissionValidator(
 
     private fun validateCreatorIdAndRequestId(creatorMemberId: Long, requestMemberId: Long) {
         if (creatorMemberId != requestMemberId) {
-            throw ForbiddenException(message = "해당 권한이 없습니다.")
+            throw ForbiddenException(message = "해당 권한이 없습니다")
         }
     }
 }

@@ -68,4 +68,11 @@ class SpaceService(
             throw ConflictException(message = "이미 해당 이름으로 등록된 공간이 존재합니다.")
         }
     }
+
+    @Transactional
+    fun deleteSpace(memberId: Long, spaceId: Long) {
+        val space = permissionValidator.validateSpaceByMemberId(memberId, spaceId)
+        containerService.deleteContainersInSpace(space)
+        spaceRepository.delete(space)
+    }
 }

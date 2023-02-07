@@ -96,4 +96,26 @@ class ContainerRepositoryTest(
             }
         }
     }
+
+    Given("공간에 보관함 3개가 저장되어 있을 때") {
+        val givenMember = memberRepository.save(createFakeMemberEntity())
+        val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = givenMember))
+        val givenContainers = mutableListOf<ContainerEntity>()
+        repeat(3) {
+            containerRepository.save(createFakeContainerEntity(space = givenSpace))
+                .let {
+                    givenContainers.add(it)
+                }
+        }
+
+        When("보관함 2개를 삭제하면") {
+            containerRepository.deleteByContainerIsIn(givenContainers.subList(0, 1))
+
+            Then("보관함 2개가 모두 삭제된다") {
+                givenContainers.subList(0, 1).map {
+                    containerRepository.findById(it.id).isEmpty shouldBe true
+                }
+            }
+        }
+    }
 })
