@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query
 
 interface SpaceRepository : JpaRepository<SpaceEntity, Long>, SpaceRepositorySupport {
     fun findByMemberIdAndName(memberId: Long, name: String): SpaceEntity?
-    fun findByMemberId(memberId: Long): List<SpaceEntity>
+    fun findByMemberIdOrderByCreatedAtAsc(memberId: Long): List<SpaceEntity>
     @Query("select s from SpaceEntity s where s.id = :id and s.member.id = :memberId")
     fun findByIdAndMemberId(id: Long, memberId: Long): SpaceEntity?
 }

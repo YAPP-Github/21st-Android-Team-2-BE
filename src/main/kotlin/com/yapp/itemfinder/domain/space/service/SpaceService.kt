@@ -33,7 +33,7 @@ class SpaceService(
     }
 
     fun getSpaces(memberId: Long): SpacesResponse {
-        val spaces = spaceRepository.findByMemberId(memberId)
+        val spaces = spaceRepository.findByMemberIdOrderByCreatedAtAsc(memberId)
         return SpacesResponse.from(spaces)
     }
     fun getSpaceWithTopContainers(memberId: Long): List<SpaceWithTopContainerResponse> {
