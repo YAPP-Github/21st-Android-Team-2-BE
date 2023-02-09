@@ -2,7 +2,6 @@ package com.yapp.itemfinder.domain.container
 
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
@@ -23,8 +22,4 @@ interface ContainerRepository : JpaRepository<ContainerEntity, Long> {
     fun findByMemberId(memberId: Long): List<ContainerEntity>
 
     fun countBySpace(space: SpaceEntity): Long
-
-    @Modifying(clearAutomatically = true)
-    @Query("delete from ContainerEntity c where c in :containers")
-    fun deleteByContainerIsIn(containers: List<ContainerEntity>)
 }

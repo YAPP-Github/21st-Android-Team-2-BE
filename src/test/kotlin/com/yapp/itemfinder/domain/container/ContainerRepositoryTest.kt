@@ -109,7 +109,7 @@ class ContainerRepositoryTest(
         }
 
         When("보관함 2개를 삭제하면") {
-            containerRepository.deleteByContainerIsIn(givenContainers.subList(0, 1))
+            containerRepository.deleteAll(givenContainers.subList(0, 1))
 
             Then("보관함 2개가 모두 삭제된다") {
                 givenContainers.subList(0, 1).map {

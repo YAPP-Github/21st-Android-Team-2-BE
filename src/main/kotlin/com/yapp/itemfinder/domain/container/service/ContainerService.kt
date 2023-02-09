@@ -104,6 +104,6 @@ class ContainerService(
     @Transactional
     fun deleteContainers(containers: List<ContainerEntity>) {
         itemRepository.deleteAllByContainerIsIn(containers)
-        containerRepository.deleteByContainerIsIn(containers)
+        containerRepository.deleteAll(containers)
     }
 }
