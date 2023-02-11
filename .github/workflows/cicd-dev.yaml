@@ -72,4 +72,4 @@ jobs:
                   docker pull $DOCERHUB_REPO:${{env.IMAGE_TAG}}
                   docker stop yapp 2> /dev/null || echo "yapp container doesn't exist"
                   docker rm yapp 2> /dev/null || echo "yapp container doesn't exist"
-                  docker run --restart always -d -p 80:8080 --add-host host.docker.internal:host-gateway --name yapp $DOCERHUB_REPO:${{env.IMAGE_TAG}}
+                  docker run --restart always -d -p 8080:8080 --add-host host.docker.internal:host-gateway --name yapp $DOCERHUB_REPO:${{env.IMAGE_TAG}}
