@@ -13,6 +13,7 @@ import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceEntity.Companion.SPACE_NAME_LENGTH_LIMIT
 import com.yapp.itemfinder.domain.tag.ItemTagEntity
 import com.yapp.itemfinder.domain.tag.TagEntity
+import java.time.LocalDateTime
 import java.util.UUID
 
 object FakeEntity {
@@ -63,14 +64,16 @@ object FakeEntity {
         container: ContainerEntity = createFakeContainerEntity(space = createFakeSpaceEntity()),
         name: String = generateRandomString(10),
         type: ItemType = ItemType.LIFE,
-        quantity: Int = 1
+        quantity: Int = 1,
+        dueDate: LocalDateTime? = null,
     ): ItemEntity {
         return ItemEntity(
             id = id,
             container = container,
             name = name,
             type = type,
-            quantity = quantity
+            quantity = quantity,
+            dueDate = dueDate
         )
     }
 
