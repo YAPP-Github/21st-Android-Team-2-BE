@@ -5,7 +5,9 @@ import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ForbiddenException
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
+import com.yapp.itemfinder.domain.item.dto.ItemDueDateTarget
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
+import com.yapp.itemfinder.domain.item.dto.ItemWithDueDateResponse
 import com.yapp.itemfinder.domain.item.dto.ItemOverviewResponse
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SearchTarget
@@ -55,6 +57,16 @@ class ItemService(
     fun findItem(itemId: Long, memberId: Long): ItemDetailResponse {
         val item = findMemberItemOrThrowException(itemId, memberId)
         return ItemDetailResponse(item)
+    }
+
+    fun searchByDueDate(pageRequest: PageRequest, memberId: Long, dueDateTarget: ItemDueDateTarget): PageResponse<ItemWithDueDateResponse> {
+        val item = itemRepository.searchByDueDate(pageRequest, memberId, dueDateTarget)
+
+        return PageResponse(
+            page = item.map {
+                ItemWithDueDateResponse.from(it)
+            }
+        )
     }
 
     fun search(searchOption: ItemSearchOption, pageRequest: PageRequest, memberId: Long): PageResponse<ItemOverviewResponse> {
