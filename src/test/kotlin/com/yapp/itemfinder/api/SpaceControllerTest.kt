@@ -83,8 +83,10 @@ class SpaceControllerTest : ControllerIntegrationTest() {
         repeat(3) {
             val container = containerRepository.save(createFakeContainerEntity(space = givenSpace))
             givenContainers.add(container)
-            itemRepository.save(createFakeItemEntity(container = container))
-            itemRepository.save(createFakeItemEntity(container = container))
+            val firstItem = itemRepository.save(createFakeItemEntity(container = container))
+            val secondItem = itemRepository.save(createFakeItemEntity(container = container))
+            createItemTag(firstItem)
+            createItemTag(secondItem)
         }
 
         // when

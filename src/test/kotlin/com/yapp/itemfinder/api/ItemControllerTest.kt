@@ -8,13 +8,10 @@ import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDetailResponse
 import com.yapp.itemfinder.domain.item.dto.UpdateItemRequest
 import com.yapp.itemfinder.domain.tag.ItemTagEntity
-import com.yapp.itemfinder.domain.tag.ItemTagRepository
 import com.yapp.itemfinder.domain.tag.TagEntity
-import com.yapp.itemfinder.domain.tag.TagRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -24,12 +21,6 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 class ItemControllerTest : ControllerIntegrationTest() {
-    @Autowired
-    lateinit var tagRepository: TagRepository
-
-    @Autowired
-    lateinit var itemTagRepository: ItemTagRepository
-
     @Test
     fun `회원이 등록한 보관함 안에 물건을 등록할 수 있다`() {
         // given

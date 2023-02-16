@@ -7,9 +7,14 @@ import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
 import com.yapp.itemfinder.domain.item.ItemEntity
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.delete
+import javax.persistence.EntityManager
 
 class ContainerControllerTest : ControllerIntegrationTest() {
+    @Autowired
+    lateinit var entityManager: EntityManager
+
     @Test
     fun `보관함 2개가 등록된 공간 내부의 보관함을 1개 삭제하면 내부 물건도 함께 삭제된다`() {
         // given
@@ -28,6 +33,7 @@ class ContainerControllerTest : ControllerIntegrationTest() {
             }
 
         // then
+        entityManager.clear()
         containerRepository.findById(givenContainer.id).isEmpty shouldBe true
         givenItems.map { itemRepository.findById(it.id).isEmpty shouldBe true }
     }

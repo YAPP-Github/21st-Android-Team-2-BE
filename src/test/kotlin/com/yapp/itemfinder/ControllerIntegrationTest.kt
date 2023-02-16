@@ -2,6 +2,12 @@ package com.yapp.itemfinder
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import com.yapp.itemfinder.FakeEntity.createFakeContainerEntity
+import com.yapp.itemfinder.FakeEntity.createFakeItemEntity
+import com.yapp.itemfinder.FakeEntity.createFakeItemTagEntity
+import com.yapp.itemfinder.FakeEntity.createFakeMemberEntity
+import com.yapp.itemfinder.FakeEntity.createFakeSpaceEntity
+import com.yapp.itemfinder.FakeEntity.createFakeTagEntity
 import com.yapp.itemfinder.api.LoginMemberResolver
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.ItemEntity
@@ -9,6 +15,9 @@ import com.yapp.itemfinder.domain.item.ItemRepository
 import com.yapp.itemfinder.domain.member.MemberEntity
 import com.yapp.itemfinder.domain.member.MemberRepository
 import com.yapp.itemfinder.domain.space.SpaceRepository
+import com.yapp.itemfinder.domain.tag.ItemTagEntity
+import com.yapp.itemfinder.domain.tag.ItemTagRepository
+import com.yapp.itemfinder.domain.tag.TagRepository
 import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,6 +53,12 @@ abstract class ControllerIntegrationTest {
     @Autowired
     lateinit var itemRepository: ItemRepository
 
+    @Autowired
+    lateinit var itemTagRepository: ItemTagRepository
+
+    @Autowired
+    lateinit var tagRepository: TagRepository
+
     @MockkBean
     lateinit var loginMemberArgumentResolver: LoginMemberResolver
 
@@ -60,7 +75,7 @@ abstract class ControllerIntegrationTest {
         testMember = createTestMember()
     }
     protected fun createTestMember(): MemberEntity {
-        val givenMember = memberRepository.save(FakeEntity.createFakeMemberEntity())
+        val givenMember = memberRepository.save(createFakeMemberEntity())
 
         every { loginMemberArgumentResolver.supportsParameter(any()) } returns true
         every { loginMemberArgumentResolver.resolveArgument(any(), any(), any(), any()) } returns givenMember
@@ -69,8 +84,13 @@ abstract class ControllerIntegrationTest {
     }
 
     fun createItem(member: MemberEntity): ItemEntity {
-        val givenSpace = spaceRepository.save(FakeEntity.createFakeSpaceEntity(member = member))
-        val givenContainer = containerRepository.save(FakeEntity.createFakeContainerEntity(space = givenSpace))
-        return itemRepository.save(FakeEntity.createFakeItemEntity(container = givenContainer))
+        val givenSpace = spaceRepository.save(createFakeSpaceEntity(member = member))
+        val givenContainer = containerRepository.save(createFakeContainerEntity(space = givenSpace))
+        return itemRepository.save(createFakeItemEntity(container = givenContainer))
+    }
+
+    fun createItemTag(item: ItemEntity): ItemTagEntity {
+        val givenTag = tagRepository.save(createFakeTagEntity(member = testMember))
+        return itemTagRepository.save(createFakeItemTagEntity(item = item, tag = givenTag))
     }
 }

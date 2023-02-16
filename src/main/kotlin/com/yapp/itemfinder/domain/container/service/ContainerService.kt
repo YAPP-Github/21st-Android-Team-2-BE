@@ -7,7 +7,7 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
-import com.yapp.itemfinder.domain.item.ItemRepository
+import com.yapp.itemfinder.domain.item.ItemService
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
@@ -21,7 +21,7 @@ class ContainerService(
     private val containerRepository: ContainerRepository,
     private val spaceRepository: SpaceRepository,
     private val permissionValidator: PermissionValidator,
-    private val itemRepository: ItemRepository
+    private val itemService: ItemService
 ) {
     fun getSpaceIdToContainers(spaceIds: List<Long>): Map<Long, List<ContainerVo>> {
         return containerRepository.findBySpaceIdIsIn(spaceIds)
@@ -103,7 +103,7 @@ class ContainerService(
 
     @Transactional
     fun deleteContainers(containers: List<ContainerEntity>) {
-        itemRepository.deleteAllByContainerIsIn(containers)
-        containerRepository.deleteAll(containers)
+        itemService.deleteItemsInContainers(containers)
+        containerRepository.deleteAllInBatch(containers)
     }
 }
