@@ -6,12 +6,15 @@ import com.yapp.itemfinder.TestCaseUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.api.exception.NotFoundException
+import com.yapp.itemfinder.domain.item.dto.ItemDueDateTarget
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SortOrderOption
+import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainInOrder
+import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.data.domain.PageRequest
@@ -211,6 +214,65 @@ class ItemRepositoryTest(
             Then("예외가 발생한다") {
                 shouldThrow<NotFoundException> {
                     itemRepository.findByIdWithContainerAndSpaceOrThrowException(itemId)
+                }
+            }
+        }
+    }
+
+    Given("소비기한이 설정된 아이템들이 저장되어 있을 때") {
+        val givenPageSize = 2
+        val (givenFirstPageNumber, givenSecondPageNumber) = 0 to 1
+        val (givenFirstPageable, givenSecondPageable) = PageRequest.of(givenFirstPageNumber, givenPageSize) to PageRequest.of(givenSecondPageNumber, givenPageSize)
+
+        val (givenMember, givenContainer) = testCaseUtil.`한 명의 회원과 해당 회원이 저장한 보관함 반환`()
+        val (givenPassedDueDateCount, givenRemainedDueDateCount) = 3 to 2
+        val today = LocalDateTime.now()
+
+        repeat(givenPassedDueDateCount) {
+            itemRepository.save(createFakeItemEntity(container = givenContainer, type = ItemType.LIFE, dueDate = today.minusDays(it.toLong() + 1)))
+        }
+
+        repeat(givenRemainedDueDateCount) {
+            itemRepository.save(createFakeItemEntity(container = givenContainer, type = ItemType.LIFE, dueDate = today.plusDays(it.toLong())))
+        }
+
+        When("소비기한이 지난 아이템을 조회한다면") {
+            val passedDueDateTarget = ItemDueDateTarget.PASSED
+            val firstPageResult = itemRepository.searchByDueDate(pageable = givenFirstPageable, memberId = givenMember.id, dueDateTarget = passedDueDateTarget)
+            val secondPageResult = itemRepository.searchByDueDate(pageable = givenSecondPageable, memberId = givenMember.id, dueDateTarget = passedDueDateTarget)
+
+            Then("대상 아이템을 소비기한이 오래된 순으로 정렬하고 페이지 수만큼 페이징을 진행해서 결과를 반환한다") {
+                assertSoftly {
+                    firstPageResult.totalPages shouldBe 2
+                    firstPageResult.totalElements shouldBe givenPassedDueDateCount
+
+                    firstPageResult.content.size shouldBeLessThan givenPassedDueDateCount
+                    firstPageResult.content.size shouldBe givenFirstPageable.pageSize
+                    with(firstPageResult.content) {
+                        this[0].dueDate shouldBe today.minusDays(3)
+                        this[1].dueDate shouldBe today.minusDays(2)
+                    }
+
+                    secondPageResult.totalPages shouldBe 2
+                    secondPageResult.totalElements shouldBe givenPassedDueDateCount
+                    secondPageResult.content.size shouldBe givenPassedDueDateCount - givenFirstPageable.pageSize
+                    secondPageResult.content[0].dueDate shouldBe today.minusDays(1)
+                }
+            }
+        }
+
+        When("소비기한이 남은 아이템을 조회한다면") {
+            val remainedDueDateTarget = ItemDueDateTarget.REMAINED
+            val result = itemRepository.searchByDueDate(pageable = givenFirstPageable, memberId = givenMember.id, dueDateTarget = remainedDueDateTarget)
+
+            Then("대상 아이템을 소비기한이 오래된 순으로 정렬하고 페이지 수만큼 페이징을 진행해서 결과를 반환한다") {
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe givenRemainedDueDateCount
+                result.content.size shouldBe givenRemainedDueDateCount
+
+                with(result.content) {
+                    this[0].dueDate shouldBe today.plusDays(0)
+                    this[1].dueDate shouldBe today.plusDays(1)
                 }
             }
         }

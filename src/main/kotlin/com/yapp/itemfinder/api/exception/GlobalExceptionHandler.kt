@@ -68,7 +68,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .body(ErrorResponse(ex.message, ex.errorCode?.value))
     }
 
-    @ExceptionHandler(Exception::class)
+    @ExceptionHandler(Exception::class, InternalServerException::class)
     fun handleException(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.error("message=${ex.message}")
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
