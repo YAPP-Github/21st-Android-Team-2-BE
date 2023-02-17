@@ -5,20 +5,16 @@ import com.yapp.itemfinder.ControllerIntegrationTest
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.domain.item.ItemType
-import com.yapp.itemfinder.domain.tag.TagRepository
 import com.yapp.itemfinder.domain.tag.dto.CreateTagsRequest
 import com.yapp.itemfinder.domain.tag.dto.TagWithItemTypeResponse
 import com.yapp.itemfinder.domain.tag.dto.TagsResponse
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 class TagControllerTest : ControllerIntegrationTest() {
-    @Autowired
-    lateinit var tagRepository: TagRepository
     @Test
     fun `회원은 10글자 이내의 태그를 등록할 수 있다`() {
         // given

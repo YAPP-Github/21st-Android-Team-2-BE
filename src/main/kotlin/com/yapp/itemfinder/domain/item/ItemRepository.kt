@@ -32,7 +32,7 @@ interface ItemRepository : JpaRepository<ItemEntity, Long>, ItemRepositorySuppor
     )
     fun findByIdWithContainerAndSpace(id: Long): ItemEntity?
 
-    fun deleteAllByContainer(container: ContainerEntity)
+    fun findByContainerIsIn(containers: List<ContainerEntity>): List<ItemEntity>
 }
 
 fun ItemRepository.findByIdWithContainerAndSpaceOrThrowException(id: Long): ItemEntity {

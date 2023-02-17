@@ -33,7 +33,7 @@ class SpaceService(
     }
 
     fun getSpaces(memberId: Long): SpacesResponse {
-        val spaces = spaceRepository.findByMemberId(memberId)
+        val spaces = spaceRepository.findByMemberIdOrderByCreatedAtAsc(memberId)
         return SpacesResponse.from(spaces)
     }
     fun getSpaceWithTopContainers(memberId: Long): List<SpaceWithTopContainerResponse> {
@@ -67,5 +67,12 @@ class SpaceService(
         spaceRepository.findByMemberIdAndName(memberId = memberId, name = spaceName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 등록된 공간이 존재합니다.")
         }
+    }
+
+    @Transactional
+    fun deleteSpace(memberId: Long, spaceId: Long) {
+        val space = permissionValidator.validateSpaceByMemberId(memberId, spaceId)
+        containerService.deleteContainersInSpace(space)
+        spaceRepository.delete(space)
     }
 }

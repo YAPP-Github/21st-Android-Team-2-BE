@@ -82,7 +82,7 @@ class SpaceServiceTest : BehaviorSpec({
         val givenMemberId = generateRandomPositiveLongValue()
 
         When("등록한 공간이 없으면") {
-            every { spaceRepository.findByMemberId(givenMemberId) } returns emptyList()
+            every { spaceRepository.findByMemberIdOrderByCreatedAtAsc(givenMemberId) } returns emptyList()
 
             Then("빈 공간 정보 리스트를 담은 값을 반환한다") {
                 val result = spaceService.getSpaces(givenMemberId)
@@ -93,7 +93,7 @@ class SpaceServiceTest : BehaviorSpec({
         When("등록한 공간이 있으면") {
             val (givenSpaceId, givenSpaceName, givenMember) = Triple(generateRandomPositiveLongValue(), "공간명", createFakeMemberEntity())
             val givenSpace = createFakeSpaceEntity(id = givenSpaceId, name = givenSpaceName, member = givenMember)
-            every { spaceRepository.findByMemberId(givenMemberId) } returns listOf(givenSpace)
+            every { spaceRepository.findByMemberIdOrderByCreatedAtAsc(givenMemberId) } returns listOf(givenSpace)
 
             Then("해당 공간 정보(id, 이름) 리스트를 담은 값을 반환한다") {
                 val result = spaceService.getSpaces(givenMemberId)

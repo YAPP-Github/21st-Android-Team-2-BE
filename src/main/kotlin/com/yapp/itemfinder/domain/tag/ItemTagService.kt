@@ -34,4 +34,9 @@ class ItemTagService(
             .groupBy { it.itemId }
             .mapValues { (_, itemTagNames) -> itemTagNames.map { it.tagName } }
     }
+
+    @Transactional
+    fun deleteItemTagsByItems(items: List<ItemEntity>) {
+        itemTagRepository.deleteAllByItemIsIn(items)
+    }
 }

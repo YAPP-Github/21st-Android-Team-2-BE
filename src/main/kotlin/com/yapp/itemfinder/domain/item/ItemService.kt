@@ -3,6 +3,7 @@ package com.yapp.itemfinder.domain.item
 import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ForbiddenException
+import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
 import com.yapp.itemfinder.domain.item.dto.ItemDueDateTarget
@@ -106,7 +107,17 @@ class ItemService(
     @Transactional
     fun deleteItem(itemId: Long, memberId: Long) {
         val item = findMemberItemOrThrowException(itemId, memberId)
-        itemRepository.delete(item)
+        deleteItems(listOf(item))
+    }
+
+    @Transactional
+    fun deleteItems(items: List<ItemEntity>) {
+        itemTagService.deleteItemTagsByItems(items)
+        itemRepository.deleteAllInBatch(items)
+    }
+
+    fun deleteItemsInContainers(containers: List<ContainerEntity>) {
+        deleteItems(itemRepository.findByContainerIsIn(containers))
     }
 
     @Transactional

@@ -7,7 +7,7 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.dto.ContainerResponse
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
-import com.yapp.itemfinder.domain.item.ItemRepository
+import com.yapp.itemfinder.domain.item.ItemService
 import com.yapp.itemfinder.domain.space.SpaceEntity
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
@@ -21,7 +21,7 @@ class ContainerService(
     private val containerRepository: ContainerRepository,
     private val spaceRepository: SpaceRepository,
     private val permissionValidator: PermissionValidator,
-    private val itemRepository: ItemRepository
+    private val itemService: ItemService
 ) {
     fun getSpaceIdToContainers(spaceIds: List<Long>): Map<Long, List<ContainerVo>> {
         return containerRepository.findBySpaceIdIsIn(spaceIds)
@@ -89,13 +89,21 @@ class ContainerService(
         }
     }
 
-    @Transactional
     fun deleteContainer(memberId: Long, containerId: Long) {
         val container = permissionValidator.validateContainerByMemberId(memberId, containerId)
         if (containerRepository.countBySpace(container.space) == 1L) {
             throw BadRequestException(message = "공간 내 보관함은 최소 1개 이상 존재해야 합니다")
         }
-        itemRepository.deleteAllByContainer(container)
-        containerRepository.delete(container)
+        deleteContainers(listOf(container))
+    }
+
+    fun deleteContainersInSpace(space: SpaceEntity) {
+        deleteContainers(containerRepository.findBySpace(space))
+    }
+
+    @Transactional
+    fun deleteContainers(containers: List<ContainerEntity>) {
+        itemService.deleteItemsInContainers(containers)
+        containerRepository.deleteAllInBatch(containers)
     }
 }

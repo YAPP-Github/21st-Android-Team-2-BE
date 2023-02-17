@@ -13,7 +13,7 @@ import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.container.IconType
 import com.yapp.itemfinder.domain.container.dto.CreateContainerRequest
 import com.yapp.itemfinder.domain.container.dto.UpdateContainerRequest
-import com.yapp.itemfinder.domain.item.ItemRepository
+import com.yapp.itemfinder.domain.item.ItemService
 import com.yapp.itemfinder.domain.space.SpaceRepository
 import com.yapp.itemfinder.domain.space.findByIdAndMemberIdOrThrowException
 import com.yapp.itemfinder.support.PermissionValidator
@@ -30,8 +30,8 @@ class ContainerServiceTest : BehaviorSpec({
     val containerRepository = mockk<ContainerRepository>(relaxed = true)
     val spaceRepository = mockk<SpaceRepository>(relaxed = true)
     val permissionValidator = mockk<PermissionValidator>(relaxed = true)
-    val itemRepository = mockk<ItemRepository>()
-    val containerService = ContainerService(containerRepository, spaceRepository, permissionValidator, itemRepository)
+    val itemService = mockk<ItemService>()
+    val containerService = ContainerService(containerRepository, spaceRepository, permissionValidator, itemService)
 
     Given("특정 공간에 보관함이 등록되어 있을 때") {
         val givenSpaceId = generateRandomPositiveLongValue()

@@ -1,8 +1,11 @@
 package com.yapp.itemfinder.domain.tag
 
+import com.yapp.itemfinder.domain.item.ItemEntity
 import com.yapp.itemfinder.domain.tag.dto.TagWithItemTypeDto
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.transaction.annotation.Transactional
 
 interface ItemTagRepository : JpaRepository<ItemTagEntity, Long> {
     @Query(
@@ -19,6 +22,11 @@ interface ItemTagRepository : JpaRepository<ItemTagEntity, Long> {
             "from ItemTagEntity itemTag inner join TagEntity tag on itemTag.tag = tag where itemTag.item.id in :itemIds"
     )
     fun findItemIdAndTagNameByItemIdIsIn(itemIds: List<Long>): List<ItemIdWithTagName>
+
+    @Modifying
+    @Transactional
+    @Query("delete from ItemTagEntity i where i.item in :items")
+    fun deleteAllByItemIsIn(items: List<ItemEntity>)
 }
 
 data class ItemIdWithTagName(
