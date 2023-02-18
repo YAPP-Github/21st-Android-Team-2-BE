@@ -21,6 +21,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -61,7 +62,7 @@ class ContainerServiceTest : BehaviorSpec({
             val (givenName, givenIcon, givenUrl) = Triple(generateRandomString(4), IconType.IC_CONTAINER_7, generateRandomString(10))
             val (currentSpaceId, givenMemberId) = givenContainer.space.id to givenSpace.member.id
 
-            When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보만 수정하고") {
+            When("보관함의 위치는 수정하지 않고 보관함 자체에 대한 정보(이름, 아이콘, 이미지)만 수정할 경우") {
                 val givenUpdateRequest = UpdateContainerRequest(spaceId = currentSpaceId, name = givenName, icon = givenIcon.name, url = givenUrl)
 
                 And("수정하려는 보관함에 대한 권한이 있고, 해당 공간에 동일한 보관한 명으로 존재하는 보관함이 존재하지 않는다면") {
@@ -81,14 +82,40 @@ class ContainerServiceTest : BehaviorSpec({
                     }
                 }
 
-                And("수정하려는 보관함에 대한 권한이 있지만 해당 공간에 동일한 보관함 명으로 존재하는 보관함이 존재한다면") {
-                    every { permissionValidator.validateContainerByMemberId(givenMemberId, givenContainer.id) } returns givenContainer
-                    every { containerRepository.findBySpaceIdAndName(currentSpaceId, givenName) } returns createFakeContainerEntity(space = givenSpace)
+                And("수정하려는 보관함에 대한 권한이 있고, 기존 보관함명이 아닌 새로운 보관함 명으로 수정할 경우") {
+                    val currentContainerName = "기존 이름"
+                    val currentContainer = createFakeContainerEntity(space = givenSpace, name = currentContainerName)
 
-                    Then("요청한 보관함 이름으로 보관함을 수정할 수 없다") {
+                    every { permissionValidator.validateContainerByMemberId(givenMemberId, currentContainer.id) } returns currentContainer
+
+                    Then("해당 공간에 동일한 보관함 명으로 존재하는 보관함이 존재하는지 확인하고, 이미 존재한다면 요청한 보관함 이름으로 보관함을 수정할 수 없다") {
+                        every { containerRepository.findBySpaceIdAndName(currentContainer.space.id, givenName) } returns givenContainer
+
+                        currentContainerName shouldNotBe givenUpdateRequest.name
+
                         shouldThrow<ConflictException> {
-                            containerService.updateContainer(givenMemberId, givenContainer.id, givenUpdateRequest)
+                            containerService.updateContainer(givenMemberId, currentContainer.id, givenUpdateRequest)
                         }
+                    }
+                }
+
+                And("수정하려는 보관함에 대한 권한이 있고, 기존 보관함 명을 새로운 보관함 명으로 수정하지 않는다면") {
+                    val currentContainer = createFakeContainerEntity(space = givenSpace, name = givenUpdateRequest.name)
+                    every { permissionValidator.validateContainerByMemberId(givenMemberId, currentContainer.id) } returns currentContainer
+
+                    Then("해당 공간에 동일한 보관함 명으로 존재하는 보관함이 존재하는지 검증을 진행하지 않고 그 외 정보(아이콘, 이미지)에 대한 수정을 진행한다") {
+                        val response = containerService.updateContainer(givenMemberId, currentContainer.id, givenUpdateRequest)
+
+                        verify(exactly = 0) {
+                            containerRepository.findBySpaceIdAndName(any(), any())
+                        }
+
+                        currentContainer.name shouldBe givenUpdateRequest.name
+
+                        response.name shouldBe currentContainer.name
+                        response.icon shouldBe givenIcon.name
+                        response.imageUrl shouldBe givenUrl
+                        response.spaceId shouldBe currentSpaceId
                     }
                 }
             }
