@@ -33,6 +33,15 @@ class ContainerController(
         return containerService.createContainer(member.id, createContainerReq)
     }
 
+    @Operation(summary = "멤버가 등록한 한 보관함의 정보를 조회")
+    @GetMapping("/containers/{containerId}")
+    fun getContainer(
+        @LoginMember member: MemberEntity,
+        @PathVariable containerId: Long
+    ): ContainerResponse {
+        return containerService.getContainer(member.id, containerId)
+    }
+
     @Operation(summary = "기존에 등록했던 보관함 정보 수정")
     @PutMapping("/containers/{containerId}")
     fun updateContainer(
