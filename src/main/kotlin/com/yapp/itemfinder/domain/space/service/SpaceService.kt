@@ -54,6 +54,12 @@ class SpaceService(
         }
     }
 
+    fun getSpace(memberId: Long, spaceId: Long): SpaceResponse {
+        return permissionValidator.validateSpaceByMemberId(memberId, spaceId).run {
+            SpaceResponse(this)
+        }
+    }
+
     @Transactional
     fun updateSpace(memberId: Long, spaceId: Long, spaceName: String): SpaceResponse {
         validateSpaceNameExist(memberId, spaceName)

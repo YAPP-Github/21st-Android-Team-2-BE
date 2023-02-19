@@ -40,6 +40,15 @@ class SpaceController(
         return spaceService.getSpaceWithTopContainers(member.id)
     }
 
+    @Operation(summary = "멤버가 등록한 한 공간의 정보를 조회")
+    @GetMapping("/spaces/{spaceId}")
+    fun getSpace(
+        @LoginMember member: MemberEntity,
+        @PathVariable spaceId: Long
+    ): SpaceResponse {
+        return spaceService.getSpace(member.id, spaceId)
+    }
+
     @Operation(summary = "멤버가 등록한 공간의 정보를 수정")
     @PutMapping("/spaces/{spaceId}")
     fun updateSpace(

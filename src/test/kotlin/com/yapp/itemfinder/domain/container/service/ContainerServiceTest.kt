@@ -161,6 +161,48 @@ class ContainerServiceTest : BehaviorSpec({
         }
     }
 
+    Given("기존에 유저가 등록한 보관함을 조회할 때") {
+        val givenMember = createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(member = givenMember)
+
+        val (givenName, givenUrl, givenIcon) = Triple("보관함", "url", IconType.IC_CONTAINER_4)
+        val givenContainer = createFakeContainerEntity(space = givenSpace, name = givenName, imageUrl = givenUrl, iconType = givenIcon)
+
+        When("해당 보관함이 존재하며 요청한 유저에게 보관함에 대한 권한이 있다면(해당 유저가 등록한 보관함임)") {
+            every {
+                permissionValidator.validateContainerByMemberId(memberId = givenMember.id, containerId = givenContainer.id)
+            } returns givenContainer
+
+            Then("해당 공간을 조회할 수 있다") {
+                val response = containerService.getContainer(
+                    memberId = givenMember.id,
+                    containerId = givenContainer.id
+                )
+
+                response.id shouldBe givenContainer.id
+                response.spaceId shouldBe givenSpace.id
+                response.name shouldBe givenName
+                response.imageUrl shouldBe givenUrl
+                response.icon shouldBe givenIcon.name
+            }
+        }
+
+        When("보관함이 존재하지 않거나 요청한 유저에게 공간에 대한 권한이 없어 보관함 검증에 실패한다면") {
+            every {
+                permissionValidator.validateContainerByMemberId(memberId = givenMember.id, containerId = givenContainer.id)
+            } throws Exception()
+
+            Then("해당 보관함을 조회할 수 없다") {
+                shouldThrow<Exception> {
+                    containerService.getContainer(
+                        memberId = givenMember.id,
+                        containerId = givenContainer.id
+                    )
+                }
+            }
+        }
+    }
+
     Given("공간에 등록된 보관함을 조회할 때") {
         val (givenMemberId, givenSpaceId) = generateRandomPositiveLongValue() to generateRandomPositiveLongValue()
 

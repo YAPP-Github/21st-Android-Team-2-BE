@@ -181,6 +181,39 @@ class SpaceServiceTest : BehaviorSpec({
         }
     }
 
+    Given("기존에 유저가 등록한 공간을 조회할 때") {
+        val (givenSpaceName, givenMember) = "공간 이름1" to createFakeMemberEntity()
+        val givenSpace = createFakeSpaceEntity(name = givenSpaceName, member = givenMember)
+
+        When("해당 공간이 존재하며 요청한 유저에게 공간에 대한 권한이 있다면(해당 유저가 등록한 공간일 경우)") {
+            every {
+                permissionValidator.validateSpaceByMemberId(memberId = givenMember.id, spaceId = givenSpace.id)
+            } returns givenSpace
+
+            Then("해당 공간을 조회할 수 있다") {
+                val response = spaceService.getSpace(
+                    memberId = givenMember.id,
+                    spaceId = givenSpace.id
+                )
+
+                response.id shouldBe givenSpace.id
+                response.name shouldBe givenSpace.name
+            }
+        }
+
+        When("공간이 존재하지 않거나 요청한 유저에게 공간에 대한 권한이 없어, 공간 검증에 실패한다면") {
+            every {
+                permissionValidator.validateSpaceByMemberId(memberId = givenMember.id, spaceId = givenSpace.id)
+            } throws Exception()
+
+            Then("해당 공간을 조회할 수 없다") {
+                shouldThrow<Exception> {
+                    spaceService.getSpace(givenMember.id, givenSpace.id)
+                }
+            }
+        }
+    }
+
     Given("기존에 등록한 공간을 수정할 때") {
         val givenNewSpaceName = "새로운 공간 이름"
         val givenMember = createFakeMemberEntity()

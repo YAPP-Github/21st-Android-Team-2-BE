@@ -86,6 +86,12 @@ class ContainerService(
         }
     }
 
+    fun getContainer(memberId: Long, containerId: Long): ContainerResponse {
+        return permissionValidator.validateContainerByMemberId(memberId, containerId).run {
+            ContainerResponse(this)
+        }
+    }
+
     private fun validateContainerNameExistInSpace(spaceId: Long, containerName: String) {
         containerRepository.findBySpaceIdAndName(spaceId = spaceId, name = containerName)?.let {
             throw ConflictException(message = "이미 해당 이름으로 공간에 등록된 보관함 존재합니다.")
