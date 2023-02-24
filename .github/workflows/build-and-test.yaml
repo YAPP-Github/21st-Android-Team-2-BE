@@ -1,0 +1,36 @@
+name: build-and-test
+
+on:
+    push:
+        branches: [develop, main]
+    pull_request:
+        branches: [develop, main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: JDK 17 설치
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+
+            - name: Cache Gradle packages
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.gradle/caches
+                      ~/.gradle/wrapper
+                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+                  restore-keys: |
+                      ${{ runner.os }}-gradle-
+
+            - name: Add permission for gradlew
+              run: chmod +x ./gradlew
+
+            - name: ktlint 및 테스트 실행
+              run: ./gradlew clean ktlintCheck test
