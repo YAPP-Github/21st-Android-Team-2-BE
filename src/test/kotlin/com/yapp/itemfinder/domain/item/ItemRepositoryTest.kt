@@ -6,6 +6,7 @@ import com.yapp.itemfinder.TestCaseUtil
 import com.yapp.itemfinder.TestUtil.generateRandomPositiveLongValue
 import com.yapp.itemfinder.TestUtil.generateRandomString
 import com.yapp.itemfinder.api.exception.NotFoundException
+import com.yapp.itemfinder.common.Const.KST_ZONE_ID
 import com.yapp.itemfinder.domain.item.dto.ItemDueDateTarget
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption
 import com.yapp.itemfinder.domain.item.dto.ItemSearchOption.SortOrderOption
@@ -226,7 +227,7 @@ class ItemRepositoryTest(
 
         val (givenMember, givenContainer) = testCaseUtil.`한 명의 회원과 해당 회원이 저장한 보관함 반환`()
         val (givenPassedDueDateCount, givenRemainedDueDateCount) = 3 to 2
-        val today = LocalDateTime.now()
+        val today = LocalDateTime.now(KST_ZONE_ID)
 
         repeat(givenPassedDueDateCount) {
             itemRepository.save(createFakeItemEntity(container = givenContainer, type = ItemType.LIFE, dueDate = today.minusDays(it.toLong() + 1)))
