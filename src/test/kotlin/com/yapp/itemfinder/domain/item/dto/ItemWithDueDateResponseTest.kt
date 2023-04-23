@@ -2,17 +2,17 @@ package com.yapp.itemfinder.domain.item.dto
 
 import com.yapp.itemfinder.FakeEntity
 import com.yapp.itemfinder.api.exception.InternalServerException
-import com.yapp.itemfinder.common.Const.KST_ZONE_ID
 import com.yapp.itemfinder.common.DateTimeFormatter.YYYYMMDD
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ItemWithDueDateResponseTest : BehaviorSpec({
     Given("소비기한이 설정된 아이템이 주어졌을 때") {
-        val givenLocalDateTime = LocalDateTime.now(KST_ZONE_ID)
+        val givenLocalDateTime = LocalDateTime.of(2022, 1, 1, 0, 0, 0)
 
         When("오늘 날짜를 기준으로 비교했을 때 아이템의 소비기한이 지났으면") {
             val (passedDays, passedYear) = 4L to 1L
@@ -20,8 +20,8 @@ class ItemWithDueDateResponseTest : BehaviorSpec({
             val yearPassedITem = FakeEntity.createFakeItemEntity(dueDate = givenLocalDateTime.minusYears(passedYear))
 
             Then("지난 일자를 계산해 -N일 형태로 담아 반환한다") {
-                val daysPassedResult = ItemWithDueDateResponse.from(daysPassedItem)
-                val yearPassedResult = ItemWithDueDateResponse.from(yearPassedITem)
+                val daysPassedResult = ItemWithDueDateResponse.from(daysPassedItem, givenLocalDateTime.toLocalDate())
+                val yearPassedResult = ItemWithDueDateResponse.from(yearPassedITem, givenLocalDateTime.toLocalDate())
 
                 assertSoftly {
                     daysPassedResult.remainDate shouldBe -1 * passedDays
@@ -42,8 +42,8 @@ class ItemWithDueDateResponseTest : BehaviorSpec({
             val yearRemainedItem = FakeEntity.createFakeItemEntity(dueDate = givenLocalDateTime.plusYears(remainedYear))
 
             Then("남은 일자를 계산해 +N일 형태로 담아 반환한다") {
-                val daysRemainedResult = ItemWithDueDateResponse.from(daysRemainedItem)
-                val yearRemainedResult = ItemWithDueDateResponse.from(yearRemainedItem)
+                val daysRemainedResult = ItemWithDueDateResponse.from(daysRemainedItem, givenLocalDateTime.toLocalDate())
+                val yearRemainedResult = ItemWithDueDateResponse.from(yearRemainedItem, givenLocalDateTime.toLocalDate())
 
                 assertSoftly {
                     daysRemainedResult.remainDate shouldBe remainDate
@@ -64,7 +64,10 @@ class ItemWithDueDateResponseTest : BehaviorSpec({
         When("해당 응답으로 변환을 시도하면") {
             Then("예외가 발생한다") {
                 shouldThrow<InternalServerException> {
-                    ItemWithDueDateResponse.from(givenItem)
+                    ItemWithDueDateResponse.from(
+                        item = givenItem,
+                        targetDate = LocalDate.of(2022, 1, 1)
+                    )
                 }
             }
         }
