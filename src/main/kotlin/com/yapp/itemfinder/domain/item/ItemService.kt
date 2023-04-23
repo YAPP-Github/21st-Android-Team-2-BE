@@ -3,6 +3,7 @@ package com.yapp.itemfinder.domain.item
 import com.yapp.itemfinder.common.PageResponse
 import com.yapp.itemfinder.api.exception.BadRequestException
 import com.yapp.itemfinder.api.exception.ForbiddenException
+import com.yapp.itemfinder.common.Const.KST_ZONE_ID
 import com.yapp.itemfinder.domain.container.ContainerEntity
 import com.yapp.itemfinder.domain.container.ContainerRepository
 import com.yapp.itemfinder.domain.item.dto.CreateItemRequest
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 @Transactional(readOnly = true)
@@ -65,7 +67,7 @@ class ItemService(
 
         return PageResponse(
             page = item.map {
-                ItemWithDueDateResponse.from(it)
+                ItemWithDueDateResponse.from(it, LocalDate.now(KST_ZONE_ID))
             }
         )
     }
